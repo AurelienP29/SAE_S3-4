@@ -1,0 +1,122 @@
+.navbar-container {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+:deep(.custom-menubar) {
+    background: linear-gradient(135deg, #bdbdbd 0%, #b6b6b6 100%);
+    border: none;
+    border-radius: 0;
+    padding: 0.75rem 2rem;
+}
+
+:deep(.custom-menubar .p-menubar-root-list) {
+    gap: 0.5rem;
+}
+
+:deep(.custom-menubar .p-menuitem-link) {
+    color: white !important;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: background-color 0.2s;
+}
+
+:deep(.custom-menubar .p-menuitem-link:hover) {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+:deep(.custom-menubar .p-menuitem-link:focus) {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.3);
+}
+
+:deep(.custom-menubar .p-menuitem-icon),
+:deep(.custom-menubar .p-submenu-icon) {
+    color: white;
+}
+
+.navbar-brand {
+    cursor: pointer;
+    margin-right: 2rem;
+}
+
+.navbar-brand .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+:deep(.language-dropdown) {
+    min-width: 120px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+:deep(.language-dropdown .p-dropdown-label) {
+    color: white;
+}
+
+:deep(.language-dropdown .p-dropdown-trigger) {
+    color: white;
+}
+
+:deep(.language-dropdown:hover) {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.login-button {
+    background-color: white !important;
+    color: #667eea !important;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.login-button:hover {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    transform: translateY(-1px);
+    margin: -1.175px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+:deep(.user-menu) {
+    border-color: white !important;
+}
+
+:deep(.user-menu .p-button) {
+    color: white !important;
+    border-color: white !important;
+}
+
+:deep(.user-menu .p-button:hover) {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Responsive design */
+@media (max-width: 960px) {
+    :deep(.custom-menubar) {
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        margin-right: 1rem;
+    }
+
+    .navbar-brand .logo {
+        font-size: 1.2rem;
+    }
+
+    .navbar-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
