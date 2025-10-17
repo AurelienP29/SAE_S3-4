@@ -17,6 +17,7 @@
 
     <section>
       <h2 class="banner">Liste des prestataire</h2>
+      <p>prestataire test :<router-link to='prestataire'> click ici</router-link> </p>
       <!-- TODO liste des prestataires avec fonction de recherche -->
     </section>
 
