@@ -1,12 +1,21 @@
-import axios from 'axios';
 
-export const sendEmail = async (emailData) => {
-    try{
-        const endpoint = 'http://localhost:8080/api/email';
-        const response = await axios.post('http://localhost:8080/api/email', emailData);
-        return response.data;
-    } catch (error) {
-        console.error('Error sending email:', error);
-        throw error;
-    }
-}
+import emailjs from '@emailjs/browser';
+
+export default {
+    methods: {
+        sendEmail() {
+            emailjs
+                .sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this.$refs.form, {
+                    publicKey: 'YOUR_PUBLIC_KEY',
+                })
+                .then(
+                    () => {
+                        console.log('SUCCESS!');
+                    },
+                    (error) => {
+                        console.log('FAILED...', error.text);
+                    },
+                );
+        },
+    },
+};

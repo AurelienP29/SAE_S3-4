@@ -6,7 +6,7 @@
 
     <!-- Modal -->
     <Dialog v-model:visible="visible" :header="t('registerAsProvider')" :style="{ width: '250rem' }"
-            position="bottom" :modal="true" :draggable="false">er...')
+            position="bottom" :modal="true" :draggable="false">
       <form class="form_provider" id="form_provider" @submit.prevent="registerProvider()">
         <p>
           <Label for="provider-name" >{{ t('providerName') }}</Label> <input type="text"
@@ -62,6 +62,9 @@ import {ref} from 'vue'
 import {useAuthStore} from '@/stores/authStore.js'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
+import {sendEmail} from "@/services/emailServices.js";
+
+
 
 const authStore = useAuthStore()
 const visible = ref(false)
@@ -128,8 +131,17 @@ function registerProvider() {
   console.log('Shop name:', document.getElementById('shop-name').value);
   console.log('Shop type:', document.querySelector('input[name="typeOfShop"]:checked').value);
   console.log('Days of presence:', Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(el => el.value));
-
-  
+  const emailData = {
+    providerName: document.getElementById('provider-name').value,
+    shopName: document.getElementById('shop-name').value,
+    phone: document.getElementById('phone').value,
+    website: document.getElementById('website').value,
+    services: Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(el => el.value),
+    shopType: document.querySelector('input[name="typeOfShop"]:checked').value,
+    daysOfPresence: Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(el => el.value),
+    email: document.getElementById('email').value,
+  } ;
+  //todo  mail + vérif des données
   visible.value = false
 }
 </script>
