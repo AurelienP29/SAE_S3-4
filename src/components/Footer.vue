@@ -62,7 +62,6 @@ import {ref} from 'vue'
 import {useAuthStore} from '@/stores/authStore.js'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
-import {sendEmail} from "@/services/emailServices.js";
 
 
 
