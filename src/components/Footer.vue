@@ -7,46 +7,52 @@
     <!-- Modal -->
     <Dialog v-model:visible="visible" :header="t('registerAsProvider')" :style="{ width: '250rem' }"
             position="bottom" :modal="true" :draggable="false">er...')
-      <p>
-        <Label for="provider-name" :required="true">{{ t('providerName') }}</Label> <input type="text"
-                                                                                           id="provider-name"/>
-      </p>
-      <p>
-        <label for="shop-name" :required="true">{{ t('shopName') }}</label> <input type="text" id="shop-name"/>
-      </p>
-      <div class="input-text-container">
-        <label for="phone">{{ t('phone') }}</label> <input type="text" id="phone" required/>
-        <label for="email">{{ t('email') }}</label> <input type="text" id="email" required/>
-        <label for="website">{{ t('website') }}</label> <input type="text" id="website"/>
-      </div>
-      <div class="checkBoxes-container">
-        <label for="days" :required="true">{{ t('daysOfPresence') }}</label>
+      <form class="form_provider" id="form_provider" @submit.prevent="registerProvider()">
         <p>
-          <input type="checkbox" id="days" value="day1"/> <label for="day1">{{ t('day1') }}</label>
-          <input type="checkbox" id="days" value="day2"/> <label for="day2">{{ t('day2') }}</label>
-          <input type="checkbox" id="days" value="day3"/> <label for="day3">{{ t('day3') }}</label>
+          <Label for="provider-name" >{{ t('providerName') }}</Label> <input type="text"
+                                                                                             id="provider-name" required/>
         </p>
-      </div>
-      <div class="radio-buttons-container">
-        <label for="typeOfShop">{{ t('typeOfShop') }}</label>
         <p>
-          <input type="radio" id="typeOfShop" name="typeOfShop" value="shop1"/> <label for="shop1">{{t('shop1') }}</label>
-          <input type="radio" id="typeOfShop" name="typeOfShop" value="shop2"/> <label for="shop2">{{t('shop2')}}</label>
-          <input type="radio" id="typeOfShop" name="typeOfShop" value="shop3"/> <label for="shop3">{{t('shop3')}}</label>
+          <label for="shop-name">{{ t('shopName') }}</label> <input type="text" id="shop-name"/>
         </p>
-      </div>
-      <div class="checkBoxes-container">
-        <span> {{ t('proposedServices') }}</span>
-        <p>
-          <input type="checkbox" id="services" value="service1"/> <label for="service1">{{ t('service1') }}</label>
-          <input type="checkbox" id="services" value="service2"/> <label for="service2">{{ t('service2') }}</label>
-          <input type="checkbox" id="services" value="service3"/> <label for="service3">{{ t('service3') }}</label>
-        </p>
-      </div>
-      <div id="button-container">
-        <Button type="button" :label="t('cancel')" severity="secondary" @click="visible = false"></Button>
-        <Button type="button" :label="t('send')" @click="registerProvider()"></Button>
-      </div>
+        <div class="input-text-container">
+          <label for="phone">{{ t('phone') }}</label> <input type="text" id="phone" required/>
+          <label for="email">{{ t('email') }}</label> <input type="text" id="email" required/>
+          <label for="website">{{ t('website') }}</label> <input type="text" id="website"/>
+        </div>
+        <div class="checkBoxes-container">
+          <label for="days">{{ t('daysOfPresence') }}</label>
+          <p>
+            <input type="checkbox" id="days" value="day1"/> <label for="day1">{{ t('day1') }}</label>
+            <input type="checkbox" id="days" value="day2"/> <label for="day2">{{ t('day2') }}</label>
+            <input type="checkbox" id="days" value="day3"/> <label for="day3">{{ t('day3') }}</label>
+          </p>
+        </div>
+        <div class="radio-buttons-container">
+          <label for="typeOfShop" required>{{ t('typeOfShop') }}</label>
+          <p>
+            <input type="radio" id="typeOfShop" name="typeOfShop" value="shop1"/> <label for="shop1">{{
+              t('shop1')
+            }}</label>
+            <input type="radio" id="typeOfShop" name="typeOfShop" value="shop2"/> <label
+              for="shop2">{{ t('shop2') }}</label>
+            <input type="radio" id="typeOfShop" name="typeOfShop" value="shop3"/> <label
+              for="shop3">{{ t('shop3') }}</label>
+          </p>
+        </div>
+        <div class="checkBoxes-container">
+          <span> {{ t('proposedServices') }}</span>
+          <p>
+            <input type="checkbox" id="services" value="service1"/> <label for="service1">{{ t('service1') }}</label>
+            <input type="checkbox" id="services" value="service2"/> <label for="service2">{{ t('service2') }}</label>
+            <input type="checkbox" id="services" value="service3"/> <label for="service3">{{ t('service3') }}</label>
+          </p>
+        </div>
+        <div id="button-container">
+          <Button type="button" :label="t('cancel')" severity="secondary" @click="visible = false"></Button>
+          <Button type="button" :label="t('send')" @click="registerProvider()"></Button>
+        </div>
+      </form>
     </Dialog>
   </div>
 </template>
@@ -66,7 +72,7 @@ const translations = {
     registerAsProvider: 'S\'inscrire comme prestataire',
     providerName: 'Nom du prestataire',
     shopName: 'Nom de la boutique',
-    phone : 'Numéro de téléphone',
+    phone: 'Numéro de téléphone',
     email: 'Adresse email',
     website: 'Site web ou réseau social',
     daysOfPresence: 'Jours de présence',
@@ -88,8 +94,8 @@ const translations = {
     registerAsProvider: 'Register as Provider',
     providerName: 'Provider Name',
     shopName: 'Shop Name',
-    phone : 'Phone number',
-    email : 'Email address',
+    phone: 'Phone number',
+    email: 'Email address',
     website: 'Website or social network',
     daysOfPresence: 'Days of Presence',
     day1: 'Friday',
@@ -117,7 +123,13 @@ function openModal() {
 }
 
 function registerProvider() {
-  console.log('Registering provider...')
+  console.log('Registering provider...');
+  console.log('Provider name:', document.getElementById('provider-name').value);
+  console.log('Shop name:', document.getElementById('shop-name').value);
+  console.log('Shop type:', document.querySelector('input[name="typeOfShop"]:checked').value);
+  console.log('Days of presence:', Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(el => el.value));
+
+  
   visible.value = false
 }
 </script>

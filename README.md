@@ -3,6 +3,7 @@
 ## Requirements
 
 - `npm` utiliies available.
+- `npm i axios` for the API email
 
 ## Installation
 
@@ -16,3 +17,6 @@ npm install
 ```bash
 npm run dev
 ```
+
+## Links used
+Contact form: `https://www.youtube.com/watch?v=iioJ2GNXbW0`
