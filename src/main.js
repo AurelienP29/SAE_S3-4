@@ -10,6 +10,7 @@ import 'primeicons/primeicons.css';
 import "/src/assets/styles/style.css";
 
 import App from './App.vue'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import router from './router'
 
 const app = createApp(App)

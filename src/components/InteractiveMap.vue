@@ -1,6 +1,6 @@
 <template>
   <div class="map-container">
-    <img src="/public/images/Placeholder.png" alt="Interactive Map" class="map-image"/>
+    <img src="/src/assets/images/IMp-PLAN-VF1.png" alt="Interactive Map" class="map-image"/>
 
     <div
         v-for="point in points"
@@ -22,7 +22,7 @@ import {ref} from "vue";
 
 const points = ref([
   {id: 1, x: 25, y: 40, label: 'Test n°1'},
-  {id: 2, x: 60, y: 70, label: 'Test n°2'},
+  {id: 2, x: 91.5, y: 43, label: 'Bar'},
 ])
 </script>
 

@@ -1,6 +1,6 @@
-import {createRouter, createWebHistory} from 'vue-router'
-import HomeView from "@/views/HomeView.vue";
-import PrestataireView from '@/views/PrestataireView.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '@/views/HomeView.vue'
+import PrestataireView from '@/views/PrestataireView.vue'
 
 // const routes = [
 //     {
@@ -12,7 +12,7 @@ import PrestataireView from '@/views/PrestataireView.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: HomeView },
-    { path: '/prestataire', name: 'prestatairepage', component: PrestataireView}
+    { path: '/prestataire', name: 'PrestataireView', component: PrestataireView },
 ]
 
 const router = createRouter({

@@ -1,32 +1,27 @@
 <template>
-  <div class="navbar-container">
+  <div :class="['navbar-container', { 'navbar-container--scrolled': isScrolled }]">
     <Menubar :model="menuItems" class="custom-menubar">
       <template #start>
         <div class="navbar-brand" @click="goTo('Home')">
-          <span class="logo"><img src="/public/images/N-con-Logo-image.png" style="height: 75px; width: auto"></span>
+          <span class="logo"><img src="/public/images/N-con-Logo-image.png" style="height: 75px; width: auto" alt="Logo"></span>
         </div>
       </template>
 
       <template #item="{ item, props, hasSubmenu }">
-        <a v-ripple class="flex align-items-center" v-bind="props.action"> <!-- TODO PrimeVue Component: ripple effect on buttons -- issue !-->
-          <span :class="item.icon" />
+        <a v-ripple class="flex align-items-center" v-bind="props.action">
+          <!-- TODO PrimeVue Component: ripple effect on buttons -->
+          <span :class="item.icon"/>
           <span class="ml-2">{{ item.label }}</span>
-          <Badge v-if="item.badge" :value="item.badge" class="ml-2" severity="danger" />
-          <span v-if="hasSubmenu" class="pi pi-angle-down ml-2" />
+          <Badge v-if="item.badge" :value="item.badge" class="ml-2" severity="danger"/>
+          <span v-if="hasSubmenu" class="pi pi-angle-down ml-2"/>
         </a>
       </template>
 
       <template #end>
         <div class="navbar-actions">
 
-          <Dropdown
-            v-model="authStore.currentLanguage" 
-            :options="languageOptions" 
-            optionLabel="label" 
-            optionValue="value"
-            placeholder="Langue"
-            class="language-dropdown"
-          >
+          <Dropdown v-model="authStore.currentLanguage" :options="languageOptions" optionLabel="label"
+                    optionValue="value" placeholder="Langue" class="language-dropdown">
             <template #value="props">
               <div v-if="props.value" class="flex align-items-center">
                 <i :class="props.value === 'fr' ? 'pi pi-flag' : 'pi pi-flag-fill'" class="mr-2"></i>
@@ -43,23 +38,23 @@
           </Dropdown>
 
           <Button
-            v-if="!authStore.isAuthenticated"
-            icon="pi pi-sign-in" 
-            :label="lang('login')"
-            @click="goTo('Login')"
-            severity="primary"
-            class="login-button"
-            raised
+              v-if="!authStore.isAuthenticated"
+              icon="pi pi-sign-in"
+              :label="lang('login')"
+              @click="giveAllRolesAndGoToLogin"
+              severity="primary"
+              class="login-button"
+              raised
           />
           <SplitButton
-            v-else
-            :label="authStore.user?.name || lang('logout')"
-            icon="pi pi-user"
-            @click="handleLogout"
-            :model="userMenuItems"
-            severity="secondary"
-            outlined
-            class="user-menu"
+              v-else
+              :label="authStore.user?.name || lang('logout')"
+              icon="pi pi-user"
+              @click="handleLogout"
+              :model="userMenuItems"
+              severity="secondary"
+              outlined
+              class="user-menu"
           />
         </div>
       </template>
@@ -68,9 +63,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore.js'
+import {ref, computed, onMounted, onBeforeUnmount} from 'vue'
+import {useRouter} from 'vue-router'
+import {useAuthStore} from '@/stores/authStore.js'
 import Menubar from 'primevue/menubar'
 import Button from 'primevue/button'
 import SplitButton from 'primevue/splitbutton'
@@ -79,17 +74,34 @@ import Badge from 'primevue/badge'
 import Ripple from 'primevue/ripple'
 
 import '/src/assets/styles/NavBar.css'
+// import PrestataireView from "@/views/PrestataireView.vue";
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-const notificationCount = ref(3)
+// Helper: supports both a single `userRole` and a multi-role `user.roles` array
+const hasRole = (role) => {
+  const roles = authStore.user?.roles || []
+  return roles.includes(role) || authStore.userRole === role
+}
+
+function giveAllRolesAndGoToLogin() {
+  authStore.login({
+    name: 'Test User (all roles)',
+    role: 'organisateur',
+    roles: ['organisateur', 'prestataire'],
+    isAuthenticated: true
+  })
+
+  router.push({ name: 'Login' })
+}
+
+const notificationCount = ref(0)
 
 function goTo(routeName) {
   router.push({ name: routeName })
 }
 
-// (when authenticated)
 const userMenuItems = computed(() => [
   {
     label: lang('profile'),
@@ -121,8 +133,7 @@ const menuItems = computed(() => {
     }
   ]
 
-  if (true) {
-  // if (authStore.userRole === 'organisateur') {
+  if (hasRole('organisateur')) {
     items.push({
       label: lang('organisateur.space'),
       icon: 'pi pi-calendar',
@@ -141,32 +152,33 @@ const menuItems = computed(() => {
     })
   }
 
-   // if (authStore.userRole === 'prestataire') {
-  items.push({
-    label: lang('prestataire.space'),
-    icon: 'pi pi-briefcase',
-    items: [
-      {
-        label: lang('prestataire.services'),
-        icon: 'pi pi-box',
-        command: () => goTo('PrestataireServices')
-      },
-      {
-        label: lang('prestataire.bookings'),
-        icon: 'pi pi-calendar-plus',
-        command: () => goTo('PrestataireBookings')
-      }
-    ]
-  })
+  if (hasRole('prestataire')) {
+    items.push({
+      label: lang('prestataire.space'),
+      icon: 'pi pi-briefcase',
+      items: [
+        {
+          label: lang('prestataire.services'),
+          icon: 'pi pi-box',
+          command: () => goTo('PrestataireView')
+        },
+        {
+          label: lang('prestataire.bookings'),
+          icon: 'pi pi-calendar-plus',
+          command: () => goTo('PrestataireBookings')
+        }
+      ]
+    })
+  }
 
-
-   // if (authStore.isAuthenticated) {
-  items.push({
-    label: lang('notifications'),
-    icon: 'pi pi-bell',
-    badge: notificationCount.value > 0 ? notificationCount.value.toString() : null,
-    command: () => goTo('Notifications')
-  })
+  if (authStore.isAuthenticated) {
+    items.push({
+      label: lang('notifications'),
+      icon: 'pi pi-bell',
+      badge: notificationCount.value > 0 ? notificationCount.value.toString() : null,
+      command: () => goTo('Notifications')
+    })
+  }
 
   // À propos
   items.push({
@@ -184,8 +196,8 @@ const lang = (key) => {
 
 // Language options
 const languageOptions = [
-  { label: ' Français', value: 'fr', icon: 'pi pi-flag' },
-  { label: ' English', value: 'en', icon: 'pi pi-flag-fill' }
+  {label: ' Français', value: 'fr', icon: 'pi pi-flag'},
+  {label: ' English', value: 'en', icon: 'pi pi-flag-fill'}
 ]
 
 const translations = {
@@ -197,7 +209,6 @@ const translations = {
     'prestataire.space': 'Espace Prestataire',
     'prestataire.services': 'Mes Services',
     'prestataire.bookings': 'Mes Réservations',
-    'search': 'Rechercher',
     'myAccount': 'Mon Compte',
     'notifications': 'Notifications',
     'about': 'À Propos',
@@ -214,7 +225,6 @@ const translations = {
     'prestataire.space': 'Provider Space',
     'prestataire.services': 'My Services',
     'prestataire.bookings': 'My Bookings',
-    'search': 'Search',
     'myAccount': 'My Account',
     'notifications': 'Notifications',
     'about': 'About',
@@ -229,6 +239,22 @@ function handleLogout() {
   authStore.logout()
   goTo('Home')
 }
+
+
+const isScrolled = ref(false)
+
+function handleScroll() {
+  isScrolled.value = window.scrollY > 50
+}
+
+onMounted(() => {
+  handleScroll()
+  window.addEventListener('scroll', handleScroll, {passive: true})
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped></style>
