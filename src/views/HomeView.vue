@@ -28,7 +28,7 @@
       <h2 class="banner">Origine de l’événement</h2>
       La Nécronomi’Con a été créée dans l’initiative d’un groupe d'étudiant de l'IUT Nord Franche-Comté, passionnés,
       souhaitant dynamiser la scène geek
-      du Nord Franche-Comté. qAu fil des années, l’événement a grandi, s’est professionnalisé et a gagner l'attention
+      du Nord Franche-Comté. Au fil des années, l’événement a grandi, s’est professionnalisé et a gagner l'attention
       d'un public de
       plus en plus large, devenant un événement incontournable pour la communauté geek régionale.
       <!--      <div>-->
