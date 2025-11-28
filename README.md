@@ -3,7 +3,7 @@
 ## Requirements
 
 - `npm` utiliies available.
-- `npm i axios` for the API email
+- `npm install emailjs`
 
 ## Installation
 
@@ -19,4 +19,5 @@ npm run dev
 ```
 
 ## Links used
-Contact form: `https://www.youtube.com/watch?v=iioJ2GNXbW0`
+- Contact form: `https://www.youtube.com/watch?v=iioJ2GNXbW0`
+- Emailjs : `https://www.emailjs.com/` -> compte Oscar

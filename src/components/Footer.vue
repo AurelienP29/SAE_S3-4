@@ -7,70 +7,152 @@
     <!-- Modal -->
     <Dialog v-model:visible="visible" :header="t('registerAsProvider')" :style="{ width: '250rem' }"
             position="bottom" :modal="true" :draggable="false">
-      <form class="form_provider" id="form_provider" @submit.prevent="registerProvider()">
-        <p>
-          <Label for="provider-name" >{{ t('providerName') }}</Label> <input type="text"
-                                                                                             id="provider-name" required/>
-        </p>
-        <p>
-          <label for="shop-name">{{ t('shopName') }}</label> <input type="text" id="shop-name"/>
-        </p>
-        <div class="input-text-container">
-          <label for="phone">{{ t('phone') }}</label> <input type="text" id="phone" required/>
-          <label for="email">{{ t('email') }}</label> <input type="text" id="email" required/>
-          <label for="website">{{ t('website') }}</label> <input type="text" id="website"/>
+
+      <form class="form_provider" id="form_provider" @submit.prevent="validateAndSend">
+
+        <!-- Provider Name -->
+        <div class="form-group">
+          <label for="provider-name">{{ t('providerName') }}</label>
+          <input type="text" id="provider-name" v-model="formData.providerName" required />
+          <span class="error" :class="{ active: errors.providerNameError }">{{ t('providerMessageError') }}</span>
         </div>
-        <div class="checkBoxes-container">
-          <label for="days">{{ t('daysOfPresence') }}</label>
-          <p>
-            <input type="checkbox" id="days" value="day1"/> <label for="day1">{{ t('day1') }}</label>
-            <input type="checkbox" id="days" value="day2"/> <label for="day2">{{ t('day2') }}</label>
-            <input type="checkbox" id="days" value="day3"/> <label for="day3">{{ t('day3') }}</label>
-          </p>
+
+        <!-- Shop Name -->
+        <div class="form-group">
+          <label for="shop-name">{{ t('shopName') }}</label>
+          <input type="text" id="shop-name" v-model="formData.shopName" />
+          <span class="error" :class="{ active: errors.shopNameError }">{{ t('shopNameError') }}</span>
         </div>
-        <div class="radio-buttons-container">
-          <label for="typeOfShop" required>{{ t('typeOfShop') }}</label>
-          <p>
-            <input type="radio" id="typeOfShop" name="typeOfShop" value="shop1"/> <label for="shop1">{{
-              t('shop1')
-            }}</label>
-            <input type="radio" id="typeOfShop" name="typeOfShop" value="shop2"/> <label
-              for="shop2">{{ t('shop2') }}</label>
-            <input type="radio" id="typeOfShop" name="typeOfShop" value="shop3"/> <label
-              for="shop3">{{ t('shop3') }}</label>
-          </p>
+
+        <!-- Phone, Email, Website -->
+        <div class="form-group">
+          <label>{{ t('phone') }} / {{ t('email') }} / {{ t('website') }}</label>
+
+          <div class="input-text-container">
+            <div>
+              <label for="phone">{{ t('phone') }}</label>
+              <input type="tel" id="phone" v-model="formData.phone" pattern="[0-9]{10}" required />
+              <span class="error" :class="{ active: errors.phoneError }">{{ t('phoneError') }}</span>
+            </div>
+
+            <div>
+              <label for="email">{{ t('email') }}</label>
+              <input type="email" id="email" v-model="formData.email" required />
+              <span class="error" :class="{ active: errors.emailError }">{{ t('emailError') }}</span>
+            </div>
+
+            <div>
+              <label for="website">{{ t('website') }}</label>
+              <input type="text" id="website" v-model="formData.website" />
+            </div>
+          </div>
         </div>
-        <div class="checkBoxes-container">
-          <span> {{ t('proposedServices') }}</span>
-          <p>
-            <input type="checkbox" id="services" value="service1"/> <label for="service1">{{ t('service1') }}</label>
-            <input type="checkbox" id="services" value="service2"/> <label for="service2">{{ t('service2') }}</label>
-            <input type="checkbox" id="services" value="service3"/> <label for="service3">{{ t('service3') }}</label>
-          </p>
+
+        <!-- Days of Presence -->
+        <div class="form-group">
+          <label>{{ t('daysOfPresence') }}</label>
+
+          <div class="option-line">
+            <div class="option-item">
+              <input type="checkbox" id="day1" value="day1" v-model="formData.daysOfPresence" />
+              <label for="day1">{{ t('day1') }}</label>
+            </div>
+
+            <div class="option-item">
+              <input type="checkbox" id="day2" value="day2" v-model="formData.daysOfPresence" />
+              <label for="day2">{{ t('day2') }}</label>
+            </div>
+
+            <div class="option-item">
+              <input type="checkbox" id="day3" value="day3" v-model="formData.daysOfPresence" />
+              <label for="day3">{{ t('day3') }}</label>
+            </div>
+          </div>
+
+          <span class="error" :class="{ active: errors.daysError }">{{ t('daysError') }}</span>
         </div>
+
+        <!-- Shop Type (Radio) -->
+        <div class="form-group">
+          <label>{{ t('typeOfShop') }}</label>
+
+          <div class="option-line">
+            <div class="option-item">
+              <input type="radio" id="shop1" name="typeOfShop" value="shop1" v-model="formData.shopType" />
+              <label for="shop1">{{ t('shop1') }}</label>
+            </div>
+
+            <div class="option-item">
+              <input type="radio" id="shop2" name="typeOfShop" value="shop2" v-model="formData.shopType" />
+              <label for="shop2">{{ t('shop2') }}</label>
+            </div>
+
+            <div class="option-item">
+              <input type="radio" id="shop3" name="typeOfShop" value="shop3" v-model="formData.shopType" />
+              <label for="shop3">{{ t('shop3') }}</label>
+            </div>
+          </div>
+
+          <span class="error" :class="{ active: errors.shopTypeError }">{{ t('shopTypeError') }}</span>
+        </div>
+
+        <!-- Services -->
+        <div class="form-group">
+          <label>{{ t('proposedServices') }}</label>
+
+          <div class="option-line">
+            <div class="option-item">
+              <input type="checkbox" id="service1" value="service1" v-model="formData.services" />
+              <label for="service1">{{ t('service1') }}</label>
+            </div>
+
+            <div class="option-item">
+              <input type="checkbox" id="service2" value="service2" v-model="formData.services" />
+              <label for="service2">{{ t('service2') }}</label>
+            </div>
+
+            <div class="option-item">
+              <input type="checkbox" id="service3" value="service3" v-model="formData.services" />
+              <label for="service3">{{ t('service3') }}</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
         <div id="button-container">
           <Button type="button" :label="t('cancel')" severity="secondary" @click="visible = false"></Button>
-          <Button type="button" :label="t('send')" @click="registerProvider()"></Button>
+          <Button type="button" :label="t('send')" @click="validateAndSend"></Button>
         </div>
+
       </form>
+
+
     </Dialog>
   </div>
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import {reactive, ref} from 'vue'
 import {useAuthStore} from '@/stores/authStore.js'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
-
+//import {EmailTemplate} from "@/components/EmailTemplate.vue";
+import {render} from '@vue-email/render'
+import emailjs from '@emailjs/browser'
 
 
 const authStore = useAuthStore()
 const visible = ref(false)
 
+
 // Simple translation function
 const translations = {
   fr: {
+    providerMessageError: 'Un nom est requis !',
+    shopNameError: 'Un nom de boutique est requis !',
+    shopTypeError: 'Il faut sélectionner un type de boutique !',
+    phoneError: 'Le numéro n\'est pas valide ! ',
+    emailError: 'L\'adresse n\'est pas valide! ',
     registerAsProvider: 'S\'inscrire comme prestataire',
     providerName: 'Nom du prestataire',
     shopName: 'Nom de la boutique',
@@ -90,9 +172,29 @@ const translations = {
     service2: 'Service 2',
     service3: 'Service 3',
     cancel: 'Annuler',
-    send: 'Envoyer'
+    send: 'Envoyer',
+    daysError: 'Il faut sélectionner au moins un jour de présence',
+    title_mail: 'Merci de votre inscription !',
+    remerciement: 'Bonjour ! Merci beaucoup de votre inscription sur le site Necronomi\'con ',
+    message: 'Nous avons bien reçu votre demande et la traiterons dans les meilleurs délais ! ',
+    message_resume: 'Vous trouverez ci-dessous les informations que nous avons recueillies sur votre inscription : ',
+    remerciement_fin: 'A très bientôt à la Necronomi\'con !',
+    msg_name: 'Nom : ',
+    msg_boutique: 'Boutique : ',
+    msg_services: 'Services : ',
+    msg_website: 'Site web : ',
+    msg_day: 'Jour.s de présence :',
+    msg_phone: 'Téléphone : ',
+    msg_email: 'Adresse email : ',
+    msg_type: 'Type de boutique : ',
   },
   en: {
+    providerMessageError: 'A name is required!',
+    shopNameError: 'A shop name is required!',
+    shopTypeError: 'You must select a shop type!',
+    phoneError: 'The phone number is not valid!',
+    emailError: 'The email address is not valid!',
+    daysError: 'You must select at least one day of presence!',
     registerAsProvider: 'Register as Provider',
     providerName: 'Provider Name',
     shopName: 'Shop Name',
@@ -112,9 +214,42 @@ const translations = {
     service2: 'Service 2',
     service3: 'Service 3',
     cancel: 'Cancel',
-    send: 'Send'
+    send: 'Send',
+    title_mail: 'Thank you for your registration!',
+    remerciement: 'Hello! Thank you so much for your registration on the Necronomi\'con website!',
+    message: 'We have received your request and will process it as soon as possible!',
+    message_resume: 'Here are the information we have collected on your registration:',
+    remerciement_fin: 'See you at the Necronomi\'con!',
+    msg_name: 'Name: ',
+    msg_boutique: 'Shop: ',
+    msg_services: 'Services: ',
+    msg_website: 'Website: ',
+    msg_day: 'Days of presence: ',
+    msg_phone: 'Phone number: ',
+    msg_email: 'Email address: ',
+    msg_type: 'Type of shop: ',
   }
 }
+
+const formData = reactive({
+  providerName: '',
+  shopName: '',
+  phone: '',
+  email: '',
+  website: '',
+  daysOfPresence: [],
+  shopType: '',
+  services: []
+});
+
+const errors = reactive({
+  providerNameError: false,
+  shopNameError: false,
+  shopTypeError: false,
+  phoneError: false,
+  emailError: false,
+  daysError: false,
+})
 
 const t = (key) => {
   return translations[authStore.currentLanguage]?.[key] || translations.fr[key]
@@ -124,25 +259,93 @@ function openModal() {
   visible.value = true
 }
 
-function registerProvider() {
-  console.log('Registering provider...');
-  console.log('Provider name:', document.getElementById('provider-name').value);
-  console.log('Shop name:', document.getElementById('shop-name').value);
-  console.log('Shop type:', document.querySelector('input[name="typeOfShop"]:checked').value);
-  console.log('Days of presence:', Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(el => el.value));
-  const emailData = {
-    providerName: document.getElementById('provider-name').value,
-    shopName: document.getElementById('shop-name').value,
-    phone: document.getElementById('phone').value,
-    website: document.getElementById('website').value,
-    services: Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(el => el.value),
-    shopType: document.querySelector('input[name="typeOfShop"]:checked').value,
-    daysOfPresence: Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(el => el.value),
-    email: document.getElementById('email').value,
-  } ;
-  //todo  mail + vérif des données
-  visible.value = false
+function validateAndSend() {
+  let isValid = true;
+
+  //Reset des erreurs
+  Object.keys(errors).forEach(key => errors[key] = false);
+
+  if (!formData.providerName) {
+    errors.providerNameError = true;
+    isValid = false;
+  }
+
+  if (!formData.shopName) {
+    errors.shopNameError = true;
+    isValid = false;
+  }
+
+  if (!formData.shopType) {
+    errors.shopTypeError = true;
+    isValid = false;
+  }
+
+  const phoneRegex = /^[0-9]{10}$/;
+  if (!formData.phone || !phoneRegex.test(formData.phone)) {
+    errors.phoneError = true;
+    isValid = false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!formData.email || !emailRegex.test(formData.email)) {
+    errors.emailError = true;
+    isValid = false;
+  }
+
+  if (formData.daysOfPresence.length === 0) {
+    errors.daysError = true;
+    isValid = false;
+  }
+
+  if (isValid) {
+    registerProvider();
+  }
 }
+
+async function registerProvider() {
+  console.log("Register provider : ", formData);
+
+  emailjs.init({
+    publicKey: 'wGckwO4lkmqPnxGfJ',
+    hasData: true,
+  })
+
+  const templateData = {
+    title: t('title_mail'),
+    remerciement: t('remerciement'),
+    name: formData.providerName,
+    message_resume: t('message_resume'),
+    message: t('message'),
+    remerciement_fin: t('remerciement_fin'),
+    provider_name: formData.providerName,
+    shop_name: formData.shopName,
+    phone: formData.phone,
+    email: formData.email,
+    website: formData.website,
+    days_of_presence: formData.daysOfPresence.join(', '),
+    shop_type: formData.shopType,
+    services: formData.services.join(', '),
+    msg_name: t('msg_name'),
+    msg_boutique: t('msg_boutique'),
+    msg_services: t('msg_services'),
+    msg_website: t('msg_website'),
+    msg_day: t('msg_day'),
+    msg_phone: t('msg_phone'),
+    msg_email: t('msg_email'),
+    msg_type: t('msg_type'),
+  };
+
+  emailjs.send('service_2zpxqyi', 'template_ul9qm2l',  templateData)
+      .then((message) => {
+            console.log('SUCCESS!', message);
+          }, (error) => {
+            console.log('FAILED...', error);
+          }
+      )
+
+  visible.value = false;
+}
+
 </script>
 
 <style scoped>
@@ -152,25 +355,113 @@ function registerProvider() {
   height: 30vh;
 }
 
-label {
-  width: calc(0.25rem * 24);
+/* ----- FORM CONTAINER ----- */
+.form_provider {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  padding: 1rem 0.8rem;
+  max-width: 900px;
+  margin: auto;
+}
+
+/* ----- BLOC GLOBAL DE CHAQUE QUESTION ----- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+}
+
+/* ----- LABEL DES QUESTIONS ----- */
+.form-group > label {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+/* ----- INPUTS TEXT ----- */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"] {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.form-group input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, .25);
+  outline: none;
+}
+
+/* ---------- INPUT TEXT GROUPED ---------- */
+.input-text-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.input-text-container label {
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
-#provider-name {
-  flex: auto;
+/* ---------- CHECKBOXES / RADIOS ALIGNÉS ---------- */
+.option-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
 }
 
+.option-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.option-item input {
+  margin: 0;
+}
+
+.option-item label {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* ----- ERROR MESSAGES ----- */
+.error {
+  font-size: 0.85rem;
+  color: white;
+  background: #b00020;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  visibility: hidden;
+  height: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.error.active {
+  visibility: visible;
+}
+
+/* ----- BUTTONS ----- */
 #button-container {
   display: flex;
   justify-content: flex-end;
-  gap: calc(0.25rem * 2);
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.input-text-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: calc(0.25rem * 4);
-  gap: calc(0.25rem * 4);
+/* ----- RESPONSIVE ----- */
+@media (max-width: 800px) {
+  .input-text-container {
+    grid-template-columns: 1fr;
+  }
 }
+
 </style>
