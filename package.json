@@ -17,6 +17,7 @@
     "@primeuix/themes": "^1.2.5",
     "@vue-email/components": "^0.0.21",
     "@vue-email/render": "^0.0.9",
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "email-js": "^2.0.3",
@@ -28,6 +29,7 @@
     "primevue": "^4.4.1",
     "quill": "^2.0.3",
     "vue": "^3.5.22",
+    "vue-quill": "^1.5.1",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
