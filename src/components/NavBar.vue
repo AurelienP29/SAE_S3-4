@@ -41,7 +41,7 @@
               v-if="!authStore.isAuthenticated"
               icon="pi pi-sign-in"
               :label="lang('login')"
-              @click="giveAllRolesAndGoToLogin"
+              @click="goTo('Login')"
               severity="primary"
               class="login-button"
               raised
@@ -80,20 +80,14 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 // Helper: supports both a single `userRole` and a multi-role `user.roles` array
-const hasRole = (role) => {
-  const roles = authStore.user?.roles || []
-  return roles.includes(role) || authStore.userRole === role
-}
+const hasRole = (roleTarget) => {
+  const userRoles = authStore.user?.roles || []
+  const singleRole = authStore.user?.role
 
-function giveAllRolesAndGoToLogin() {
-  authStore.login({
-    name: 'Test User (all roles)',
-    role: 'organisateur',
-    roles: ['organisateur', 'prestataire'],
-    isAuthenticated: true
-  })
+  // Admin = accès a tout
+  if (roleTarget === 'organisateur' && singleRole === 'organisateur') return true
 
-  router.push({ name: 'Login' })
+  return userRoles.includes(roleTarget) || singleRole === roleTarget
 }
 
 const notificationCount = ref(0)
@@ -130,6 +124,11 @@ const menuItems = computed(() => {
       label: lang('home'),
       icon: 'pi pi-home',
       command: () => goTo('Home')
+    },
+    {
+      label: lang('activities'),
+      icon: 'pi pi-calendar-times',
+      command: () => goTo('Activities')
     }
   ]
 
@@ -203,6 +202,7 @@ const languageOptions = [
 const translations = {
   fr: {
     home: 'Accueil',
+    activities : 'Activités & Réservations',
     'organisateur.space': 'Espace Organisateur',
     'organisateur.events': 'Mes Événements',
     'organisateur.create': 'Créer un Événement',
@@ -219,6 +219,7 @@ const translations = {
   },
   en: {
     home: 'Home',
+    activities : 'Activities & Booking',
     'organisateur.space': 'Organizer Space',
     'organisateur.events': 'My Events',
     'organisateur.create': 'Create Event',
