@@ -8,6 +8,7 @@
 ## Installation
 
 ### Setup
+Installs all dependencies and modules
 ```bash
 npm install
 ```

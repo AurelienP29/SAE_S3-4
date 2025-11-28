@@ -2,13 +2,33 @@
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    margin: 0;
+    border-radius: 0;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+    transition:
+        margin 0.25s ease,
+        top 0.25s ease,
+        border-radius 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
+.navbar-container--scrolled {
+    /* Pull away from edges – tweak to taste */
+    margin: 0.75rem 1.15rem;
+    top: 0.75rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* Menubar styling */
 :deep(.custom-menubar) {
     background: linear-gradient(135deg, #bdbdbd 0%, #b6b6b6 100%);
     border: none;
-    border-radius: 0;
+    border-radius: inherit;
+
     padding: 0.75rem 2rem;
 }
 
