@@ -186,6 +186,12 @@ const menuItems = computed(() => {
     command: () => goTo('About')
   })
 
+  items.push({
+    label: lang('contact'),
+    icon: 'pi pi-envelope',
+    command: () => goTo('Contact')
+  })
+
   return items
 })
 
@@ -215,7 +221,8 @@ const translations = {
     'login': 'Connexion',
     'logout': 'Déconnexion',
     'profile': 'Mon Profil',
-    'settings': 'Paramètres'
+    'settings': 'Paramètres',
+    'contact': 'Contactez nous',
   },
   en: {
     home: 'Home',
@@ -232,7 +239,8 @@ const translations = {
     'login': 'Login',
     'logout': 'Logout',
     'profile': 'My Profile',
-    'settings': 'Settings'
+    'settings': 'Settings',
+    'contact': 'Contact Us',
   }
 }
 

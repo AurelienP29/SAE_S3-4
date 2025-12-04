@@ -4,6 +4,7 @@ import PrestataireView from '@/views/PrestataireView.vue'
 import LoginView from '@/views/LoginView.vue'
 import ActivitiesView from '@/views/ActivitiesView.vue'
 import AccountView from '@/views/AccountView.vue'
+import ContactUs from "@/views/ContactUs.vue";
 
 // const routes = [
 //     {
@@ -19,6 +20,7 @@ const routes = [
     { path: '/login', name: 'Login', component: LoginView },
     { path: '/activities', name: 'Activities', component: ActivitiesView },
     { path: '/account', name: 'Account', component: AccountView },
+    {path: '/contact-us' , name: 'Contact' , component: ContactUs}
 ]
 
 const router = createRouter({
