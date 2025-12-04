@@ -3,7 +3,8 @@
     <Menubar :model="menuItems" class="custom-menubar">
       <template #start>
         <div class="navbar-brand" @click="goTo('Home')">
-          <span class="logo"><img src="/public/images/N-con-Logo-image.png" style="height: 75px; width: auto" alt="Logo"></span>
+          <span class="logo"><img src="/public/images/N-con-Logo-image.png" style="height: 75px; width: auto"
+                                  alt="Logo"></span>
         </div>
       </template>
 
@@ -93,7 +94,7 @@ const hasRole = (roleTarget) => {
 const notificationCount = ref(0)
 
 function goTo(routeName) {
-  router.push({ name: routeName })
+  router.push({name: routeName})
 }
 
 const userMenuItems = computed(() => [
@@ -129,6 +130,11 @@ const menuItems = computed(() => {
       label: lang('activities'),
       icon: 'pi pi-calendar-times',
       command: () => goTo('Activities')
+    },
+    {
+      label: lang('contact'),
+      icon: 'pi pi-envelope',
+      command: () => goTo('Contact')
     }
   ]
 
@@ -186,11 +192,6 @@ const menuItems = computed(() => {
     command: () => goTo('About')
   })
 
-  items.push({
-    label: lang('contact'),
-    icon: 'pi pi-envelope',
-    command: () => goTo('Contact')
-  })
 
   return items
 })
@@ -208,7 +209,7 @@ const languageOptions = [
 const translations = {
   fr: {
     home: 'Accueil',
-    activities : 'Activités & Réservations',
+    activities: 'Activités & Réservations',
     'organisateur.space': 'Espace Organisateur',
     'organisateur.events': 'Mes Événements',
     'organisateur.create': 'Créer un Événement',
@@ -226,7 +227,7 @@ const translations = {
   },
   en: {
     home: 'Home',
-    activities : 'Activities & Booking',
+    activities: 'Activities & Booking',
     'organisateur.space': 'Organizer Space',
     'organisateur.events': 'My Events',
     'organisateur.create': 'Create Event',

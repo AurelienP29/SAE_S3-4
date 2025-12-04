@@ -14,7 +14,6 @@
         conviviale et immersive.</p>
     </div>
 
-
     <section>
       <h2 class="banner">Emplacement de l'évènement</h2>
       <iframe
