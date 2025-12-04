@@ -1,11 +1,11 @@
 <template>
   <div class="contact-form-container">
     <h2> {{t('title')}}</h2>
-    <form @submit.prevent="handleSubmit" class="contact-form" id="formData">
+    <form @submit.prevent="handleSubmit" class="contact-form" id="form_contact">
       <div class="form-group">
         <div class="label-input-wrapper">
           <label for="name"> {{ t('name')}}</label>
-          <input type="text" id="name" v-model="formData.name" required >
+          <input type="text" v-model="formData.name" required >
         </div>
         <span class="error" :class="{active: errors.nameError}"> {{t('nameError')}}</span>
       </div>
@@ -13,7 +13,7 @@
       <div class="form-group">
         <div class="label-input-wrapper">
           <label for="email">{{t('email')}}</label>
-          <input type="email" id="email" v-model="formData.email" required >
+          <input type="email" v-model="formData.email" required >
           <span class="error" :class="{active: errors.emailError}"> {{t('emailError')}}</span>
         </div>
       </div>
@@ -21,7 +21,7 @@
       <div class="form-group">
         <div class="label-input-wrapper">
           <label for="subject">{{t('subject')}}</label>
-          <input type="text" id="subject" v-model="formData.subject" required>
+          <input type="text" v-model="formData.subject" required>
           <span class="error" :class="{active: errors.subjectError}"> {{t('subjectError')}}</span>
         </div>
       </div>
@@ -29,7 +29,7 @@
       <div class="form-group">
         <label for="message">{{t('message')}}</label>
         <span class="error" :class="{active: errors.messageError}"> {{t('messageError')}}</span>
-        <textarea id="message" v-model="formData.message" rows="5" required ></textarea>
+        <textarea v-model="formData.message" rows="5" required ></textarea>
       </div>
 
       <button type="button" class="submit-button" @click="validateAndSend">{{t('submit')}}</button>
@@ -114,12 +114,14 @@
   font-size: 0.85rem;
   color: white;
   background: #b00020;
-  padding: 0.25rem 0.6rem;
+  padding: 0.3rem 0.6rem;
   border-radius: 4px;
   visibility: hidden;
-  height: 1.2rem;
+  min-height: 1.2rem;
+  height: auto;
   display: flex;
   align-items: center;
+  white-space: normal;
 }
 
 .error.active {
@@ -134,10 +136,7 @@ import { ref, reactive } from 'vue';
 import emailjs from '@emailjs/browser';
 import {useAuthStore} from "@/stores/authStore.js";
 
-const visible = ref(false);
-
-// Déclaration des données du formulaire
-const formData = ref({
+const formData = reactive({
   name: '',
   email: '',
   subject: '',
@@ -157,6 +156,10 @@ const translation = {
     emailError: "Veuillez entrer une adresse email valide",
     subjectError: "Veuillez entrer un sujet",
     messageError: "Veuillez entrer un message",
+    msg_content: "Nous avons bien reçu votre question à propos de ",
+    msg_content2: ". Nous vous répondrons le plus rapidement possible.",
+    msg_salutation: "Bonjour",
+    msg_signature: "L'équipe Necronomi'con",
   } ,
   en:{
     title: "Contact Us",
@@ -170,13 +173,14 @@ const translation = {
     emailError: "Please enter a valid email address",
     subjectError: "Please enter a subject",
     messageError: "Please enter a message",
+    msg_content: "We have received your question about ",
+    msg_content2: ". We will reply as soon as possible.",
+    msg_salutation: "Dear",
+    msg_signature: "The Necronomi'con Team",
   }
 }
 
-/* Les données pour le mail */
-const templateData = {
 
-}
 const authStore = useAuthStore()
 
 /* Traduction dynamique */
@@ -193,7 +197,7 @@ const errors = reactive({
 
 function validateAndSend() {
   let isValid = true;
-  Objects.keys(errors).forEach(key=>errors[key] = false);
+  Object.keys(errors).forEach(key=>errors[key] = false);
 
   if (!formData.name) {
     errors.nameError = true;
@@ -217,11 +221,33 @@ function validateAndSend() {
   }
 
   if (isValid) {
+    console.log("valider le formulaire");
     handleSubmit();
   }
 
 }
 
-async function handleSubmit() {}
+
+
+async function handleSubmit() {
+  console.log("envoyer le formulaire : " + formData.name + " " + formData.email + " " + formData.subject + " " + formData.message);
+  /* Les données pour le mail */
+  const templateData = {
+    salutation: t('msg_salutation'),
+    name: formData.name,
+    email: formData.email,
+    msg_content: t('msg_content') + formData.subject + t('msg_content2'),
+    signature: t('msg_signature')
+  }
+
+  emailjs.send('service_2zpxqyi', 'template_hkdszbd' , templateData)
+      .then(message => {
+        console.log('SUCCESS!', message.text);
+      }, (err) => {
+        console.log('FAILED...', err);
+      })
+
+  //envoyer le message et le sujet aux admins - data.js
+}
 
 </script>

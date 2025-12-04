@@ -305,11 +305,6 @@ function validateAndSend() {
 async function registerProvider() {
   console.log("Register provider : ", formData);
 
-  emailjs.init({
-    publicKey: 'wGckwO4lkmqPnxGfJ',
-    hasData: true,
-  })
-
   const templateData = {
     title: t('title_mail'),
     remerciement: t('remerciement'),
