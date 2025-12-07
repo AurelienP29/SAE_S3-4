@@ -80,12 +80,10 @@ import '/src/assets/styles/NavBar.css'
 const router = useRouter()
 const authStore = useAuthStore()
 
-// Helper: supports both a single `userRole` and a multi-role `user.roles` array
 const hasRole = (roleTarget) => {
   const userRoles = authStore.user?.roles || []
   const singleRole = authStore.user?.role
 
-  // Admin = accès a tout
   if (roleTarget === 'organisateur' && singleRole === 'organisateur') return true
 
   return userRoles.includes(roleTarget) || singleRole === roleTarget
@@ -211,7 +209,7 @@ const translations = {
     home: 'Accueil',
     activities: 'Activités & Réservations',
     'organisateur.space': 'Espace Organisateur',
-    'organisateur.events': 'Mes Événements',
+    'organisateur.events': 'Événements',
     'organisateur.create': 'Créer un Événement',
     'prestataire.space': 'Espace Prestataire',
     'prestataire.services': 'Mes Services',
@@ -229,7 +227,7 @@ const translations = {
     home: 'Home',
     activities: 'Activities & Booking',
     'organisateur.space': 'Organizer Space',
-    'organisateur.events': 'My Events',
+    'organisateur.events': 'Events',
     'organisateur.create': 'Create Event',
     'prestataire.space': 'Provider Space',
     'prestataire.services': 'My Services',

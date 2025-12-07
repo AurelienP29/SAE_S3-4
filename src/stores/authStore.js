@@ -2,7 +2,10 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', () => {
-    const user = ref(null)
+    // On initialise l'utilisateur depuis le localStorage s'il existe
+    const storedUser = localStorage.getItem('user')
+    const user = ref(storedUser ? JSON.parse(storedUser) : null)
+    
     const currentLanguage = ref('fr')
     const reservations = ref([])
 
@@ -24,31 +27,22 @@ export const useAuthStore = defineStore('auth', () => {
     })
 
 
-    function login(email) {
-        let role
-        let nom
-
-        if (email.includes('admin')) {
-            role = 'organisateur'
-            nom = 'Organisateur'
-        } else if (email.includes('prestataire')) {
-            role = 'prestataire'
-            nom = 'Prestataire'
-        } else {
-            role = 'visiteur'
-            nom = 'Visiteur'
+    function login(userData) {
+        const newUser = {
+            id: userData.id,
+            email: userData.email,
+            name: userData.name,
+            role: userData.role,
+            roles: userData.roles || [userData.role]
         }
-
-        user.value = {
-            email: email,
-            name: nom,
-            role: role,
-            roles: [role]
-        }
+        
+        user.value = newUser
+        localStorage.setItem('user', JSON.stringify(newUser))
     }
 
     function logout() {
         user.value = null
+        localStorage.removeItem('user')
     }
 
     function setLanguage(lang) {
