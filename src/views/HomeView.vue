@@ -26,6 +26,8 @@
       <MapViewer/>
     </section>
 
+    <PrestataireTable></PrestataireTable>
+
     <div class="text-container">
       <h2 class="banner">Origine de l’événement</h2>
       La Nécronomi’Con a été créée dans l’initiative d’un groupe d'étudiant de l'IUT Nord Franche-Comté, passionnés,
@@ -174,10 +176,11 @@
 <script>
 import InteractiveMap from '@/components/InteractiveMap.vue'
 import MapViewer from "@/components/MapViewer.vue";
+import PrestataireTable from "@/components/PrestataireTable.vue";
 
 export default {
   name: 'HomeView',
-  components: {InteractiveMap, MapViewer }
+  components: {PrestataireTable, InteractiveMap, MapViewer }
 }
 </script>
 

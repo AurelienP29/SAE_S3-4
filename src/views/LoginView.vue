@@ -1,89 +1,65 @@
 <template>
-  <div class="login-container">
-    <h1>Connexion Necronomi'con</h1>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <h2 class="text-center mb-4">Connexion</h2>
 
-    <div class="login-card">
-      <div class="form-group">
-        <label>Email</label>
-        <input
-            type="email"
+      <div class="p-fluid">
+        <div class="field mb-4">
+          <label for="email" class="block mb-2">Email</label>
+          <InputText
+            id="email"
             v-model="email"
-            placeholder="Entrez votre email..."
-            @keyup.enter="handleLogin"
-        >
-      </div>
+            type="text"
+            placeholder="exemple@test.com"
+            :class="{ 'p-invalid': emailError }"
+            class="loginInputField"
+          />
+          <div v-if="emailError" style="color: red;">{{ emailError }}</div>
+        </div>
 
-      <div class="form-group">
-        <button @click="handleLogin" class="btn-login">Se connecter</button>
+        <div class="field mb-4">
+          <label for="password" class="block mb-2">Mot de passe</label>
+          <Password
+            id="password"
+            v-model="password"
+            :feedback="false"
+            toggleMask
+            placeholder="Votre mot de passe"
+            :class="{ 'p-invalid': passwordError }"
+            class="loginInputField"
+          />
+          <div v-if="passwordError" style="color: red;">{{ passwordError }}</div>
+        </div>
+
+        <Button label="Se connecter" icon="pi pi-sign-in" @click="handleLogin" />
+
+        <div class="mt-3 text-center">
+          <Button
+            label="Créer un compte"
+            icon="pi pi-user-plus"
+            class="p-button-text"
+            @click="goToCreateAccount"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import {useRouter} from 'vue-router'
-import {useAuthStore} from '@/stores/authStore.js'
+import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
+import Button from 'primevue/button'
+import { useLoginService } from '@/services/loginService.js'
 
-const email = ref('')
-const router = useRouter()
-const authStore = useAuthStore()
-
-function handleLogin() {
-  if (email.value) {
-    authStore.login(email.value)
-    router.push({name: 'Account'})
-  } else {
-    alert("Merci d'entrer un email valide.")
-  }
-}
+const {
+  email,
+  password,
+  emailError,
+  passwordError,
+  handleLogin,
+  goToCreateAccount
+} = useLoginService()
 </script>
 
-<style scoped>
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 50px;
-  min-height: 60vh;
-}
-
-.login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.form-group {
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-input {
-  padding: 12px;
-  margin-top: 10px;
-  width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.btn-login {
-  padding: 12px 30px;
-  background-color: #4e1a3d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.3s;
-}
-
-.btn-login:hover {
-  background-color: #bd2cd1;
-}
-</style>
+<style scoped src="@/assets/styles/LoginForm.css"></style>
