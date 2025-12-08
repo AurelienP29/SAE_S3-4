@@ -27,13 +27,14 @@
             placeholder="Votre mot de passe"
             :class="{ 'p-invalid': passwordError }"
             class="loginInputField"
+            fluid
           />
           <div v-if="passwordError" style="color: red;">{{ passwordError }}</div>
         </div>
 
         <Button label="Se connecter" icon="pi pi-sign-in" @click="handleLogin" />
 
-        <div class="mt-3 text-center">
+        <div class="mt-4 text-center">
           <Button
             label="Créer un compte"
             icon="pi pi-user-plus"

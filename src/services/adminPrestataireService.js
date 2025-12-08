@@ -1,5 +1,5 @@
 import { ref, reactive } from 'vue'
-import { usePrestataireStore } from '@/stores/prestataireStore.js'
+import { usePrestataireStore } from '@/stores/prestataire.js'
 
 export function useAdminPrestataireService() {
   const prestataireStore = usePrestataireStore()
