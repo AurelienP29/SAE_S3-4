@@ -6,6 +6,7 @@ import ActivitiesView from '@/views/ActivitiesView.vue'
 import AccountView from '@/views/AccountView.vue'
 import ContactUs from "@/views/ContactUs.vue"
 import AdminView from "@/views/AdminView/AdminView.vue"
+import AdminMapView from "@/views/AdminMapView.vue";
 
 // const routes = [
 //     {
@@ -23,6 +24,7 @@ const routes = [
     {path: '/account', name: 'Account', component: AccountView},
     {path: '/contact-us', name: 'Contact', component: ContactUs},
     {path: '/admin/prestataires', name: 'OrganisateurEvents', component: AdminView},
+    {path: '/admin/map', name: 'OrganisateurMap', component: AdminMapView}
 ]
 
 const router = createRouter({

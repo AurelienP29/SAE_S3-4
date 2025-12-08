@@ -20,8 +20,6 @@
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2690.089298896684!2d6.8599186124863225!3d47.604953271069576!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47923e1b276a30bb%3A0x2104ccadfe33b055!2sL&#39;%20AtraXion%20-%20Parc%20des%20Expositions%20de%20Belfort%20-%20H%C3%A9ricourt%20-%20Montb%C3%A9liard!5e0!3m2!1sfr!2sfr!4v1760515696559!5m2!1sfr!2sfr"
           width="900" height="400" style="border:0;" allowfullscreen="" loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"></iframe>
-      <h4>Map Admin</h4>
-      <InteractiveMap/>
       <h4>Map Visiteur</h4>
       <MapViewer/>
     </section>

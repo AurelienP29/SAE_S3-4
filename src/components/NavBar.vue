@@ -142,6 +142,11 @@ const menuItems = computed(() => {
       icon: 'pi pi-calendar',
       items: [
         {
+          label: lang('organisateur.map'),
+          icon: 'pi pi-map',
+          command: () => goTo('OrganisateurMap')
+        },
+        {
           label: lang('organisateur.events'),
           icon: 'pi pi-list',
           command: () => goTo('OrganisateurEvents')
@@ -211,6 +216,7 @@ const translations = {
     'organisateur.space': 'Espace Organisateur',
     'organisateur.events': 'Événements',
     'organisateur.create': 'Créer un Événement',
+    'organisateur.map': 'Gérer la Carte',
     'prestataire.space': 'Espace Prestataire',
     'prestataire.services': 'Mes Services',
     'prestataire.bookings': 'Mes Réservations',
@@ -229,6 +235,7 @@ const translations = {
     'organisateur.space': 'Organizer Space',
     'organisateur.events': 'Events',
     'organisateur.create': 'Create Event',
+    'organisateur.map': 'Manage Map',
     'prestataire.space': 'Provider Space',
     'prestataire.services': 'My Services',
     'prestataire.bookings': 'My Bookings',

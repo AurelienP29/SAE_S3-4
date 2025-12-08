@@ -73,7 +73,7 @@ const users = [
     email: 'admin@test.com',
     password: 'password123',
     role: 'organisateur',
-    roles: ['organisateur', 'prestataire', 'visiteur']
+    roles: ['organisateur', 'visiteur']
   },
   {
     id: 2,
