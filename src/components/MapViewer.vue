@@ -1,6 +1,6 @@
 <template>
   <div class="map-container">
-    <img src="/public/images/Placeholder.png" alt="Interactive Map" class="map-image"/>
+    <img src="/src/assets/images/IMp-PLAN-VF1.png" alt="Interactive Map" class="map-image"/>
 
     <div
         v-for="point in points"
