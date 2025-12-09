@@ -1,16 +1,25 @@
 <template>
   <div class="admin-prestataire-manager">
-    <Toolbar class="mb-3">
-      <template #start>
-        <Button
-            label="Nouveau prestataire"
-            icon="pi pi-plus"
-            severity="primary"
-            @click="openCreateDialog"
-        />
-      </template>
-    </Toolbar>
+    <h1 class="mb-4">Gestion des prestataires</h1>
 
+    <h1 class="mb-2">Waitlist</h1>
+      <div class="flex align-items-center gap-2 tab-header">
+      </div>
+    <div class="tab-content">
+      <AdminPrestataireWaitlist />
+    </div>
+
+    <h1 class="mb-2">Prestataires</h1>
+        <Toolbar class="mb-3">
+          <template #start>
+            <Button
+                label="Nouveau prestataire"
+                icon="pi pi-plus"
+                severity="secondary"
+                @click="openCreateDialog"
+            />
+          </template>
+        </Toolbar>
     <DataTable
         :value="prestataires"
         dataKey="id"
@@ -44,7 +53,7 @@
       </Column>
     </DataTable>
 
-    <!-- Dialogue create/modif -->
+    <!-- Dialogue create/ -->
     <Dialog
         v-model:visible="dialogVisible"
         :header="isEditMode ? 'Modifier un prestataire' : 'Nouveau prestataire'"
@@ -135,6 +144,7 @@ import Dropdown from 'primevue/dropdown'
 import Editor from 'primevue/editor'
 
 import {useAdminPrestataireService} from '/src/services/adminPrestataireService.js'
+import AdminPrestataireWaitlist from "@/components/adminComponents/PrestataireWaitlistManagement.vue";
 
 const {
   prestataires,

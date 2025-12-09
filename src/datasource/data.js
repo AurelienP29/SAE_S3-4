@@ -432,8 +432,13 @@ let prestataires = [
         description: '<p>Illustrations fantasy, marque-pages et commissions.</p>'
     }
 ];
+
 let categoryOptions = [
+    {label: 'Artisan', value: 'artisan'},
     {label: 'Atelier', value: 'atelier'},
+    {label: 'Jeu vidéo', value: 'jeu_video'},
+    {label: 'Jeu de Plateau', value: 'jeu_plateau'},
+    {label: 'Boutique', value: 'boutique'},
     {label: 'Restauration', value: 'restauration'},
 ]
 
@@ -445,7 +450,7 @@ let waitingList = [
         phone: '06 00 00 00 01',
         category: 'atelier',
         description: '<p>Atelier de forge pour débutants.</p>',
-        requestDate: '2023-12-01'
+        requestDate: ' 2024-12-01'
     },
     {
         id: 102,
@@ -454,7 +459,52 @@ let waitingList = [
         phone: '06 00 00 00 02',
         category: 'restauration',
         description: '<p>Le meilleur kebab de la galaxie.</p>',
-        requestDate: '2023-12-05'
+        requestDate: ' 2024-12-05'
+    },
+    {
+        id: 103,
+        name: 'Studio PixelArt',
+        email: 'contact@pixelart.studio',
+        phone: '06 00 00 00 03',
+        category: 'atelier',
+        description: '<p>Initiation et perfectionnement au pixel art.</p>',
+        requestDate: ' 2025-01-03'
+    },
+    {
+        id: 104,
+        name: 'Boulangerie du Dragon',
+        email: 'dragon@bakery.com',
+        phone: '06 00 00 00 04',
+        category: 'restauration',
+        description: '<p>Pains et pâtisseries cuits au feu de dragon.</p>',
+        requestDate: ' 2025-01-12'
+    },
+    {
+        id: 105,
+        name: 'Atelier Bois Magique',
+        email: 'atelier@boismagique.fr',
+        phone: '06 00 00 00 05',
+        category: 'atelier',
+        description: '<p>Travail du bois enchanté, sculptures et créations.</p>',
+        requestDate: ' 2025-01-20'
+    },
+    {
+        id: 106,
+        name: 'Café des Etoiles',
+        email: 'hello@cafestars.com',
+        phone: '06 00 00 00 06',
+        category: 'restauration',
+        description: '<p>Café futuriste avec boissons interstellaires.</p>',
+        requestDate: ' 2025-02-02'
+    },
+    {
+        id: 107,
+        name: 'Atelier Couture Elfe',
+        email: 'elfe@couture.com',
+        phone: '06 00 00 00 07',
+        category: 'atelier',
+        description: '<p>Cours de couture spécialisés dans les tissus elfiques.</p>',
+        requestDate: ' 2025-02-15'
     }
 ];
 
