@@ -67,15 +67,11 @@
 import {ref, computed, onMounted, onBeforeUnmount} from 'vue'
 import {useRouter} from 'vue-router'
 import {useAuthStore} from '@/stores/authStore.js'
-import Menubar from 'primevue/menubar'
-import Button from 'primevue/button'
-import SplitButton from 'primevue/splitbutton'
-import Dropdown from 'primevue/dropdown'
-import Badge from 'primevue/badge'
+import { Menubar, Button, SplitButton, Dropdown, Badge  } from 'primevue'
 import Ripple from 'primevue/ripple'
 
 import '/src/assets/styles/NavBar.css'
-// import PrestataireView from "@/views/PrestataireView.vue";
+import { translations } from '@/datasource/lang.js'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -147,7 +143,7 @@ const menuItems = computed(() => {
           command: () => goTo('OrganisateurMap')
         },
         {
-          label: lang('organisateur.events'),
+          label: lang('organistaeur.manager'),
           icon: 'pi pi-list',
           command: () => goTo('OrganisateurEvents')
         },
@@ -179,21 +175,20 @@ const menuItems = computed(() => {
     })
   }
 
-  if (authStore.isAuthenticated) {
-    items.push({
-      label: lang('notifications'),
-      icon: 'pi pi-bell',
-      badge: notificationCount.value > 0 ? notificationCount.value.toString() : null,
-      command: () => goTo('Notifications')
-    })
-  }
-
   // À propos
   items.push({
     label: lang('about'),
     icon: 'pi pi-info-circle',
     command: () => goTo('About')
   })
+
+  if (authStore.isAuthenticated) {
+    items.push({
+      icon: 'pi pi-bell',
+      badge: notificationCount.value > 0 ? notificationCount.value.toString() : null,
+      command: () => goTo('Notifications')
+    })
+  }
 
 
   return items
@@ -208,47 +203,6 @@ const languageOptions = [
   {label: ' Français', value: 'fr', icon: 'pi pi-flag'},
   {label: ' English', value: 'en', icon: 'pi pi-flag-fill'}
 ]
-
-const translations = {
-  fr: {
-    home: 'Accueil',
-    activities: 'Activités & Réservations',
-    'organisateur.space': 'Espace Organisateur',
-    'organisateur.events': 'Événements',
-    'organisateur.create': 'Créer un Événement',
-    'organisateur.map': 'Gérer la Carte',
-    'prestataire.space': 'Espace Prestataire',
-    'prestataire.services': 'Mes Services',
-    'prestataire.bookings': 'Mes Réservations',
-    'myAccount': 'Mon Compte',
-    'notifications': 'Notifications',
-    'about': 'À Propos',
-    'login': 'Connexion',
-    'logout': 'Déconnexion',
-    'profile': 'Mon Profil',
-    'settings': 'Paramètres',
-    'contact': 'Contactez nous',
-  },
-  en: {
-    home: 'Home',
-    activities: 'Activities & Booking',
-    'organisateur.space': 'Organizer Space',
-    'organisateur.events': 'Events',
-    'organisateur.create': 'Create Event',
-    'organisateur.map': 'Manage Map',
-    'prestataire.space': 'Provider Space',
-    'prestataire.services': 'My Services',
-    'prestataire.bookings': 'My Bookings',
-    'myAccount': 'My Account',
-    'notifications': 'Notifications',
-    'about': 'About',
-    'login': 'Login',
-    'logout': 'Logout',
-    'profile': 'My Profile',
-    'settings': 'Settings',
-    'contact': 'Contact Us',
-  }
-}
 
 function handleLogout() {
   authStore.logout()

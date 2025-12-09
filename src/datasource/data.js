@@ -1,39 +1,353 @@
 import {ref} from "vue";
 
 let message = [
-    { message: 'Hello World' , date: '2021-05-12' , emeteur: 'adressemail@mail.com' , sujet: 'Sujet du message' , statut: 'a traiter'},
-    { message: 'Bonjour', date: '2021-05-14' , emeteur: 'adressemail@mail.com' , sujet: 'Sujet du message' , statut: 'traité'}
-]
-
-let providers=[
-    {nom:'provider1', mail: 'mail.com' , boutique:'boutique1' , typeBoutique:'cosplay' , jours: ['samedi','dimanche'] , service:'cosplay' , statut:'accepté'},
-    {nom: 'provider2' , mail: 'unamil.com' ,boutique: 'uneBoutique' , typeBoutique: 'food' , jours: ['vendredi','samedi','dimanche'], services:'clickncollect' , statut: 'en attente'}
-]
-
-let activities = [
-    {id: 1, titre: "Concours Cosplay", places: 50, date: "Samedi 14h" },
-]
-
-let prestations = [
     {
-        id: 1,
-        name: 'Prestataire Exemple 1',
-        Champ1: 'A1',
-        Champ2: 'B1',
-        category: 'atelier',
-        description: '<p>Spécialiste atelier et lumière.</p>'
+        message: 'Hello World',
+        date: '2021-05-12',
+        emeteur: 'adressemail@mail.com',
+        sujet: 'Sujet du message',
+        statut: 'a traiter'
     },
     {
-        id: 2,
-        name: 'Prestataire Exemple 2',
-        Champ1: 'A2',
-        Champ2: 'B2',
-        category: 'restauration',
-        description: '<p>Service traiteur haut de gamme.</p>'
+        message: 'Bonjour',
+        date: '2021-05-14',
+        emeteur: 'adressemail@mail.com',
+        sujet: 'Sujet du message',
+        statut: 'traité'
     }
 ]
 
-let prestataires = [
+let providers = [
+    // --- RESTAURATION ---
+    {
+        nom: 'Mme. Rosmerta',
+        mail: 'rosmerta@poudlard-express.com',
+        boutique: 'Le Chaudron Baveur',
+        typeBoutique: 'restauration',
+        jours: ['samedi', 'dimanche'],
+        service: 'Boissons et Snacks',
+        statut: 'accepté'
+    },
+    {
+        nom: 'Teuchi',
+        mail: 'ramen-boss@konoha.jp',
+        boutique: 'Ichiraku Ramen',
+        typeBoutique: 'restauration',
+        jours: ['vendredi', 'samedi', 'dimanche'],
+        service: 'Restauration chaude',
+        statut: 'accepté'
+    },
+
+    // --- BOUTIQUES ---
+    {
+        nom: 'Jean-Mi',
+        mail: 'jm.goodies@wanadoo.fr',
+        boutique: 'Goodies & Co.',
+        typeBoutique: 'boutique',
+        jours: ['samedi', 'dimanche'],
+        service: 'Vente produits dérivés',
+        statut: 'accepté'
+    },
+    {
+        nom: 'M. Blade',
+        mail: 'katana.spirit@forge.com',
+        boutique: 'Katana Spirit',
+        typeBoutique: 'boutique',
+        jours: ['samedi', 'dimanche'],
+        service: 'Vente répliques armes',
+        statut: 'en attente' // En attente de validation sécurité
+    },
+
+    // --- ASSOCIATIONS & ANIMATIONS ---
+    {
+        nom: 'Marc D.',
+        mail: 'contact@retrogaming-asso.fr',
+        boutique: 'RetroGaming Association',
+        typeBoutique: 'jeu_video',
+        jours: ['samedi', 'dimanche'],
+        service: 'Animation Arcade',
+        statut: 'accepté'
+    },
+    {
+        nom: 'Sarah C.',
+        mail: 'vr.sarah@tech.com',
+        boutique: 'VR Experience 9000',
+        typeBoutique: 'jeu_video',
+        jours: ['samedi'],
+        service: 'Démonstration VR',
+        statut: 'refusé' // Exemple de statut refusé
+    },
+    {
+        nom: 'Marie C.',
+        mail: 'marie.cosplay@sos.com',
+        boutique: 'Cosplay SOS',
+        typeBoutique: 'atelier',
+        jours: ['vendredi', 'samedi', 'dimanche'],
+        service: 'Réparation costumes',
+        statut: 'accepté'
+    }
+];
+
+let activities = [
+    {
+        id: 1,
+        titre: "Grand Tournoi Smash Bros (Team Fox)",
+        places: 64,
+        date: "Samedi 14h00"
+    },
+    {
+        id: 2,
+        titre: "Concours Cosplay - Défilé",
+        places: 500,
+        date: "Dimanche 15h00"
+    },
+    {
+        id: 3,
+        titre: "MasterClass Origami avec Kenji",
+        places: 20,
+        date: "Samedi 10h30"
+    },
+    {
+        id: 4,
+        titre: "Initiation Sabre Laser (Jedi Order)",
+        places: 15,
+        date: "Dimanche 11h00"
+    },
+    {
+        id: 5,
+        titre: "Atelier Peinture Warhammer",
+        places: 12,
+        date: "Samedi 16h00"
+    },
+    {
+        id: 6,
+        titre: "Draft Magic: The Gathering",
+        places: 32,
+        date: "Vendredi 20h00"
+    },
+    {
+        id: 7,
+        titre: "Atelier Doublage Anime",
+        places: 10,
+        date: "Dimanche 13h30"
+    }
+];
+
+let prestations = [
+    // --- RESTAURATION (Food) ---
+    {
+        id: 1,
+        name: 'Le Chaudron Baveur',
+        Champ1: 'Zone Food - F01',
+        Champ2: 'Mme. Rosmerta',
+        category: 'restauration',
+        description: '<p>Bièraubeurre maison, jus de citrouille et snacks magiques inspirés des sorciers.</p>'
+    },
+    {
+        id: 2,
+        name: 'Ichiraku Ramen',
+        Champ1: 'Zone Food - F02',
+        Champ2: 'Teuchi',
+        category: 'restauration',
+        description: '<p>Les authentiques Ramen de Konoha. Miso, Porc ou Végétarien.</p>'
+    },
+    {
+        id: 3,
+        name: 'La Taverne du Nain',
+        Champ1: 'Zone Food - F03',
+        Champ2: 'Gimli',
+        category: 'restauration',
+        description: '<p>Plateaux de charcuterie, hydromel (sans alcool) et ambiance médiévale.</p>'
+    },
+    {
+        id: 4,
+        name: 'Bubble Tea K-Pop',
+        Champ1: 'Zone Food - F04',
+        Champ2: 'Sophie L.',
+        category: 'restauration',
+        description: '<p>Bubble teas colorés et mochis glacés.</p>'
+    },
+
+    // --- JEUX VIDÉO (Video Games) ---
+    {
+        id: 5,
+        name: 'RetroGaming Association',
+        Champ1: 'Hall A - G01',
+        Champ2: 'Marc D.',
+        category: 'jeu_video',
+        description: '<p>Rejouez aux classiques : NES, SNES, Megadrive et bornes d\'arcade en libre service.</p>'
+    },
+    {
+        id: 6,
+        name: 'VR Experience 9000',
+        Champ1: 'Hall A - G05',
+        Champ2: 'Sarah C.',
+        category: 'jeu_video',
+        description: '<p>Démonstration de casques VR dernière génération. Beat Saber et simulateurs de vol.</p>'
+    },
+    {
+        id: 7,
+        name: 'Smash Bros Tournament',
+        Champ1: 'Scène Gaming',
+        Champ2: 'Team Fox',
+        category: 'jeu_video',
+        description: '<p>Inscriptions pour le grand tournoi SSBU. Manettes Gamecube recommandées.</p>'
+    },
+    {
+        id: 8,
+        name: 'Indie Dev Corner',
+        Champ1: 'Hall A - G12',
+        Champ2: 'Lucas Dev',
+        category: 'jeu_video',
+        description: '<p>Venez tester les productions des développeurs indépendants de la région.</p>'
+    },
+
+    // --- JEUX DE PLATEAU (Board Games/Tabletop) ---
+    {
+        id: 9,
+        name: 'L\'Antre du Maître de Jeu',
+        Champ1: 'Hall B - T01',
+        Champ2: 'Antoine R.',
+        category: 'jeu_plateau',
+        description: '<p>Initiation au Jeu de Rôle : D&D, Cthulhu et Pathfinder. Sessions de 1h.</p>'
+    },
+    {
+        id: 10,
+        name: 'Warhammer Painting',
+        Champ1: 'Hall B - T04',
+        Champ2: 'Games Workshop',
+        category: 'jeu_plateau',
+        description: '<p>Atelier de peinture de figurines. Repartez avec votre Space Marine peint !</p>'
+    },
+    {
+        id: 11,
+        name: 'Magic: The Gathering Area',
+        Champ1: 'Hall B - T08',
+        Champ2: 'Wizards Rep',
+        category: 'jeu_plateau',
+        description: '<p>Drafts toute la journée et initiation gratuite avec des decks de bienvenue.</p>'
+    },
+    {
+        id: 12,
+        name: 'Ludothèque Géante',
+        Champ1: 'Hall B - T10',
+        Champ2: 'Assoc. Des Jeux',
+        category: 'jeu_plateau',
+        description: '<p>Plus de 200 jeux de société en libre accès pour jouer entre amis.</p>'
+    },
+
+    // --- BOUTIQUE (Shops) ---
+    {
+        id: 13,
+        name: 'Goodies & Co.',
+        Champ1: 'Hall C - S01',
+        Champ2: 'Jean-Mi',
+        category: 'boutique',
+        description: '<p>Figurines Pop, mugs, t-shirts et produits dérivés officiels.</p>'
+    },
+    {
+        id: 14,
+        name: 'Manga Store Import',
+        Champ1: 'Hall C - S05',
+        Champ2: 'Yuki M.',
+        category: 'boutique',
+        description: '<p>Import direct du Japon : Artbooks, Snacks japonais et figurines rares.</p>'
+    },
+    {
+        id: 15,
+        name: 'L\'Échoppe Médiévale',
+        Champ1: 'Hall C - S09',
+        Champ2: 'Guillaume le T.',
+        category: 'boutique',
+        description: '<p>Costumes, corsets, hydromel et accessoires en cuir pour le GN.</p>'
+    },
+    {
+        id: 16,
+        name: 'Dice Goblin',
+        Champ1: 'Hall C - S12',
+        Champ2: 'Elodie D.',
+        category: 'boutique',
+        description: '<p>Dés artisanaux en résine, métal et pierre semi-précieuse.</p>'
+    },
+    {
+        id: 17,
+        name: 'Katana Spirit',
+        Champ1: 'Hall C - S15',
+        Champ2: 'M. Blade',
+        category: 'boutique',
+        description: '<p>Répliques d\'armes de manga et d\'épées historiques (non affûtées).</p>'
+    },
+
+    // --- ATELIER (Workshops) ---
+    {
+        id: 18,
+        name: 'Cosplay SOS',
+        Champ1: 'Zone Cosplay',
+        Champ2: 'Marie C.',
+        category: 'atelier',
+        description: '<p>Réparations d\'urgence pour cosplayers (colle, fil, épingles) et vestiaires.</p>'
+    },
+    {
+        id: 19,
+        name: 'Origami MasterClass',
+        Champ1: 'Salle 1',
+        Champ2: 'Kenji',
+        category: 'atelier',
+        description: '<p>Apprenez l\'art du pliage de papier japonais. Niveau débutant à expert.</p>'
+    },
+    {
+        id: 20,
+        name: 'Initiation au Sabre Laser',
+        Champ1: 'Extérieur',
+        Champ2: 'Jedi Order',
+        category: 'atelier',
+        description: '<p>Chorégraphie de combat au sabre laser. (Prêt de matériel inclus).</p>'
+    },
+    {
+        id: 21,
+        name: 'Cours de Doublage',
+        Champ1: 'Salle Audio',
+        Champ2: 'Brigitte L.',
+        category: 'atelier',
+        description: '<p>Essayez-vous au doublage d\'anime avec une directrice de plateau pro.</p>'
+    },
+
+    // --- ARTISAN / ARTIST ALLEY ---
+    {
+        id: 22,
+        name: 'Plumes & Dragons',
+        Champ1: 'Artist Alley - A01',
+        Champ2: 'Chloé Art',
+        category: 'artisan',
+        description: '<p>Illustrations fantasy, marque-pages et commissions sur place.</p>'
+    },
+    {
+        id: 23,
+        name: 'Steampunk Factory',
+        Champ1: 'Artist Alley - A04',
+        Champ2: 'Victor V.',
+        category: 'artisan',
+        description: '<p>Bijoux et accessoires style victorien et industriel.</p>'
+    },
+    {
+        id: 24,
+        name: 'Pixel Beads',
+        Champ1: 'Artist Alley - A08',
+        Champ2: 'Maxime',
+        category: 'artisan',
+        description: '<p>Tableaux et porte-clés en perles à repasser (Pixel Art).</p>'
+    },
+    {
+        id: 25,
+        name: 'Cuirs de Légende',
+        Champ1: 'Artist Alley - A10',
+        Champ2: 'Ragnar',
+        category: 'artisan',
+        description: '<p>Ceintures, bourses et brassards en cuir véritable faits main.</p>'
+    }
+];
+
+let initialPrestataires = [
     {
         id: 1,
         name: 'Prestataire Exemple 1',
@@ -52,43 +366,156 @@ let prestataires = [
     }
 ]
 
+let prestataires = [
+    {
+        id: 1,
+        name: 'Le Chaudron Baveur',
+        email: 'contact@chaudron-baveur.wizard',
+        phone: '06 99 88 77 66',
+        category: 'restauration',
+        description: '<p>Bièraubeurre maison, jus de citrouille et snacks magiques.</p>'
+    },
+    {
+        id: 2,
+        name: 'Ichiraku Ramen',
+        email: 'commande@ichiraku.konoha',
+        phone: '07 65 43 21 09',
+        category: 'restauration',
+        description: '<p>Les authentiques Ramen de Konoha. Miso, Porc ou Végétarien.</p>'
+    },
+    {
+        id: 5,
+        name: 'RetroGaming Association',
+        email: 'asso@retrogaming-est.fr',
+        phone: '03 84 00 00 00',
+        category: 'jeu_video',
+        description: '<p>Rejouez aux classiques : NES, SNES, Megadrive et bornes d\'arcade.</p>'
+    },
+    {
+        id: 9,
+        name: 'L\'Antre du Maître de Jeu',
+        email: 'mj@antre-asso.com',
+        phone: '06 11 22 33 44',
+        category: 'jeu_plateau',
+        description: '<p>Initiation au Jeu de Rôle : D&D, Cthulhu et Pathfinder.</p>'
+    },
+    {
+        id: 13,
+        name: 'Goodies & Co.',
+        email: 'sales@goodies-corp.com',
+        phone: '01 44 55 66 77',
+        category: 'boutique',
+        description: '<p>Figurines Pop, mugs, t-shirts et produits dérivés officiels.</p>'
+    },
+    {
+        id: 18,
+        name: 'Cosplay SOS',
+        email: 'help@cosplay-sos.org',
+        phone: '06 00 11 00 11',
+        category: 'atelier',
+        description: '<p>Réparations d\'urgence pour cosplayers et vestiaires.</p>'
+    },
+    {
+        id: 20,
+        name: 'Initiation au Sabre Laser',
+        email: 'master@jedi-order-fc.fr',
+        phone: '06 55 44 33 22',
+        category: 'atelier',
+        description: '<p>Chorégraphie de combat au sabre laser.</p>'
+    },
+    {
+        id: 22,
+        name: 'Plumes & Dragons',
+        email: 'chloe.art@gmail.com',
+        phone: '06 12 34 12 34',
+        category: 'artisan',
+        description: '<p>Illustrations fantasy, marque-pages et commissions.</p>'
+    }
+];
 let categoryOptions = [
-    { label: 'Atelier', value: 'atelier' },
-    { label: 'Restauration', value: 'restauration' },
+    {label: 'Atelier', value: 'atelier'},
+    {label: 'Restauration', value: 'restauration'},
 ]
 
+let waitingList = [
+    {
+        id: 101,
+        name: 'Atelier Forge',
+        email: 'forge@dwarf.com',
+        phone: '06 00 00 00 01',
+        category: 'atelier',
+        description: '<p>Atelier de forge pour débutants.</p>',
+        requestDate: '2023-12-01'
+    },
+    {
+        id: 102,
+        name: 'Kebab Galactique',
+        email: 'chef@spacekebab.com',
+        phone: '06 00 00 00 02',
+        category: 'restauration',
+        description: '<p>Le meilleur kebab de la galaxie.</p>',
+        requestDate: '2023-12-05'
+    }
+];
+
+
 export {
-    users,
     message,
     providers,
+    activities,
     prestations,
+    initialPrestataires,
     prestataires,
-    categoryOptions
+    waitingList,
+    categoryOptions,
 }
 
-const users = [
-  {
-    id: 1,
-    name: 'Admin Organisateur',
-    email: 'admin@test.com',
-    password: 'password123',
-    role: 'organisateur',
-    roles: ['organisateur', 'visiteur']
-  },
-  {
-    id: 2,
-    name: 'Prestataire Demo',
-    email: 'prestataire@test.com',
-    password: 'password123',
-    role: 'prestataire',
-    roles: ['prestataire', 'visiteur']
-  },
-  {
-    id: 3,
-    name: 'Visiteur Lambda',
-    email: 'user@test.com',
-    password: 'password123',
-    role: 'visiteur',
-    roles: ['visiteur']
-  }
-];
+export const users = [
+    {
+        id: 1,
+        name: 'Admin User',
+        email: 'admin@test.com',
+        password: 'admin',
+        role: 'admin',
+        roles: ['admin', 'organisateur']
+    },
+    {
+        id: 2,
+        name: 'Prestataire User',
+        email: 'prestataire@test.com',
+        password: 'presta',
+        role: 'prestataire',
+        roles: ['prestataire']
+    },
+    {
+        id: 3,
+        name: 'Visiteur User',
+        email: 'visiteur@test.com',
+        password: 'visi',
+        role: 'visiteur',
+        roles: ['visiteur']
+    }
+]
+
+export const mainPageTextPresentation = {
+    fr: {
+        banner: "Bienvenue à la Necronomi'con !",
+        intro: "Venez découvrir notre évènement, son intérêt, ses moments forts !",
+        description: "La Nécronomi’Con est une convention dédiée aux cultures de l’imaginaire, réunissant chaque année passionnés de science-fiction, de fantastique, d’horreur, de jeux vidéo et de jeux de rôle. Conçue comme un espace d’échange, de créativité et de célébration du geekverse, elle propose rencontres avec des auteurs et artistes, animations variées, conférences, ateliers et expositions, le tout dans une ambiance conviviale et immersive.",
+        locationTitle: "Emplacement de l'évènement",
+        mapTitle: "Map Visiteur",
+        originTitle: "Origine de l’événement",
+        originDescription: "La Nécronomi’Con a été créée dans l’initiative d’un groupe d'étudiant de l'IUT Nord Franche-Comté, passionnés, souhaitant dynamiser la scène geek du Nord Franche-Comté. Au fil des années, l’événement a grandi, s’est professionnalisé et a gagner l'attention d'un public de plus en plus large, devenant un événement incontournable pour la communauté geek régionale.",
+        supportersTitle: "Nos partenaires"
+    },
+    en: {
+        banner: "Welcome to Necronomi'con!",
+        intro: "Come and discover our event, its purpose, and its highlights!",
+        description: "Necronomi'Con is a convention dedicated to imaginary cultures, bringing together science fiction, fantasy, horror, video game and role-playing enthusiasts every year. Designed as a space for exchange, creativity and celebration of the geekverse, it offers meetings with authors and artists, varied activities, conferences, workshops and exhibitions, all in a friendly and immersive atmosphere.",
+        locationTitle: "Event Location",
+        mapTitle: "Visitor Map",
+        originTitle: "Origins of the Event",
+        originDescription: "Necronomi'Con was created on the initiative of a group of passionate students from IUT Nord Franche-Comté, wishing to boost the geek scene in Nord Franche-Comté. Over the years, the event has grown, professionalized and gained the attention of an increasingly large audience, becoming a key event for the regional geek community.",
+        supportersTitle: "Our Partners"
+    }
+}
