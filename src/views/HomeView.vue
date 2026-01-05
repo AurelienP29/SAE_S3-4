@@ -48,7 +48,10 @@
           <h2 class="neon-title">{{ texts.locationTitle }}</h2>
           <p class="mb-4">{{ texts.mapTitle }}</p>
           <div class="map-actions">
-            <MapViewer/>
+            <InteractiveMap
+                :current-user="authStore.user"
+                :enable-actions="false"
+            />
           </div>
         </div>
       </section>
@@ -88,12 +91,12 @@
 </template>
 
 <script setup>
-import MapViewer from "@/components/MapViewer.vue";
 import PrestataireTable from "@/components/PrestataireTable.vue";
 import {useAuthStore} from '@/stores/authStore.js';
 import {mainPageTextPresentation} from '@/datasource/data.js';
 import {computed, onMounted} from 'vue';
 import InfiniteCarousel from '@/components/homeComponents/infiniteCarousel.vue';
+import InteractiveMap from "@/components/InteractiveMap.vue";
 
 const authStore = useAuthStore();
 

@@ -1,373 +1,436 @@
 <template>
-  <div class="admin-controls">
-    <h2>Modes d'Édition</h2>
-    <div class="radio-group">
-      <label>
-        <input type="radio" v-model="editMode" value="drag"> Déplacer
-      </label><br>
-      <label>
-        <input type="radio" v-model="editMode" value="add"> Ajouter
-      </label><br>
-      <label>
-        <input type="radio" v-model="editMode" value="delete"> Supprimer
-      </label>
+  <div class="map-wrapper" ref="mapContainer">
+
+    <div v-if="loading" class="loading-overlay">
+      Chargement du plan...
     </div>
 
-    <div v-if="editMode === 'add'" class="add-config">
-      <label for="new-label">Nom nouveau point :</label>
-      <input id="new-label" type="text" v-model="newPointLabel" placeholder="Ex: Entrée principale">
-    </div>
+    <img
+        src="@/assets/images/IMp-PLAN-VF1.png"
+        alt="Plan Necronomi'con"
+        class="map-bg"
+    />
+
+    <svg class="map-overlay" viewBox="0 0 1133 938" preserveAspectRatio="none">
+      <g
+          v-for="stand in visibleStands"
+          :key="stand.id"
+          class="stand-group"
+          @click="handleStandClick(stand, $event)"
+      >
+        <path
+            :d="stand.pathData"
+            :class="['stand-zone', stand.status, { 'is-interactive': isInteractive(stand) }]"
+        />
+
+        <text v-if="false" x="50%" y="50%" class="stand-text">
+          {{ stand.zone_id }}
+        </text>
+      </g>
+    </svg>
+
+    <Teleport to="body">
+      <div v-if="selectedStand" class="map-popup" :style="popupStyle">
+        <button class="close-btn" @click="closePopup">×</button>
+
+        <div class="popup-header">
+          <h3>{{ selectedStand.label || selectedStand.zone_id }}</h3>
+          <span :class="['status-badge', selectedStand.status]">
+          {{ translateStatus(selectedStand.status) }}
+        </span>
+        </div>
+
+        <div class="popup-body">
+
+          <div v-if="selectedStand.status === 'occupied' && selectedStand.prestataire">
+            <p class="prestataire-name">{{ selectedStand.prestataire.name }}</p>
+            <p class="prestataire-desc">{{ selectedStand.prestataire.description }}</p>
+
+            <!-- TODO Link to presta page -->
+            <a href="#" class="btn-link">Voir la fiche</a>
+
+            <button v-if="canModerate" @click="updateStandStatus(selectedStand, 'free')" class="btn-danger mt-2">
+              Admin: Libérer ce stand
+            </button>
+          </div>
+
+          <div v-else-if="selectedStand.status === 'free'">
+            <p>Cet emplacement est disponible.</p>
+
+            <button v-if="canBook" @click="requestBooking(selectedStand)" class="btn-primary">
+              Réserver ce stand
+            </button>
+
+            <p v-if="canModerate" class="admin-hint">En tant qu'admin, attendez une demande.</p>
+
+            <p v-if="!currentUser && enableActions" class="info-text">
+              Connectez-vous pour réserver.
+            </p>
+          </div>
+
+          <div v-else-if="selectedStand.status === 'pending'">
+            <p><strong>Demande en cours :</strong></p>
+            <p v-if="selectedStand.prestataire">{{ selectedStand.prestataire.name }}</p>
+
+            <div v-if="canModerate" class="admin-actions">
+              <button @click="updateStandStatus(selectedStand, 'occupied')" class="btn-success">Valider</button>
+              <button @click="updateStandStatus(selectedStand, 'free')" class="btn-danger">Refuser</button>
+            </div>
+
+            <p v-else>Demande en cours d'examen par l'organisation.</p>
+          </div>
+
+        </div>
+      </div>
+    </Teleport>
+
   </div>
-
-  <div
-      class="map-container"
-      :class="`mode-${editMode}`"
-      @click="addPoint"
-  >
-    <img src="/src/assets/images/IMp-PLAN-VF1.png" alt="Interactive Map" class="map-image"/>
-
-    <div
-        v-for="point in points"
-        :key="point.id"
-        class="map-point"
-        :style="{
-        top: point.y + '%',
-        left: point.x + '%'
-      }"
-        @mousedown.stop="startDrag(point, $event)"
-        @click.stop="handlePointClick(point)"
-        :class="{
-        'is-dragging': draggingPoint && draggingPoint.id === point.id,
-        'is-deleting': editMode === 'delete',
-        'is-draggable': editMode === 'drag' // Nouvelle classe pour le curseur
-      }"
-        tabindex="0"
-    >
-      <div class="pin-shape"></div>
-      <div class="tooltip">{{ point.label }}</div>
-    </div>
-  </div>
-
-  <div v-if="pointToDelete" class="modal-overlay">
-    <div class="modal-content">
-      <p>Supprimer point "{{ pointToDelete.label }}" ?</p>
-      <button @click="executeDelete" class="btn-confirm">Oui</button>
-      <button @click="cancelDelete" class="btn-cancel">Annuler</button>
-    </div>
-  </div>
-
-  <pre class="debug-output">Points : {{ points.length }} | Mode : {{ editMode }}</pre>
 </template>
 
 <script setup>
-import {ref, watch} from "vue";
+import {ref, onMounted, computed} from 'vue';
+import StandService from '@/services/standService';
 
-const STORAGE_KEY = 'interactive_map_points';
-
-function loadPoints() {
-  const storedPoints = localStorage.getItem(STORAGE_KEY);
-  if (storedPoints) {
-    try {
-      return JSON.parse(storedPoints);
-    } catch (e) {
-      console.error("Erreur lors du chargement des points:", e);
-    }
+const props = defineProps({
+  currentUser: {
+    type: Object,
+    default: null
+  },
+  enableActions: {
+    type: Boolean,
+    default: true
   }
-  return [
-    {id: 1, x: 25, y: 40, label: 'Test n°1'},
-    {id: 2, x: 60, y: 70, label: 'Test n°2'},
-  ];
-}
-const points = ref(loadPoints());
-let nextId = points.value.length > 0 ? Math.max(...points.value.map(p => p.id)) + 1 : 1;
-watch(points, (newPoints) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(newPoints));
-}, { deep: true });
+});
 
-const editMode = ref('drag');
-const newPointLabel = ref('Nouveau Point');
-const pointToDelete = ref(null);
-const draggingPoint = ref(null);
-let startMouseX = 0;
-let startMouseY = 0;
+const stands = ref([]);
+const loading = ref(true);
+const selectedStand = ref(null);
+const mapContainer = ref(null);
+const popupPos = ref({x: 0, y: 0});
 
-function startDrag(point, event) {
-  if (editMode.value !== 'drag') return;
+const canModerate = computed(() => {
+  if (!props.enableActions || !props.currentUser) return false;
+  return props.currentUser.roles.includes('admin') || props.currentUser.role === 'admin';
+});
 
-  event.preventDefault();
-  draggingPoint.value = point;
-  startMouseX = event.clientX;
-  startMouseY = event.clientY;
+const canBook = computed(() => {
+  if (!props.enableActions || !props.currentUser) return false;
+  return props.currentUser.roles.includes('prestataire') || props.currentUser.role === 'prestataire';
+});
 
-  window.addEventListener('mousemove', onDrag);
-  window.addEventListener('mouseup', stopDrag);
-  document.body.classList.add('dragging-active');
-}
+onMounted(async () => {
+  await loadData();
+});
 
-function onDrag(event) {
-  if (!draggingPoint.value) return;
-
-  const mapContainer = document.querySelector('.map-container');
-  if (!mapContainer) return;
-
-  const rect = mapContainer.getBoundingClientRect();
-  const mapWidth = rect.width;
-  const mapHeight = rect.height;
-
-  const deltaX = event.clientX - startMouseX;
-  const deltaY = event.clientY - startMouseY;
-
-  const currentX_px = (draggingPoint.value.x / 100) * mapWidth;
-  const currentY_px = (draggingPoint.value.y / 100) * mapHeight;
-
-  const newX_px = currentX_px + deltaX;
-  const newY_px = currentY_px + deltaY;
-
-  let newX_pct = (newX_px / mapWidth) * 100;
-  let newY_pct = (newY_px / mapHeight) * 100;
-
-  newX_pct = Math.min(100, Math.max(0, newX_pct));
-  newY_pct = Math.min(100, Math.max(0, newY_pct));
-
-  draggingPoint.value.x = newX_pct;
-  draggingPoint.value.y = newY_pct;
-
-  startMouseX = event.clientX;
-  startMouseY = event.clientY;
+async function loadData() {
+  loading.value = true;
+  try {
+    stands.value = await StandService.getAllStands();
+  } catch (e) {
+    console.error("Erreur chargement map:", e);
+  } finally {
+    loading.value = false;
+  }
 }
 
-function stopDrag() {
-  if (!draggingPoint.value) return;
-  draggingPoint.value = null;
-  window.removeEventListener('mousemove', onDrag);
-  window.removeEventListener('mouseup', stopDrag);
-  document.body.classList.remove('dragging-active');
-  console.log('Déplacement terminé, données sauvegardées.');
-}
 
-function addPoint(event) {
-  if (editMode.value !== 'add') return;
+const visibleStands = computed(() => {
+  if (loading.value) return [];
 
-  const mapContainer = event.currentTarget;
-  const rect = mapContainer.getBoundingClientRect();
+  return stands.value.filter(stand => {
+    // Si on est en mode admin/actions, on garde tout
+    if (props.enableActions) return true;
 
-  const clickX_px = event.clientX - rect.left;
-  const clickY_px = event.clientY - rect.top;
+    // Sinon (visiteur), on ne garde que les occupés
+    return stand.status === 'occupied';
+  });
+});
 
-  if (clickX_px < 0 || clickX_px > rect.width || clickY_px < 0 || clickY_px > rect.height) {
-    return;
+function isInteractive(stand) {
+  if (!props.enableActions) {
+    return stand.status === 'occupied';
   }
 
-  const newX_pct = (clickX_px / rect.width) * 100;
-  const newY_pct = (clickY_px / rect.height) * 100;
+  if (canModerate.value) return true;
+  if (stand.status === 'occupied') return true;
+  if (stand.status === 'free' && canBook.value) return true;
 
-  const newPoint = {
-    id: nextId++,
-    x: newX_pct,
-    y: newY_pct,
-    label: newPointLabel.value
+  return false;
+}
+
+function handleStandClick(stand, event) {
+  if (!isInteractive(stand)) return;
+
+  selectedStand.value = stand;
+
+  popupPos.value = {
+    x: event.pageX + 20,
+    y: event.pageY + 20,
+    clientX: event.clientX
+  };
+}
+
+function closePopup() {
+  selectedStand.value = null;
+}
+
+const popupStyle = computed(() => {
+  const isTooRight = popupPos.value.clientX > (window.innerWidth * 0.6);
+
+  const style = {
+    top: `${popupPos.value.y}px`,
   };
 
-  points.value.push(newPoint);
-  console.log(`Point ajouté: ${newPoint.label}`);
-}
+  if (isTooRight) {
+    style.right = `${document.body.clientWidth - popupPos.value.x + 40}px`;
+    style.left = 'auto';
+  } else {
+    style.left = `${popupPos.value.x}px`;
+    style.right = 'auto';
+  }
 
-function confirmDelete(pointId) {
-  if (editMode.value === 'delete') {
-    pointToDelete.value = points.value.find(p => p.id === pointId);
+  return style;
+});
+
+
+async function requestBooking(stand) {
+  if (!props.currentUser) return;
+
+  const result = await StandService.requestStand(stand.id, props.currentUser);
+  if (result) {
+    await loadData();
+    closePopup();
   }
 }
 
-function executeDelete() {
-  if (pointToDelete.value) {
-    const index = points.value.findIndex(p => p.id === pointToDelete.value.id);
-    if (index !== -1) {
-      points.value.splice(index, 1);
-      console.log(`Point ID ${pointToDelete.value.id} supprimé.`);
-    }
-    pointToDelete.value = null;
+async function updateStandStatus(stand, newStatus) {
+  const result = await StandService.updateStatus(stand.id, newStatus);
+  if (result) {
+    await loadData();
+    closePopup();
   }
 }
 
-function cancelDelete() {
-  pointToDelete.value = null;
-}
-
-function handlePointClick(point) {
-  if (editMode.value === 'delete') {
-    confirmDelete(point.id);
+function translateStatus(status) {
+  switch (status) {
+    case 'free':
+      return 'Libre';
+    case 'occupied':
+      return 'Occupé';
+    case 'pending':
+      return 'En attente';
+    default:
+      return status;
   }
 }
 </script>
 
 <style scoped>
-.map-container {
+.map-wrapper {
   position: relative;
-  display: inline-block;
-  border: 2px dashed transparent;
-}
-
-.map-image {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
-
-.map-point {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  cursor: default;
-}
-
-.pin-shape {
-  width: 20px;
-  height: 30px;
-  background-color: red;
-  border-radius: 50%;
-  position: relative;
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-.pin-shape::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 10px solid red;
-}
-
-.map-point:focus .pin-shape {
-  outline-offset: 3px;
-}
-
-.tooltip {
-  position: absolute;
-  bottom: 110%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.75);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  font-size: 13px;
-  z-index: 50;
-}
-
-.map-point:hover .tooltip,
-.map-point:focus .tooltip {
-  opacity: 1;
-}
-
-.map-point.is-draggable {
-  cursor: grab;
-}
-.map-point.is-draggable:active,
-.dragging-active {
-  cursor: grabbing !important;
-  user-select: none;
-}
-.map-point.is-dragging {
-  z-index: 100;
-  transform: translate(-50%, -100%) scale(1.1);
-  transition: none;
-}
-
-.map-container.mode-drag .map-point:not(.is-draggable) {
-  cursor: default;
-}
-
-
-.map-container.mode-add {
-  cursor: crosshair;
-}
-
-.map-container.mode-add .map-point {
-  cursor: default;
-}
-
-.map-container.mode-delete .map-point {
-  cursor: pointer;
-}
-.map-point.is-deleting:hover .pin-shape {
-  transform: scale(1.1);
-}
-
-.admin-controls {
-  margin-bottom: 20px;
-  padding: 15px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #f8f9fa;
   border: 1px solid #ddd;
   border-radius: 8px;
 }
-.radio-group label {
-  margin-right: 15px;
-  font-weight: 500;
-  cursor: pointer;
-}
-.add-config {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid #eee;
-}
-.add-config input {
-  padding: 5px;
-  margin-left: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-.debug-output {
-  margin-top: 20px;
-  background: #f0f0f0;
-  padding: 10px;
-  border-radius: 4px;
-  font-size: 12px;
+
+.map-bg {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
 }
 
-.modal-overlay {
-  position: fixed;
+.map-overlay {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 200;
+  z-index: 10;
 }
-.modal-content {
+
+.stand-zone {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 2px;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.stand-zone.is-interactive {
+  cursor: pointer;
+}
+
+.stand-zone.is-interactive:hover {
+  stroke: #fff;
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5));
+}
+
+.stand-zone.free {
+  fill: rgba(46, 204, 113, 0.2);
+  stroke: rgba(46, 204, 113, 0.4);
+}
+
+.stand-zone.free.is-interactive:hover {
+  fill: rgba(46, 204, 113, 0.5);
+}
+
+.stand-zone.occupied {
+  fill: rgba(52, 152, 219, 0.0);
+}
+
+.stand-zone.occupied.is-interactive:hover {
+  fill: rgba(52, 152, 219, 0.3);
+}
+
+.stand-zone.pending {
+  fill: rgba(243, 156, 18, 0.3);
+  stroke: rgba(243, 156, 18, 0.8);
+  stroke-dasharray: 8, 4;
+  animation: pulseZone 2s infinite;
+}
+
+@keyframes pulseZone {
+  0% {
+    fill-opacity: 0.3;
+  }
+  50% {
+    fill-opacity: 0.6;
+  }
+  100% {
+    fill-opacity: 0.3;
+  }
+}
+
+.map-popup {
+  position: absolute;
+  width: 280px;
   background: white;
-  padding: 25px;
+  padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  max-width: 400px;
-  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  border: 1px solid #eee;
+  font-family: sans-serif;
 }
-.modal-content p {
-  margin: 15px 0;
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #888;
 }
-.btn-confirm, .btn-cancel {
-  padding: 8px 15px;
+
+.popup-header {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.popup-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status-badge.free {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.occupied {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.btn-primary, .btn-danger, .btn-success {
   border: none;
   border-radius: 4px;
+  padding: 6px 12px;
+  margin-top: 5px;
   cursor: pointer;
-  margin: 0 5px;
-}
-.btn-confirm {
-  background-color: #dc3545;
   color: white;
+  font-size: 0.9rem;
 }
-.btn-cancel {
-  background-color: #f8f9fa;
-  color: #343a40;
-  border: 1px solid #ccc;
+
+.btn-primary {
+  background: #3498db;
+}
+
+.btn-danger {
+  background: #e74c3c;
+}
+
+.btn-success {
+  background: #2ecc71;
+  margin-right: 5px;
+}
+
+.btn-link {
+  color: #3498db;
+  text-decoration: underline;
+  font-size: 0.9rem;
+}
+
+.admin-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 5px;
+}
+
+.mt-2 {
+  margin-top: 10px;
+}
+
+.admin-hint {
+  font-style: italic;
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 5px;
+}
+
+.info-text {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  color: #333;
+  font-weight: bold;
 }
 </style>

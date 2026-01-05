@@ -36,7 +36,10 @@
               </div>
             </template>
             <div class="tab-content">
-              <MapViewManager />
+              <InteractiveMap
+                  :current-user="authStore.user"
+                  :enable-actions="true"
+              />
             </div>
           </TabPanel>
 
@@ -66,7 +69,10 @@ import { ref } from 'vue';
 import { TabPanel, TabView } from 'primevue';
 
 import PrestataireManager from '@/components/adminComponents/AdminPrestataireManager.vue';
-import MapViewManager from '@/components/MapViewer.vue';
+import InteractiveMap from "@/components/InteractiveMap.vue";
+import {useAuthStore} from "@/stores/authStore.js";
+
+const authStore = useAuthStore();
 
 const activeTab = ref(0);
 </script>
