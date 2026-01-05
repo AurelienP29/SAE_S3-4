@@ -71,7 +71,44 @@
 .navbar-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
+}
+
+.cart-container {
+    position: relative;
+    display: inline-flex !important; /* Force l'affichage */
+    align-items: center;
+    justify-content: center;
+    color: #ffffff; /* Assure-toi que c'est visible sur ton fond */
+    text-decoration: none;
+    cursor: pointer;
+    margin-right: 5px;
+    z-index: 10;
+}
+
+.cart-container i {
+    color: black !important; /* Force la couleur de l'icône */
+    font-size: 1.4rem !important;
+}
+
+.cart-container:hover {
+    transform: scale(1.1);
+    color: #bd2cd1;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: #bd2cd1; /* Une couleur qui flashe pour le panier */
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 15px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 :deep(.language-dropdown) {

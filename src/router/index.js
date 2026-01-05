@@ -8,8 +8,9 @@ import AccountView from '@/views/AccountView.vue'
 import ContactUs from "@/views/ContactUs.vue"
 import AdminView from "@/views/AdminView.vue"
 import AdminMapView from "@/views/AdminMapView.vue";
+import CartView from "@/views/CartView.vue";
 
-import Test from "@/views/Test.vue";
+//import Test from "@/views/Test.vue";
 
 // const routes = [
 //     {
@@ -30,6 +31,7 @@ const routes = [
     {path: '/contact-us', name: 'Contact', component: ContactUs},
     {path: '/admin/prestataires', name: 'OrganisateurEvents', component: AdminView},
     {path: '/admin/map', name: 'OrganisateurMap', component: AdminMapView},
+    {path: '/cart', name:'Cart', component: CartView}
 ]
 
 const router = createRouter({

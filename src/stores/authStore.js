@@ -17,6 +17,14 @@ export const useAuthStore = defineStore('auth', () => {
         { id: 4, titre: "Atelier Maquillage FX", places: 10, date: "Dimanche 14h" }
     ])
 
+    //TODO Stockage temporaire des activités
+    const ticketsTypes = ref([
+        {id:1 , label: "Tarif réduit" , price: "12€" , description:"Pour les étudiants, personnes au chômage, personne à mobilité réduite et/ou retraitée", cout: 12},
+        {id:2 , label: "Tarif plein" , price: "20€", cout:20},
+        {id:3 , label: "Tarif enfant de moins de 14 ans", price: "10€", description: "Enfant et adolescent de moins de 14 ans inclus", cout:10},
+        {id:4 , label: "Enfant de moins de 5 ans", price:"Gratuit", description: "Enfant de moins de 5 ans inclus",cout:0}
+    ])
+
     const isAuthenticated = computed(() => user.value !== null)
 
     const userRole = computed(() => user.value?.role || null)
@@ -84,6 +92,7 @@ export const useAuthStore = defineStore('auth', () => {
         userRole,
         currentLanguage,
         activities, // TODO Pareil, stockage des activités temporaire
+        ticketsTypes, //todo idem
         reservations,
         mesReservations,
         login,

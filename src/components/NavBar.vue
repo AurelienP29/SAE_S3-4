@@ -21,6 +21,13 @@
       <template #end>
         <div class="navbar-actions">
 
+          <router-link to="/cart" class="cart-container">
+            <i class="pi pi-shopping-cart" style="font-size: 1.2rem;"></i>
+            <span v-if="cartStore.itemsCount > 0" class="cart-badge">
+            {{ cartStore.itemsCount }}
+          </span>
+          </router-link>
+
           <Dropdown v-model="authStore.currentLanguage" :options="languageOptions" optionLabel="label"
                     optionValue="value" placeholder="Langue" class="language-dropdown">
             <template #value="props">
@@ -72,9 +79,11 @@ import Ripple from 'primevue/ripple'
 
 import '/src/assets/styles/NavBar.css'
 import { translations } from '@/datasource/lang.js'
+import {useCartStore} from "@/stores/cartStore.js";
 
 const router = useRouter()
 const authStore = useAuthStore()
+const cartStore = useCartStore()
 
 const hasRole = (roleTarget) => {
   const userRoles = authStore.user?.roles || []
@@ -226,4 +235,6 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

@@ -1,5 +1,28 @@
 <template>
   <div class="activities-page">
+    <h1 class="banner">Tickets d'entrée</h1>
+    <div class="tickets-grid">
+      <div v-for="ticket in ticketsTypes" :key="ticket.id" class="activity-card ticket-card">
+        <h3>{{ ticket.label }}</h3>
+        <p class="description">{{ ticket.description }}</p>
+        <p class="price">Prix : <strong>{{ ticket.price }}</strong></p>
+
+        <div class="actions">
+          <button
+              v-if="authStore.user"
+              @click="handleAddToCart(ticket)"
+              class="btn-reserve"
+          >
+            Ajouter au panier
+          </button>
+
+          <div v-else class="warning">
+            <router-link :to="{name: 'Login'}">Connectez-vous</router-link>
+            pour acheter
+          </div>
+        </div>
+      </div>
+    </div>
     <h1 class="banner">Programme & Réservations</h1>
 
     <div class="activities-grid">
@@ -29,8 +52,12 @@
 
 <script setup>
 import {useAuthStore} from '@/stores/authStore.js'
+import {useCartStore} from "@/stores/cartStore.js";
+import {ref} from "vue";
 
+const cartStore = useCartStore()
 const authStore = useAuthStore()
+const ticketsTypes = authStore.ticketsTypes;
 
 function handleReservation(id) {
   const success = authStore.reserverActivite(id)
@@ -38,6 +65,11 @@ function handleReservation(id) {
     console.error("Erreur réservation")
   }
 }
+
+const handleAddToCart = (ticket) => {
+  cartStore.addToCart(ticket, authStore.user?.id)
+}
+
 </script>
 
 <style scoped>
@@ -59,7 +91,7 @@ function handleReservation(id) {
   max-width: 900px;
 }
 
-.activities-grid {
+.activities-grid, .tickets-grid {
   display: flex;
   gap: 30px;
   flex-wrap: wrap;
