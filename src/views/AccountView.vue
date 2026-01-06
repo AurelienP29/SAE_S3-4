@@ -1,231 +1,248 @@
 <template>
-  <div class="profile-container">
+  <div class="account-view-container p-4">
+    <div v-if="!authStore.isAuthenticated" class="flex flex-col items-center justify-center h-64">
+      <Message severity="warn">Vous devez être connecté pour accéder à cette page.</Message>
+      <Button label=" Se connecter" icon="pi pi-sign-in" @click="router.push('/login')" class="mt-4" />
+    </div>
 
-    <div v-if="authStore.user" class="profile-card">
-      <div class="header">
-        <h1>Bienvenue, {{ authStore.user.name }}</h1>
-        <span class="badge">{{ authStore.user.role.toUpperCase() }}</span>
-      </div>
+    <div v-else class="max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold mb-6 text-white uppercase tracking-wider">Mon Compte</h1>
 
-      <hr>
+      <div class="g-panel p-6">
+        <div class="flex items-center gap-4 mb-8">
+          <!-- icone user !-->
+          <Avatar v-if="authStore.user.picture" :image="authStore.user.picture" size="xlarge" shape="circle" />
+          <Avatar v-else :label=" authStore.user.name?.charAt(0).toUpperCase()" size="xlarge" shape="circle" class="bg-purple-500 text-white" />
+          <div>
+            <h2 class="text-2xl font-bold text-white">{{ authStore.user.name }}</h2>
+            <p class="text-gray-400 capitalize">{{ authStore.user.role }}</p>
+          </div>
+        </div>
 
-      <div v-if="authStore.user.role === 'visiteur'" class="section">
-        <h2>Mes Réservations</h2>
+        <Tabs value="0">
+          <TabList>
+            <Tab value="0">
+              <i class="pi pi-user mr-2"></i>Profil
+            </Tab>
+            <Tab value="1">
+              <i class="pi pi-calendar mr-2"></i>Mes Activités
+            </Tab>
+            <Tab value="2">
+              <i class="pi pi-lock mr-2"></i>Sécurité
+            </Tab>
+          </TabList>
+          <TabPanels>
 
-        <ul class="reservation-list">
-          <li v-for="resa in authStore.mesReservations" :key="resa.id" class="resa-item">
-            <div class="resa-info">
-              <strong>{{ resa.activite.titre }}</strong>
-              <br>
-              <span class="date">{{ resa.activite.date }} (Réservé le {{ resa.dateReservation }})</span>
-            </div>
+<!-- tab Profil -->
+            <TabPanel value="0">
+              <div class="pt-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="flex flex-col gap-2">
+                    <label for="acc-name" class="font-bold text-gray-300">Nom Complet</label>
+                    <InputText id="acc-name" v-model="profileForm.name" />
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label for="acc-email" class="font-bold text-gray-300">Email (non modifiable)</label>
+                    <InputText id="acc-email" v-model="profileForm.email" disabled class="opacity-60" />
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label for="acc-phone" class="font-bold text-gray-300">Téléphone</label>
+                    <InputText id="acc-phone" v-model="profileForm.phone" placeholder="Ex: 06 00 00 00 00" />
+                  </div>
+                  <div class="flex flex-col gap-2 md:col-span-2">
+                    <label for="acc-desc" class="font-bold text-gray-300">Bio / Description</label>
+                    <Textarea id="acc-desc" v-model="profileForm.description" rows="4" class="w-full" />
+                  </div>
+                </div>
 
-            <button @click="handleCancel(resa.id)" class="btn-cancel">
-              Annuler
-            </button>
-          </li>
-        </ul>
+                <div class="mt-8 flex justify-end">
+                  <Button label=" Enregistrer les modifications" icon="pi pi-save" severity="primary" @click="saveProfile" :loading="saving" />
+                </div>
+              </div>
+            </TabPanel>
 
-        <p v-if="authStore.mesReservations.length === 0">Aucune réservation pour le moment.</p>
 
-        <button @click="$router.push({name: 'Activities'})" class="action-btn">Voir les activités</button>
-      </div>
+<!-- tab activités -->
+            <TabPanel value="1">
+              <div class="pt-4">
+                <div v-if="authStore.user.role === 'visiteur'">
+                  <h3 class="text-xl font-bold text-purple-400 mb-4">Mes Réservations</h3>
+                  <div v-if="authStore.mesReservations.length > 0" class="flex flex-col gap-4">
+                    <div v-for="resa in authStore.mesReservations" :key="resa.id" class="resa-item-glass p-4 rounded flex justify-between items-center">
+                      <div>
+                        <div class="font-bold text-white text-lg">{{ resa.activite.titre }}</div>
+                        <div class="text-gray-400 text-sm">{{ resa.activite.date }} (Réservé le {{ resa.dateReservation }})</div>
+                      </div>
+                      <Button icon="pi pi-trash" severity="danger" rounded text @click="handleCancel(resa.id)" />
+                    </div>
+                  </div>
+                  <div v-else class="text-gray-400 italic p-4">Aucune réservation pour le moment.</div>
+                  <Button label=" Voir les activités" icon="pi pi-calendar" @click="router.push('/activities')" class="mt-4" text />
+                </div>
 
-      <div v-if="authStore.user.role === 'organisateur'" class="section">
-        <h2>Administration - Suivi global</h2>
-        <table class="admin-table">
-          <thead>
-          <tr>
-            <th>Client (Email)</th>
-            <th>Activité</th>
-            <th>Date Réservation</th>
-            <th>Action</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="resa in authStore.reservations" :key="resa.id">
-            <td>{{ resa.userEmail }}</td>
-            <td>{{ resa.activite.titre }}</td>
-            <td>{{ resa.dateReservation }}</td>
-            <td>
-              <button @click="handleCancel(resa.id)" class="btn-cancel-small">X</button>
-            </td>
-          </tr>
-          <tr v-if="authStore.reservations.length === 0">
-            <td colspan="4" style="text-align:center">Aucune réservation.</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
+                <div v-else-if="authStore.user.role === 'organisateur'">
+                   <h3 class="text-xl font-bold text-purple-400 mb-4">Administration - Suivi global</h3>
+                   <DataTable :value="authStore.reservations" class="p-datatable-sm">
+                      <Column field="userEmail" header="Client"></Column>
+                      <Column field="activite.titre" header="Activité"></Column>
+                      <Column field="dateReservation" header="Date"></Column>
+                      <Column header="Action">
+                        <template #body="slotProps">
+                          <Button icon="pi pi-times" severity="danger" text rounded @click="handleCancel(slotProps.data.id)" />
+                        </template>
+                      </Column>
+                   </DataTable>
+                </div>
 
-      <div v-if="authStore.user.role === 'prestataire'" class="section">
-        <h2>Espace Prestataire</h2>
-        <div class="info-box">
-          <p>Statut du stand : <strong>Validé</strong></p>
-          <p>Emplacement : <strong>Hall B - Stand 12</strong></p>
+                <div v-else-if="authStore.user.role === 'prestataire'">
+                  <h3 class="text-xl font-bold text-purple-400 mb-4">Espace Prestataire</h3>
+                  <div class="resa-item-glass p-6 rounded">
+                    <p class="mb-2">Statut du stand : <span class="text-green-400 font-bold">Validé</span></p>
+                    <p>Emplacement : <span class="text-white font-bold">Hall B - Stand 12</span></p>
+                    <Button label=" Gérer mes prestations" icon="pi pi-box" @click="router.push('/prestataire')" class="mt-4" />
+                  </div>
+                </div>
+              </div>
+            </TabPanel>
+
+<!-- tab sécu -->
+            <TabPanel value="2">
+              <div class="pt-4">
+                <p class="text-gray-700 mb-6">Pour changer votre mot de passe, veuillez remplir les champs ci-dessous.</p>
+                <div class="grid grid-cols-1 gap-4">
+                  <div class="flex gap-2">
+                    <label for="current-pass" class="font-bold text-gray-500">Mot de passe actuel</label>
+                    <Password id="current-pass" v-model="securityForm.currentPassword" :feedback="false" toggleMask fluid />
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <label for="new-pass" class="font-bold text-gray-500">Nouveau mot de passe</label>
+                    <Password id="new-pass" v-model="securityForm.newPassword" toggleMask fluid />
+                  </div>
+                  <div class="flex gap-2">
+                    <label for="confirm-pass" class="font-bold text-gray-500">Confirmer le mot de passe</label>
+                    <Password id="confirm-pass" v-model="securityForm.confirmPassword" :feedback="false" toggleMask fluid />
+                  </div>
+                </div>
+                <div class="mt-8 flex justify-start">
+                  <Button label=" Mettre à jour le mot de passe" icon="pi pi-key" severity="warn" @click="updatePassword" />
+                </div>
+              </div>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+
+        <div class="mt-5 items-center">
+            <span class="text-gray-500 text-sm">Identifiant unique: {{ authStore.user.id }}</span>
+            <Button label=" Se déconnecter" icon="pi pi-sign-out" severity="danger" text @click="handleLogout" />
         </div>
       </div>
-
-      <div class="footer">
-        <button class="logout-btn" @click="handleLogout">Se déconnecter</button>
-      </div>
     </div>
-
-    <div v-else class="not-connected">
-      <p>Vous n'êtes pas connecté.</p>
-      <button @click="$router.push({name: 'Login'})" class="login-link">Aller à la connexion</button>
-    </div>
-
+    <Toast />
   </div>
 </template>
 
 <script setup>
-import {useAuthStore} from '@/stores/authStore.js'
-import {useRouter} from 'vue-router'
+import { ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore.js';
+import { 
+  InputText, Button, Textarea, Password, Message, 
+  Tabs, TabList, Tab, TabPanels, TabPanel, Avatar, Toast,
+  DataTable, Column
+} from 'primevue';
+import { useToast } from 'primevue/usetoast';
 
-const authStore = useAuthStore()
-const router = useRouter()
+const router = useRouter();
+const authStore = useAuthStore();
+const toast = useToast();
+
+const saving = ref(false);
+
+const profileForm = reactive({
+  name: '',
+  email: '',
+  phone: '',
+  description: ''
+});
+
+const securityForm = reactive({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+});
+
+onMounted(() => {
+  if (authStore.user) {
+    profileForm.name = authStore.user.name || '';
+    profileForm.email = authStore.user.email || '';
+    profileForm.phone = authStore.user.phone || '';
+    profileForm.description = authStore.user.description || '';
+  }
+});
+
+function saveProfile() {
+  saving.value = true;
+  
+  // Simulation d'un délai réseau
+  setTimeout(() => {
+    authStore.updateUser({
+      name: profileForm.name,
+      phone: profileForm.phone,
+      description: profileForm.description
+    });
+    
+    saving.value = false;
+    toast.add({ severity: 'success', summary: 'Succès', detail: 'Profil mis à jour avec succès', life: 3000 });
+  }, 500);
+}
+
+function updatePassword() {
+  if (!securityForm.currentPassword || !securityForm.newPassword || !securityForm.confirmPassword) {
+    toast.add({ severity: 'error', summary: 'Erreur', detail: 'Veuillez remplir tous les champs', life: 3000 });
+    return;
+  }
+  
+  if (securityForm.newPassword !== securityForm.confirmPassword) {
+    toast.add({ severity: 'error', summary: 'Erreur', detail: 'Les nouveaux mots de passe ne correspondent pas', life: 3000 });
+    return;
+  }
+  
+  toast.add({ severity: 'success', summary: 'Succès', detail: 'Mot de passe mis à jour (simulation)', life: 3000 });
+  
+  // Reset security form
+  securityForm.currentPassword = '';
+  securityForm.newPassword = '';
+  securityForm.confirmPassword = '';
+}
 
 function handleLogout() {
-  authStore.logout()
-  router.push('/')
+  authStore.logout();
+  router.push('/');
 }
 
 function handleCancel(id) {
   if (confirm("Voulez-vous vraiment annuler cette réservation ?")) {
-    authStore.annulerReservation(id)
+    authStore.annulerReservation(id);
+    toast.add({ severity: 'info', summary: 'Annulé', detail: 'Réservation annulée', life: 3000 });
   }
 }
 </script>
 
 <style scoped>
-.profile-container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  font-family: 'Arial', sans-serif;
+.account-view-container {
+  min-height: 90vh;
+  color: #f1f5f9;
 }
 
-.profile-card {
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.g-panel {
+  background: rgba(187, 186, 197, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 12px;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.badge {
-  background-color: #2d2d4d;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-.reservation-list {
-  list-style: none;
-  padding: 0;
-}
-
-.resa-item {
-  background: #f4f4f4;
-  margin-bottom: 10px;
-  padding: 15px;
-  border-left: 5px solid #bd2cd1;
-  border-radius: 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.resa-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.date {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.btn-cancel {
-  background-color: #ff6b6b;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-cancel:hover {
-  background-color: #ee5253;
-}
-
-.btn-cancel-small {
-  background-color: #ff6b6b;
-  color: white;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.logout-btn {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 30px;
-  width: 100%;
-}
-
-.action-btn {
-  background-color: #2d2d4d;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-}
-
-.admin-table th, .admin-table td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: left;
-}
-
-.admin-table th {
-  background-color: #2d2d4d;
-  color: white;
-}
-
-.not-connected {
-  text-align: center;
-  margin-top: 100px;
-}
-
-.login-link {
-  background-color: #2d2d4d;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 1.2rem;
+.resa-item-glass {
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.2);
 }
 </style>

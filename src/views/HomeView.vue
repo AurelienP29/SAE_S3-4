@@ -44,7 +44,7 @@
           </div>
         </div>
 
-        <div class="text-col sticky-col">
+        <div class="text-col sticky-col" style="max-width: 100%; max-height: 100%;">
           <h2 class="neon-title">{{ texts.locationTitle }}</h2>
           <p class="mb-4">{{ texts.mapTitle }}</p>
           <div class="map-actions">
@@ -58,14 +58,22 @@
 
       <section class="full-width-row scroll-reveal">
         <div class="glass-panel-wide">
-          <PrestataireTable/>
+          <PrestataireTable mode="prestataires"/>
+        </div>
+      </section>
+
+      <section class="full-width-row scroll-reveal">
+        <div class="glass-panel-wide">
+          <PrestataireTable mode="prestations"/>
         </div>
       </section>
 
       <section class="grid-row scroll-reveal">
         <div class="visual-col center-content">
           <div class="deco-square">
-            <span class="emoji">?</span>
+            <span class="emoji">
+              <img src="/src/assets/images/question-mark-8127954_640.png" alt="Necronomi'con Logo" height="100px" width="100%"/>
+            </span>
           </div>
         </div>
         <div class="text-col">
@@ -168,7 +176,7 @@ const supporterItems = supporters.map(s => ({...s, src: getImageUrl(s.imgName)})
 /* --- HERO SECTION --- */
 .hero-section {
   position: relative;
-  height: 91vh;
+  height: 93vh;
   background-size: cover;
   background-position: center;
   background-attachment: fixed; /* Parallax */
@@ -192,7 +200,7 @@ const supporterItems = supporters.map(s => ({...s, src: getImageUrl(s.imgName)})
 }
 
 .floating-banner {
-  max-width: 600px;
+  max-width: 800px;
   width: 90vw;
   border-radius: 12px;
   box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
@@ -275,7 +283,7 @@ const supporterItems = supporters.map(s => ({...s, src: getImageUrl(s.imgName)})
 
 /* Map specific styling */
 .map-container {
-  height: 450px;
+  height: auto;
   border-radius: 8px;
   overflow: hidden;
   border: 2px solid #333;

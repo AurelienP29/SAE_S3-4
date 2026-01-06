@@ -31,6 +31,10 @@ export const translations = {
     'profile': 'Mon Profil',
     'settings': 'Paramètres',
     'contact': 'Contactez nous',
+    'login.with.google': 'Se connecter avec Google',
+    'login.with.social': 'Ou se connecter via',
+    'register.with.google': 'S\'inscrire avec Google',
+    'register.with.social': 'Ou s\'inscrire via',
   },
   en: {
     home: 'Home',
@@ -50,5 +54,9 @@ export const translations = {
     'profile': 'My Profile',
     'settings': 'Settings',
     'contact': 'Contact Us',
+    'login.with.google': 'Login with Google',
+    'login.with.social': 'Or login via',
+    'register.with.google': 'Register with Google',
+    'register.with.social': 'Or register via',
   }
 }

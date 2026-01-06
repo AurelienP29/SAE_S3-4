@@ -147,11 +147,6 @@ const menuItems = computed(() => {
       icon: 'pi pi-calendar',
       items: [
         {
-          label: lang('organisateur.map'),
-          icon: 'pi pi-map',
-          command: () => goTo('OrganisateurMap')
-        },
-        {
           label: lang('organistaeur.manager'),
           icon: 'pi pi-list',
           command: () => goTo('OrganisateurEvents')
@@ -174,11 +169,6 @@ const menuItems = computed(() => {
           label: lang('prestataire.services'),
           icon: 'pi pi-box',
           command: () => goTo('PrestataireView')
-        },
-        {
-          label: lang('prestataire.bookings'),
-          icon: 'pi pi-calendar-plus',
-          command: () => goTo('PrestataireBookings')
         }
       ]
     })

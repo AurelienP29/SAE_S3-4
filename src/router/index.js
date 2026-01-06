@@ -10,6 +10,7 @@ import AdminView from "@/views/AdminView.vue"
 import AdminMapView from "@/views/AdminMapView.vue";
 import CartView from "@/views/Billeterie/CartView.vue";
 import SuccessView from "@/views/Billeterie/SuccessView.vue";
+import PrestationView from "@/views/PrestationView.vue";
 
 //import Test from "@/views/Test.vue";
 
@@ -34,7 +35,8 @@ const routes = [
     {path: '/admin/map', name: 'OrganisateurMap', component: AdminMapView},
     {path: '/cart', name:'Cart', component: CartView},
     {path: '/checkout', name:'Checkout', component: () => import('@/views/Billeterie/CheckOutView.vue')},
-    {path: '/order-success' ,name: 'success', component: SuccessView}
+    {path: '/order-success' ,name: 'success', component: SuccessView},
+    {path: '/prestation/:id', name: 'PrestationDetail', component: PrestationView}
 ]
 
 const router = createRouter({
