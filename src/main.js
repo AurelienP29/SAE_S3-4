@@ -8,6 +8,7 @@ import ConfirmationService from 'primevue/confirmationservice'
 import DialogService from 'primevue/dialogservice'
 import 'primeicons/primeicons.css';
 import "/src/assets/styles/style.css";
+import "primeflex/primeflex.css";
 
 import App from './App.vue'
 import router from './router'

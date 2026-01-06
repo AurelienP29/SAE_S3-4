@@ -22,7 +22,7 @@
         <h3 class="total-text">Total : <span>{{ cartStore.totalAmount }}€</span></h3>
         <div class="cart-actions">
           <button @click="cartStore.clearCart()" class="btn-clear">Vider le panier</button>
-          <button class="btn-validate">Valider la commande</button>
+          <button class="btn-validate" @click="$router.push('/checkout')">Valider la commande</button>
         </div>
       </div>
     </div>

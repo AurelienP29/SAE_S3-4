@@ -330,7 +330,7 @@ async function registerProvider() {
     msg_type: t('msg_type'),
   };
 
-  emailjs.send('service_2zpxqyi', 'template_ul9qm2l',  templateData)
+  emailjs.send('service_2zpxqyi', 'inscription_provider',  templateData)
       .then((message) => {
             console.log('SUCCESS!', message);
           }, (error) => {

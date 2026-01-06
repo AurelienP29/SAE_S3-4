@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import emailjs from '@emailjs/browser'
 
 export const useAuthStore = defineStore('auth', () => {
     // On initialise l'utilisateur depuis le localStorage s'il existe
@@ -17,7 +18,7 @@ export const useAuthStore = defineStore('auth', () => {
         { id: 4, titre: "Atelier Maquillage FX", places: 10, date: "Dimanche 14h" }
     ])
 
-    //TODO Stockage temporaire des activités
+    //TODO Stockage temporaire des billets
     const ticketsTypes = ref([
         {id:1 , label: "Tarif réduit" , price: "12€" , description:"Pour les étudiants, personnes au chômage, personne à mobilité réduite et/ou retraitée", cout: 12},
         {id:2 , label: "Tarif plein" , price: "20€", cout:20},
@@ -71,7 +72,17 @@ export const useAuthStore = defineStore('auth', () => {
             })
 
             alert(`Réservation enregistrée`)
-            // TODO Envoyer un mail de confirmation de réservation
+            const templateParams = {
+                salutation: this.user.name,
+                activite: activite.titre,
+                date: activite.date,
+            }
+            emailjs.send('service_2zpxqyi', 'template_ul9qm2l', templateParams)
+                .then((response) => {
+                    console.log('SUCCESS!', response.status, response.text);
+                }, (err) => {
+                    console.log('FAILED...', err);
+                })
             return true
         }
         return false
