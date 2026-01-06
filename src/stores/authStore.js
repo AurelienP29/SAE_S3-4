@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 import emailjs from '@emailjs/browser'
 
 export const useAuthStore = defineStore('auth', () => {
-    // On initialise l'utilisateur depuis le localStorage s'il existe
     const storedUser = localStorage.getItem('user')
     const user = ref(storedUser ? JSON.parse(storedUser) : null)
     
@@ -42,11 +41,21 @@ export const useAuthStore = defineStore('auth', () => {
             email: userData.email,
             name: userData.name,
             role: userData.role,
-            roles: userData.roles || [userData.role]
+            roles: userData.roles || [userData.role],
+            phone: userData.phone || '',
+            description: userData.description || '',
+            picture: userData.picture || ''
         }
         
         user.value = newUser
         localStorage.setItem('user', JSON.stringify(newUser))
+    }
+
+    function updateUser(updatedData) {
+        if (user.value) {
+            user.value = { ...user.value, ...updatedData }
+            localStorage.setItem('user', JSON.stringify(user.value))
+        }
     }
 
     function logout() {
@@ -107,6 +116,7 @@ export const useAuthStore = defineStore('auth', () => {
         reservations,
         mesReservations,
         login,
+        updateUser,
         logout,
         setLanguage,
         reserverActivite,

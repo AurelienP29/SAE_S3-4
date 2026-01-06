@@ -1,7 +1,7 @@
 <template>
   <div id="footer">
     <!-- Button -->
-    <Button :label="t('registerAsProvider')" icon="pi pi-user-plus" @click="openModal()" severity="secondary"
+    <Button :label=" t('registerAsProvider')" icon="pi pi-user-plus" @click="openModal()" severity="secondary"
             style="min-width: 10rem"/>
 
     <!-- Modal -->
@@ -120,8 +120,8 @@
 
         <!-- Buttons -->
         <div id="button-container">
-          <Button type="button" :label="t('cancel')" severity="secondary" @click="visible = false"></Button>
-          <Button type="button" :label="t('send')" @click="validateAndSend"></Button>
+          <Button type="button" :label=" t('cancel')" severity="secondary" @click="visible = false"></Button>
+          <Button type="button" :label=" t('send')" @click="validateAndSend"></Button>
         </div>
 
       </form>
@@ -134,8 +134,8 @@
 <script setup>
 import {reactive, ref} from 'vue'
 import {useAuthStore} from '@/stores/authStore.js'
-import Dialog from 'primevue/dialog'
-import Button from 'primevue/button'
+import {Dialog, Button} from 'primevue'
+
 //import {EmailTemplate} from "@/components/EmailTemplate.vue";
 import {render} from '@vue-email/render'
 import emailjs from '@emailjs/browser'

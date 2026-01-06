@@ -32,11 +32,25 @@
           <div v-if="passwordError" style="color: red;">{{ passwordError }}</div>
         </div>
 
-        <Button label="Se connecter" icon="pi pi-sign-in" @click="handleLogin" />
+        <Button label=" Se connecter" icon="pi pi-sign-in" @click="handleLogin" />
+
+        <div class="divider">
+          <span>{{ lang('login.with.social') }}</span>
+        </div>
+
+        <div class="social-login-grid">
+          <div id="google-login-btn" class="social-btn google-btn-container"></div>
+          
+          <div class="social-icons-row mt-3">
+            <Button icon="pi pi-github" severity="secondary" rounded outlined @click="handleSocialLogin('GitHub')" />
+            <Button icon="pi pi-facebook" severity="secondary" rounded outlined @click="handleSocialLogin('Facebook')" />
+            <Button icon="pi pi-twitter" severity="secondary" rounded outlined @click="handleSocialLogin('Twitter')" />
+          </div>
+        </div>
 
         <div class="mt-4 text-center">
           <Button
-            label="Créer un compte"
+            label=" Créer un compte"
             icon="pi pi-user-plus"
             class="p-button-text"
             @click="goToCreateAccount"
@@ -52,6 +66,14 @@ import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 import { useLoginService } from '@/services/loginService.js'
+import { useAuthStore } from '@/stores/authStore.js'
+import { translations } from '@/datasource/lang.js'
+import { onMounted } from 'vue'
+
+const authStore = useAuthStore()
+const lang = (key) => {
+  return translations[authStore.currentLanguage][key] || key
+}
 
 const {
   email,
@@ -59,8 +81,29 @@ const {
   emailError,
   passwordError,
   handleLogin,
-  goToCreateAccount
+  goToCreateAccount,
+  handleSocialLogin,
+  handleGoogleCallback
 } = useLoginService()
+
+onMounted(() => {
+  if (window.google) {
+    window.google.accounts.id.initialize({
+      client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // À remplacer par un vrai ID
+      callback: handleGoogleCallback,
+      auto_select: false,
+      cancel_on_tap_outside: true
+    });
+    
+    window.google.accounts.id.renderButton(
+      document.getElementById("google-login-btn"),
+      { theme: "outline", size: "large", width: "100%", text: "signin_with", shape: "rectangular" }
+    );
+    
+    // Optionnel : Afficher le One Tap de Google
+    // window.google.accounts.id.prompt();
+  }
+})
 </script>
 
 <style scoped src="@/assets/styles/LoginForm.css"></style>

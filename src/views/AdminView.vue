@@ -46,14 +46,12 @@
           <TabPanel lazy>
             <template #header>
               <div class="flex align-items-center gap-2 tab-header">
-                <span class="font-bold">Accounts</span>
+                <i class="pi pi-users" />
+                <span class="font-bold">Comptes</span>
               </div>
             </template>
             <div class="tab-content">
-              <div class="placeholder-box">
-                <i class="pi pi-wrench text-4xl mb-3 text-purple"></i>
-                <p>Module en cours de développement...</p>
-              </div>
+              <AccountManager />
             </div>
           </TabPanel>
 
@@ -71,6 +69,8 @@ import { TabPanel, TabView } from 'primevue';
 import PrestataireManager from '@/components/adminComponents/AdminPrestataireManager.vue';
 import InteractiveMap from "@/components/InteractiveMap.vue";
 import {useAuthStore} from "@/stores/authStore.js";
+
+import AccountManager from '@/components/adminComponents/AdminAccountManager.vue';
 
 const authStore = useAuthStore();
 

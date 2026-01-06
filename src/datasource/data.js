@@ -139,7 +139,7 @@ let prestations = [
         id: 1,
         name: 'Le Chaudron Baveur',
         Champ1: 'Zone Food - F01',
-        Champ2: 'Mme. Rosmerta',
+        prestataireId: 1,
         category: 'restauration',
         description: '<p>Bièraubeurre maison, jus de citrouille et snacks magiques inspirés des sorciers.</p>'
     },
@@ -147,7 +147,7 @@ let prestations = [
         id: 2,
         name: 'Ichiraku Ramen',
         Champ1: 'Zone Food - F02',
-        Champ2: 'Teuchi',
+        prestataireId: 2,
         category: 'restauration',
         description: '<p>Les authentiques Ramen de Konoha. Miso, Porc ou Végétarien.</p>'
     },
@@ -155,7 +155,7 @@ let prestations = [
         id: 3,
         name: 'La Taverne du Nain',
         Champ1: 'Zone Food - F03',
-        Champ2: 'Gimli',
+        prestataireId: null,
         category: 'restauration',
         description: '<p>Plateaux de charcuterie, hydromel (sans alcool) et ambiance médiévale.</p>'
     },
@@ -163,7 +163,7 @@ let prestations = [
         id: 4,
         name: 'Bubble Tea K-Pop',
         Champ1: 'Zone Food - F04',
-        Champ2: 'Sophie L.',
+        prestataireId: null,
         category: 'restauration',
         description: '<p>Bubble teas colorés et mochis glacés.</p>'
     },
@@ -173,7 +173,7 @@ let prestations = [
         id: 5,
         name: 'RetroGaming Association',
         Champ1: 'Hall A - G01',
-        Champ2: 'Marc D.',
+        prestataireId: 5,
         category: 'jeu_video',
         description: '<p>Rejouez aux classiques : NES, SNES, Megadrive et bornes d\'arcade en libre service.</p>'
     },
@@ -181,7 +181,7 @@ let prestations = [
         id: 6,
         name: 'VR Experience 9000',
         Champ1: 'Hall A - G05',
-        Champ2: 'Sarah C.',
+        prestataireId: null,
         category: 'jeu_video',
         description: '<p>Démonstration de casques VR dernière génération. Beat Saber et simulateurs de vol.</p>'
     },
@@ -189,7 +189,7 @@ let prestations = [
         id: 7,
         name: 'Smash Bros Tournament',
         Champ1: 'Scène Gaming',
-        Champ2: 'Team Fox',
+        prestataireId: null,
         category: 'jeu_video',
         description: '<p>Inscriptions pour le grand tournoi SSBU. Manettes Gamecube recommandées.</p>'
     },
@@ -197,7 +197,7 @@ let prestations = [
         id: 8,
         name: 'Indie Dev Corner',
         Champ1: 'Hall A - G12',
-        Champ2: 'Lucas Dev',
+        prestataireId: null,
         category: 'jeu_video',
         description: '<p>Venez tester les productions des développeurs indépendants de la région.</p>'
     },
@@ -207,7 +207,7 @@ let prestations = [
         id: 9,
         name: 'L\'Antre du Maître de Jeu',
         Champ1: 'Hall B - T01',
-        Champ2: 'Antoine R.',
+        prestataireId: 9,
         category: 'jeu_plateau',
         description: '<p>Initiation au Jeu de Rôle : D&D, Cthulhu et Pathfinder. Sessions de 1h.</p>'
     },
@@ -215,7 +215,7 @@ let prestations = [
         id: 10,
         name: 'Warhammer Painting',
         Champ1: 'Hall B - T04',
-        Champ2: 'Games Workshop',
+        prestataireId: null,
         category: 'jeu_plateau',
         description: '<p>Atelier de peinture de figurines. Repartez avec votre Space Marine peint !</p>'
     },
@@ -223,7 +223,7 @@ let prestations = [
         id: 11,
         name: 'Magic: The Gathering Area',
         Champ1: 'Hall B - T08',
-        Champ2: 'Wizards Rep',
+        prestataireId: null,
         category: 'jeu_plateau',
         description: '<p>Drafts toute la journée et initiation gratuite avec des decks de bienvenue.</p>'
     },
@@ -231,7 +231,7 @@ let prestations = [
         id: 12,
         name: 'Ludothèque Géante',
         Champ1: 'Hall B - T10',
-        Champ2: 'Assoc. Des Jeux',
+        prestataireId: null,
         category: 'jeu_plateau',
         description: '<p>Plus de 200 jeux de société en libre accès pour jouer entre amis.</p>'
     },
@@ -241,109 +241,33 @@ let prestations = [
         id: 13,
         name: 'Goodies & Co.',
         Champ1: 'Hall C - S01',
-        Champ2: 'Jean-Mi',
+        prestataireId: 13,
         category: 'boutique',
         description: '<p>Figurines Pop, mugs, t-shirts et produits dérivés officiels.</p>'
     },
     {
-        id: 14,
-        name: 'Manga Store Import',
-        Champ1: 'Hall C - S05',
-        Champ2: 'Yuki M.',
-        category: 'boutique',
-        description: '<p>Import direct du Japon : Artbooks, Snacks japonais et figurines rares.</p>'
-    },
-    {
-        id: 15,
-        name: 'L\'Échoppe Médiévale',
-        Champ1: 'Hall C - S09',
-        Champ2: 'Guillaume le T.',
-        category: 'boutique',
-        description: '<p>Costumes, corsets, hydromel et accessoires en cuir pour le GN.</p>'
-    },
-    {
-        id: 16,
-        name: 'Dice Goblin',
-        Champ1: 'Hall C - S12',
-        Champ2: 'Elodie D.',
-        category: 'boutique',
-        description: '<p>Dés artisanaux en résine, métal et pierre semi-précieuse.</p>'
-    },
-    {
-        id: 17,
-        name: 'Katana Spirit',
-        Champ1: 'Hall C - S15',
-        Champ2: 'M. Blade',
-        category: 'boutique',
-        description: '<p>Répliques d\'armes de manga et d\'épées historiques (non affûtées).</p>'
-    },
-
-    // --- ATELIER (Workshops) ---
-    {
         id: 18,
         name: 'Cosplay SOS',
         Champ1: 'Zone Cosplay',
-        Champ2: 'Marie C.',
+        prestataireId: 18,
         category: 'atelier',
         description: '<p>Réparations d\'urgence pour cosplayers (colle, fil, épingles) et vestiaires.</p>'
-    },
-    {
-        id: 19,
-        name: 'Origami MasterClass',
-        Champ1: 'Salle 1',
-        Champ2: 'Kenji',
-        category: 'atelier',
-        description: '<p>Apprenez l\'art du pliage de papier japonais. Niveau débutant à expert.</p>'
     },
     {
         id: 20,
         name: 'Initiation au Sabre Laser',
         Champ1: 'Extérieur',
-        Champ2: 'Jedi Order',
+        prestataireId: 20,
         category: 'atelier',
         description: '<p>Chorégraphie de combat au sabre laser. (Prêt de matériel inclus).</p>'
     },
     {
-        id: 21,
-        name: 'Cours de Doublage',
-        Champ1: 'Salle Audio',
-        Champ2: 'Brigitte L.',
-        category: 'atelier',
-        description: '<p>Essayez-vous au doublage d\'anime avec une directrice de plateau pro.</p>'
-    },
-
-    // --- ARTISAN / ARTIST ALLEY ---
-    {
         id: 22,
         name: 'Plumes & Dragons',
         Champ1: 'Artist Alley - A01',
-        Champ2: 'Chloé Art',
+        prestataireId: 22,
         category: 'artisan',
         description: '<p>Illustrations fantasy, marque-pages et commissions sur place.</p>'
-    },
-    {
-        id: 23,
-        name: 'Steampunk Factory',
-        Champ1: 'Artist Alley - A04',
-        Champ2: 'Victor V.',
-        category: 'artisan',
-        description: '<p>Bijoux et accessoires style victorien et industriel.</p>'
-    },
-    {
-        id: 24,
-        name: 'Pixel Beads',
-        Champ1: 'Artist Alley - A08',
-        Champ2: 'Maxime',
-        category: 'artisan',
-        description: '<p>Tableaux et porte-clés en perles à repasser (Pixel Art).</p>'
-    },
-    {
-        id: 25,
-        name: 'Cuirs de Légende',
-        Champ1: 'Artist Alley - A10',
-        Champ2: 'Ragnar',
-        category: 'artisan',
-        description: '<p>Ceintures, bourses et brassards en cuir véritable faits main.</p>'
     }
 ];
 
@@ -378,7 +302,7 @@ let prestataires = [
     {
         id: 2,
         name: 'Ichiraku Ramen',
-        email: 'commande@ichiraku.konoha',
+        email: 'prestataire@test.com',
         phone: '07 65 43 21 09',
         category: 'restauration',
         description: '<p>Les authentiques Ramen de Konoha. Miso, Porc ou Végétarien.</p>'
@@ -527,7 +451,9 @@ export const users = [
         email: 'admin@test.com',
         password: 'admin',
         role: 'admin',
-        roles: ['admin', 'organisateur']
+        roles: ['admin', 'organisateur'],
+        phone: '0123456789',
+        description: 'Administrateur de la plateforme Necronomi\'con.'
     },
     {
         id: 2,
@@ -535,7 +461,9 @@ export const users = [
         email: 'prestataire@test.com',
         password: 'presta',
         role: 'prestataire',
-        roles: ['prestataire']
+        roles: ['prestataire'],
+        phone: '0765432109',
+        description: 'Chef chez Ichiraku Ramen, spécialiste des nouilles de Konoha.'
     },
     {
         id: 3,
@@ -543,7 +471,79 @@ export const users = [
         email: 'visiteur@test.com',
         password: 'visi',
         role: 'visiteur',
-        roles: ['visiteur']
+        roles: ['visiteur'],
+        phone: '0611223344',
+        description: 'Passionné de culture geek et de cosplay.'
+    },
+    {
+        id: 4,
+        name: 'Rosmerta',
+        email: 'contact@chaudron-baveur.wizard',
+        password: 'rosm',
+        role: 'prestataire',
+        roles: ['prestataire'],
+        phone: '0699887766',
+        description: 'Tenancière du Chaudron Baveur.'
+    },
+    {
+        id: 5,
+        name: 'RetroGaming Asso',
+        email: 'asso@retrogaming-est.fr',
+        password: 'retro',
+        role: 'prestataire',
+        roles: ['prestataire'],
+        phone: '0384000000',
+        description: 'Association de passionnés de jeux vidéo anciens.'
+    },
+    {
+        id: 6,
+        name: 'MJ Antre',
+        email: 'mj@antre-asso.com',
+        password: 'mjmj',
+        role: 'prestataire',
+        roles: ['prestataire'],
+        phone: '0611223344',
+        description: 'Maître de Jeu professionnel.'
+    },
+    {
+        id: 7,
+        name: 'Sales Goodies',
+        email: 'sales@goodies-corp.com',
+        password: 'good',
+        role: 'prestataire',
+        roles: ['prestataire'],
+        phone: '0144556677',
+        description: 'Vendeur de produits dérivés.'
+    },
+    {
+        id: 8,
+        name: 'Help Cosplay',
+        email: 'help@cosplay-sos.org',
+        password: 'help',
+        role: 'prestataire',
+        roles: ['prestataire'],
+        phone: '0600110011',
+        description: 'Service d\'aide au cosplay.'
+    },
+    {
+        id: 9,
+        name: 'Master Jedi',
+        email: 'master@jedi-order-fc.fr',
+        password: 'jedi',
+        role: 'prestataire',
+        roles: ['prestataire'],
+        phone: '0655443322',
+        description: 'Maître Jedi formateur.'
+    },
+    {
+        id: 10,
+        name: 'Chloe Art',
+        email: 'chloe.art@gmail.com',
+        password: 'art',
+        role: 'prestataire',
+        roles: ['prestataire'],
+        phone: '0612341234',
+        description: 'Illustratrice freelance.'
     }
 ]
 

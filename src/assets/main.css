@@ -1,0 +1,212 @@
+/* src/assets/main.css */
+
+/* =========================================
+   1. IMPORTS & FONTS
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+/* =========================================
+   2. VARIABLES (THEME DNA)
+   ========================================= */
+:root {
+    /* Colors */
+    --necro-bg: #0b0914;           /* Deep Void */
+    --necro-surface: #1e1b2e;      /* Card Background */
+    --necro-purple: #a855f7;       /* Primary Accent */
+    --necro-purple-dim: rgba(168, 85, 247, 0.2);
+    --necro-green: #22c55e;        /* Secondary Accent (Toxic) */
+    --necro-text: #f1f5f9;         /* Main Text */
+    --necro-text-muted: #94a3b8;   /* Secondary Text */
+
+    /* Glassmorphism settings */
+    --glass-bg: rgba(30, 27, 46, 0.65);
+    --glass-border: rgba(168, 85, 247, 0.3);
+    --glass-blur: 12px;
+
+    /* Spacing */
+    --radius-md: 12px;
+    --radius-lg: 16px;
+
+    /* PrimeVue Overrides (Optional - maps theme to PrimeVue vars) */
+    --primary-color: var(--necro-purple);
+    --primary-color-text: #ffffff;
+}
+
+/* =========================================
+   3. RESET & BASE
+   ========================================= */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--necro-bg);
+    color: var(--necro-text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px; /* Slightly larger for readability */
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar (Chrome/Safari/Edge) */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: var(--necro-bg);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--necro-purple);
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--necro-green);
+}
+
+/* =========================================
+   4. TYPOGRAPHY
+   ========================================= */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.4;
+    margin-top: 0;
+}
+
+h1 { color: var(--necro-text); margin-bottom: 2rem; }
+h2 { color: var(--necro-purple); margin-bottom: 1.5rem; }
+h3 { color: var(--necro-green); margin-bottom: 1rem; }
+
+a {
+    color: var(--necro-purple);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: var(--necro-green);
+    text-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+}
+
+/* =========================================
+   5. LAYOUT UTILITIES
+   ========================================= */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.page-wrapper {
+    padding-top: 80px; /* Space for fixed navbar if you have one */
+    min-height: 100vh;
+}
+
+/* =========================================
+   6. COMPONENT: GLASS CARDS
+   ========================================= */
+.necro-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.necro-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(168, 85, 247, 0.2);
+}
+
+/* Green accent variation */
+.necro-card.accent-green {
+    border-left: 4px solid var(--necro-green);
+}
+
+/* =========================================
+   7. COMPONENT: BUTTONS
+   ========================================= */
+.necro-btn {
+    display: inline-block;
+    background: var(--necro-purple);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    border-radius: 4px; /* Pixel art looks better with small radius */
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+    text-transform: uppercase;
+}
+
+.necro-btn:hover {
+    background: var(--necro-green);
+    color: #000;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.5);
+}
+
+.necro-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px rgba(0,0,0,0.5);
+}
+
+/* =========================================
+   8. COMPONENT: FORMS (PrimeVue Overrides)
+   ========================================= */
+/* Applies to PrimeVue inputs if you import this CSS after PrimeVue */
+/*.p-inputtext {*/
+/*    background: rgba(11, 9, 20, 0.8) !important;*/
+/*    border: 1px solid var(--necro-purple) !important;*/
+/*    color: var(--necro-text) !important;*/
+/*    font-family: 'Rajdhani', sans-serif !important;*/
+/*}*/
+
+.p-inputtext:focus {
+    border-color: var(--necro-green) !important;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3) !important;
+}
+
+/* =========================================
+   9. ANIMATIONS
+   ========================================= */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes glitch {
+    0% { text-shadow: 2px 2px var(--necro-purple); }
+    25% { text-shadow: -2px -2px var(--necro-green); }
+    50% { text-shadow: 2px -2px var(--necro-purple); }
+    75% { text-shadow: -2px 2px var(--necro-green); }
+    100% { text-shadow: 2px 2px var(--necro-purple); }
+}
+
+.anim-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.anim-glitch:hover {
+    animation: glitch 0.5s infinite;
+}
+
+/* =========================================
+   10. TEXT UTILITIES
+   ========================================= */
+.text-purple { color: var(--necro-purple); }
+.text-green { color: var(--necro-green); }
+.text-center { text-align: center; }

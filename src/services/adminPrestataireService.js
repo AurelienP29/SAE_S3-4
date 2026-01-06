@@ -1,5 +1,6 @@
 import {ref, reactive} from 'vue'
 import {usePrestataireStore} from '@/stores/prestataire.js'
+import {categoryOptions} from '@/datasource/data.js'
 
 export function useAdminPrestataireService() {
     const prestataireStore = usePrestataireStore()
@@ -8,11 +9,6 @@ export function useAdminPrestataireService() {
     const deleteDialogVisible = ref(false)
     const isEditMode = ref(false)
     const selectedToDelete = ref(null)
-
-    const categoryOptions = [
-        {label: 'Atelier', value: 'atelier'},
-        {label: 'Restauration', value: 'restauration'},
-    ]
 
     const emptyForm = () => ({
         id: null,
