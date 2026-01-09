@@ -433,6 +433,27 @@ let waitingList = [
 ];
 
 
+let prestationWaitingList = [
+    {
+        id: 201,
+        name: 'Magic Wand Workshop',
+        Champ1: 'Hall C - S05',
+        prestataireId: 1,
+        category: 'artisan',
+        description: '<p>Apprenez à fabriquer votre propre baguette magique.</p>',
+        requestDate: '2025-01-15'
+    },
+    {
+        id: 202,
+        name: 'Cyberpunk Ramen Bar',
+        Champ1: 'Zone Food - F08',
+        prestataireId: 2,
+        category: 'restauration',
+        description: '<p>Ramen futuristes avec néons comestibles.</p>',
+        requestDate: '2025-01-20'
+    }
+];
+
 export {
     message,
     providers,
@@ -441,6 +462,7 @@ export {
     initialPrestataires,
     prestataires,
     waitingList,
+    prestationWaitingList,
     categoryOptions,
 }
 
@@ -453,7 +475,8 @@ export const users = [
         role: 'admin',
         roles: ['admin', 'organisateur'],
         phone: '0123456789',
-        description: 'Administrateur de la plateforme Necronomi\'con.'
+        description: 'Administrateur de la plateforme Necronomi\'con.',
+        picture: ''
     },
     {
         id: 2,
@@ -463,7 +486,8 @@ export const users = [
         role: 'prestataire',
         roles: ['prestataire'],
         phone: '0765432109',
-        description: 'Chef chez Ichiraku Ramen, spécialiste des nouilles de Konoha.'
+        description: 'Chef chez Ichiraku Ramen, spécialiste des nouilles de Konoha.',
+        picture: 'https://primefaces.org/cdn/primevue/images/avatar/onyamalimba.png'
     },
     {
         id: 3,
@@ -473,7 +497,8 @@ export const users = [
         role: 'visiteur',
         roles: ['visiteur'],
         phone: '0611223344',
-        description: 'Passionné de culture geek et de cosplay.'
+        description: 'Passionné de culture geek et de cosplay.',
+        picture: 'https://primefaces.org/cdn/primevue/images/avatar/ionibowcher.png'
     },
     {
         id: 4,

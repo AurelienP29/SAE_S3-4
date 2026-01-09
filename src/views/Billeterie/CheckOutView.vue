@@ -247,7 +247,9 @@ const processPayment = async () => {
       await Promise.all(emailPromises);
 
       alert(`Paiement réussi ! Un mail a été envoyé à chaque participant.`);
-      cartStore.clearCart();
+
+      cartStore.confirmTickets();
+
       await router.push({name: 'success'});
     } catch (error) {
       console.error("Erreur lors de l'envoi des mails :", error);

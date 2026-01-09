@@ -10,7 +10,6 @@
 
       <template #item="{ item, props, hasSubmenu }">
         <a v-ripple class="flex align-items-center" v-bind="props.action">
-          <!-- TODO PrimeVue Component: ripple effect on buttons -->
           <span :class="item.icon"/>
           <span class="ml-2">{{ item.label }}</span>
           <Badge v-if="item.badge" :value="item.badge" class="ml-2" severity="danger"/>
@@ -54,16 +53,27 @@
               class="login-button"
               raised
           />
-          <SplitButton
-              v-else
-              :label="authStore.user?.name || lang('logout')"
-              icon="pi pi-user"
-              @click="handleLogout"
-              :model="userMenuItems"
-              severity="secondary"
-              outlined
-              class="user-menu"
-          />
+          <template v-else>
+            <SplitButton
+                :label="authStore.user? authStore.user.name : lang('logout')"
+                @click="handleLogout"
+                :model="userMenuItems"
+                severity="secondary"
+                outlined
+                class="user-menu"
+            >
+              <template #icon>
+                <Avatar
+                    v-if="authStore.user"
+                    :image="authStore.user?.picture"
+                    :label="!authStore.user?.picture ? authStore.user?.name?.charAt(0).toUpperCase() : null"
+                    @click="goTo('Account')"
+                    shape="circle"
+                    class="mr-2 border-1 border-purple-500"
+                />
+              </template>
+            </SplitButton>
+          </template>
         </div>
       </template>
     </Menubar>
@@ -74,7 +84,7 @@
 import {ref, computed, onMounted, onBeforeUnmount} from 'vue'
 import {useRouter} from 'vue-router'
 import {useAuthStore} from '@/stores/authStore.js'
-import { Menubar, Button, SplitButton, Dropdown, Badge  } from 'primevue'
+import { Menubar, Button, SplitButton, Dropdown, Badge, Avatar } from 'primevue'
 import Ripple from 'primevue/ripple'
 
 import '/src/assets/styles/NavBar.css'
@@ -102,14 +112,9 @@ function goTo(routeName) {
 
 const userMenuItems = computed(() => [
   {
-    label: lang('profile'),
+    label: lang('Profile & Settings'),
     icon: 'pi pi-user',
     command: () => goTo('Account')
-  },
-  {
-    label: lang('settings'),
-    icon: 'pi pi-cog',
-    command: () => goTo('Settings')
   },
   {
     separator: true
@@ -174,7 +179,7 @@ const menuItems = computed(() => {
     })
   }
 
-  // À propos
+  // About
   items.push({
     label: lang('about'),
     icon: 'pi pi-info-circle',

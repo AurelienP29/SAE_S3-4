@@ -177,3 +177,19 @@
         gap: 0.5rem;
     }
 }
+
+::deep(.user-menu .p-avatar) {
+    width: 32px;
+    height: 32px;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+    border: 1px solid #a855f7 !important;
+}
+
+::deep(.user-menu .p-avatar .p-avatar-text) {
+    font-size: 0.9rem;
+}
+
+::deep(.user-menu .p-button-label) {
+    font-weight: 600;
+}

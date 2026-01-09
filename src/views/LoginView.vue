@@ -39,6 +39,8 @@
         </div>
 
         <div class="social-login-grid">
+          <!-- <button @click="handleGoogleLogin">Google</button> !-->
+
           <div id="google-login-btn" class="social-btn google-btn-container"></div>
           
           <div class="social-icons-row mt-3">
@@ -100,7 +102,7 @@ onMounted(() => {
       { theme: "outline", size: "large", width: "100%", text: "signin_with", shape: "rectangular" }
     );
     
-    // Optionnel : Afficher le One Tap de Google
+    // Optionnel
     // window.google.accounts.id.prompt();
   }
 })

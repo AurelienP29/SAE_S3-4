@@ -1,3 +1,5 @@
+<!-- TODO: ajouter version anglaise du texte créé par le prestataire qu'il peut modifier / ajouter; Possibilité d'ajouter des images -->
+
 <template>
   <div class="prestation-detail-view p-4 min-h-screen bg-necro-bg">
     <div v-if="loading" class="flex justify-center items-center h-64">
@@ -49,9 +51,15 @@
               <h1 class="text-4xl md:text-5xl font-bold text-white mb-2 uppercase tracking-tight">
                 {{ prestation.name }}
               </h1>
-              <p class="text-xl text-green-400 font-medium flex items-center gap-2">
-                <i class="pi pi-map-marker"></i> {{ prestation.Champ1 }}
-              </p>
+              <div class="flex items-center gap-4">
+                <p class="text-xl text-green-400 font-medium flex items-center gap-2">
+                  <i class="pi pi-map-marker"></i> {{ prestation.Champ1 }}
+                </p>
+                <div v-if="averageRating > 0" class="flex items-center gap-2 bg-yellow-400/10 px-2 py-1 rounded border border-yellow-400/30">
+                  <Rating v-model="averageRating" readonly :cancel="false" />
+                  <span class="text-yellow-400 font-bold">{{ averageRating }}</span>
+                </div>
+              </div>
             </div>
 
             <div v-if="prestataire" class="prestataire-card p-4 rounded-lg bg-black/30 border border-purple-500/30">
@@ -61,7 +69,58 @@
             </div>
           </div>
 
-          <div class="content-display text-gray-200 leading-relaxed" v-html="detailContent"></div>
+          <div class="content-display text-gray-200 leading-relaxed mb-10" v-html="detailContent"></div>
+
+          <!-- Section Reviews -->
+          <div class="reviews-section mt-10 border-t border-purple-500/20 pt-8">
+            <h2 class="text-2xl font-bold text-purple-400 mb-6 uppercase tracking-wider flex items-center gap-3">
+              <i class="pi pi-comments"></i> Avis des visiteurs ({{ prestationReviews.length }})
+            </h2>
+
+            <!-- Formulaire pour ajouter un avis -->
+            <div v-if="authStore.isAuthenticated && !canEdit && !hasLeftReview" class="add-review-box p-4 rounded-lg bg-purple-900/20 border border-purple-500/30 mb-8">
+              <h3 class="text-lg font-bold text-white mb-3">Laisser un avis</h3>
+              <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-3">
+                  <span class="text-gray-300">Note :</span>
+                  <Rating v-model="newReview.rating" :cancel="false" />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label class="text-gray-300">Votre commentaire :</label>
+                  <Textarea v-model="newReview.comment" rows="3" class="w-full bg-black/40 text-white border-purple-500/30" />
+                </div>
+                <div class="flex justify-end">
+                  <Button label=" Publier mon avis" icon="pi pi-send" severity="primary" @click="submitReview" :disabled="!newReview.rating" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Liste des avis -->
+            <div v-if="prestationReviews.length > 0" class="flex flex-col gap-6">
+              <div v-for="review in prestationReviews" :key="review.id" class="review-item p-4 rounded-lg bg-black/20 border border-white/5 transition-all hover:border-purple-500/30">
+                <div class="flex justify-between items-start mb-2">
+                  <div class="flex items-center gap-3">
+                    <Avatar :label="review.userName.charAt(0).toUpperCase()" shape="circle" class="bg-purple-600 text-white" />
+                    <div>
+                      <div class="font-bold text-white">{{ review.userName }}</div>
+                      <div class="text-xs text-gray-500">{{ review.date }}</div>
+                    </div>
+                  </div>
+                  <div class="flex flex-col items-end gap-2">
+                    <Rating v-model="review.rating" readonly :cancel="false" />
+                    <div v-if="canManageReview(review)" class="flex gap-2">
+                      <Button icon="pi pi-pencil" text rounded severity="info" size="small" @click="editReview(review)" v-if="review.userId === authStore.user?.id" />
+                      <Button icon="pi pi-trash" text rounded severity="danger" size="small" @click="confirmDeleteReview(review.id)" />
+                    </div>
+                  </div>
+                </div>
+                <p class="text-gray-300 leading-relaxed italic">"{{ review.comment }}"</p>
+              </div>
+            </div>
+            <div v-else class="text-gray-500 italic p-4 text-center">
+              Soyez le premier à donner votre avis sur cette prestation !
+            </div>
+          </div>
         </div>
 
         <div v-else>
@@ -75,25 +134,53 @@
         </div>
       </div>
 
+      <!-- Dialog Modification Review -->
+      <Dialog v-model:visible="editReviewDialog" header="Modifier mon avis" modal class="p-fluid" style="width: 450px">
+        <div class="flex flex-col gap-4 mt-2">
+          <div class="flex items-center gap-3">
+            <span class="font-bold">Note :</span>
+            <Rating v-model="selectedReview.rating" :cancel="false" />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="font-bold">Commentaire :</label>
+            <Textarea v-model="selectedReview.comment" rows="4" />
+          </div>
+        </div>
+        <template #footer>
+          <Button label=" Annuler" icon="pi pi-times" text @click="editReviewDialog = false" />
+          <Button label=" Enregistrer" icon="pi pi-check" @click="saveReviewEdit" />
+        </template>
+      </Dialog>
+
+      <ConfirmDialog />
       <Toast />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore.js';
+import { useReviewStore } from '@/stores/reviewStore.js';
 import { prestations, prestataires } from '@/datasource/data.js';
-import { prestationsDetails } from '@/datasource/prestations_data.js';
-import { Button, Message, Toast } from 'primevue';
+import { prestationsDetails } from '@/datasource/prestations_data.js'
+
+import { 
+  Button, Message, Toast, Rating, Textarea, Avatar, 
+  ConfirmDialog, Dialog 
+} from 'primevue';
 import Editor from 'primevue/editor';
+
 import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
+const reviewStore = useReviewStore();
 const toast = useToast();
+const confirm = useConfirm();
 
 const loading = ref(true);
 const prestation = ref(null);
@@ -103,6 +190,88 @@ const isEditing = ref(false);
 const editContent = ref('');
 
 const prestationId = parseInt(route.params.id);
+
+
+// Reviews
+const prestationReviews = computed(() => reviewStore.getReviewsByPrestation(prestationId));
+// const averageRating = computed(() => {
+//   const total = prestationReviews.value.reduce((acc, r) => acc + r.rating, 0);
+//   return total / prestationReviews.value.length;
+// });
+const averageRating = computed(() => parseFloat(reviewStore.getAverageRating(prestationId)));
+const hasLeftReview = computed(() => {
+  if (!authStore.isAuthenticated) return false;
+  return prestationReviews.value.some(r => r.userId === authStore.user.id);
+});
+
+const newReview = reactive({
+  rating: 0,
+  comment: ''
+});
+
+const editReviewDialog = ref(false);
+const selectedReview = reactive({
+  id: null,
+  rating: 0,
+  comment: ''
+});
+
+function submitReview() {
+  if (!newReview.rating) return;
+  
+  reviewStore.addReview({
+    prestationId: prestationId,
+    userId: authStore.user.id,
+    userName: authStore.user.name,
+    rating: newReview.rating,
+    comment: newReview.comment
+  });
+  
+  newReview.rating = 0;
+  newReview.comment = '';
+  toast.add({ severity: 'success', summary: 'Avis publié', detail: 'Merci pour votre retour !', life: 3000 });
+}
+
+function canManageReview(review) {
+  if (!authStore.isAuthenticated) return false;
+  
+  // L'auteur peut modifier/supprimer
+  if (review.userId === authStore.user.id) return true;
+  
+  // Le prestataire peut supprimer les avis sur ses prestations
+  if (authStore.user.email === prestataire.value?.email) return true;
+  
+  return false;
+}
+
+function editReview(review) {
+  selectedReview.id = review.id;
+  selectedReview.rating = review.rating;
+  selectedReview.comment = review.comment;
+  editReviewDialog.value = true;
+}
+
+function saveReviewEdit() {
+  reviewStore.updateReview(selectedReview.id, {
+    rating: selectedReview.rating,
+    comment: selectedReview.comment
+  });
+  editReviewDialog.value = false;
+  toast.add({ severity: 'success', summary: 'Succès', detail: 'Avis mis à jour', life: 3000 });
+}
+
+function confirmDeleteReview(id) {
+  confirm.require({
+    message: 'Voulez-vous vraiment supprimer cet avis ?',
+    header: 'Confirmation de suppression',
+    icon: 'pi pi-exclamation-triangle',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      reviewStore.deleteReview(id);
+      toast.add({ severity: 'info', summary: 'Supprimé', detail: 'L\'avis a été supprimé', life: 3000 });
+    }
+  });
+}
 
 
 onMounted(() => {

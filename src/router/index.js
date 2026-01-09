@@ -12,7 +12,6 @@ import CartView from "@/views/Billeterie/CartView.vue";
 import SuccessView from "@/views/Billeterie/SuccessView.vue";
 import PrestationView from "@/views/PrestationView.vue";
 
-//import Test from "@/views/Test.vue";
 
 // const routes = [
 //     {
@@ -33,9 +32,9 @@ const routes = [
     {path: '/contact-us', name: 'Contact', component: ContactUs},
     {path: '/admin/prestataires', name: 'OrganisateurEvents', component: AdminView},
     {path: '/admin/map', name: 'OrganisateurMap', component: AdminMapView},
-    {path: '/cart', name:'Cart', component: CartView},
-    {path: '/checkout', name:'Checkout', component: () => import('@/views/Billeterie/CheckOutView.vue')},
-    {path: '/order-success' ,name: 'success', component: SuccessView},
+    {path: '/cart', name: 'Cart', component: CartView},
+    {path: '/checkout', name: 'Checkout', component: () => import('@/views/Billeterie/CheckOutView.vue')},
+    {path: '/order-success', name: 'success', component: SuccessView},
     {path: '/prestation/:id', name: 'PrestationDetail', component: PrestationView}
 ]
 

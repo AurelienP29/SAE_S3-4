@@ -58,21 +58,22 @@
 
       <section class="full-width-row scroll-reveal">
         <div class="glass-panel-wide">
-          <PrestataireTable mode="prestataires"/>
+          <PrestataireTable mode="prestations"/>
         </div>
       </section>
 
       <section class="full-width-row scroll-reveal">
         <div class="glass-panel-wide">
-          <PrestataireTable mode="prestations"/>
+          <PrestataireTable mode="prestataires"/>
         </div>
       </section>
+
 
       <section class="grid-row scroll-reveal">
         <div class="visual-col center-content">
           <div class="deco-square">
             <span class="emoji">
-              <img src="/src/assets/images/question-mark-8127954_640.png" alt="Necronomi'con Logo" height="100px" width="100%"/>
+              <img src="/src/assets/images/question-mark-8127954_640.png" alt="Question Mark" height="100px" width="100%"/>
             </span>
           </div>
         </div>
@@ -122,13 +123,14 @@ onMounted(() => {
 });
 
 const texts = computed(() => {
+  // return mainPageTextPresentation.fr;
   return mainPageTextPresentation[authStore.currentLanguage] || mainPageTextPresentation.fr;
 });
+
 
 const getImageUrl = (path) => {
   return new URL(`/src/assets/images/homeView/supporters/${path}`, import.meta.url).href;
 };
-
 const supporters = [
   {link: 'https://www.dagoma3d.com/', imgName: 'dagoma-baseline.png'},
   {link: 'https://cybersecurite.trinaps.com/', imgName: 'Trinaps_logo_RVB_transparent_500px.png'},
@@ -138,7 +140,7 @@ const supporters = [
   {link: 'http://www.univ-fcomte.fr/', imgName: 'ufc-ok.png'},
   {link: 'http://www.iut-bm.univ-fcomte.fr/', imgName: 'IUTBM.png'},
   {link: 'http://www.lpmosel.fr/', imgName: 'LPMOSEL.png'},
-  {link: 'http://www.ijbelfort.jeunes-fc.com/', imgName: 'AvantagesJeunes.jpg'},
+  {link: 'https://www.avantagesjeunes.com/', imgName: 'AvantagesJeunes.jpg'},
   {link: 'https://letrois.info/', imgName: 'letrois-e1562845802515.png'},
   {link: 'http://www.alaconquetedelest.fr/', imgName: 'Conquetedelest.jpg'},
   {link: 'http://latraxion.com/', imgName: 'Atraxion-e1575534618439.jpg'},

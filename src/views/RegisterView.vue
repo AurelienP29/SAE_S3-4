@@ -71,6 +71,8 @@
         </div>
 
         <div class="social-login-grid">
+
+          <!-- <button @click="handleGoogleLogin">Google</button> !-->
           <div id="google-register-btn" class="social-btn google-btn-container"></div>
           
           <div class="social-icons-row mt-3">
