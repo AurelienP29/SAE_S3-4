@@ -20,7 +20,7 @@
       >
         <path
             :d="stand.pathData"
-            :class="['stand-zone', stand.status, { 'is-interactive': isInteractive(stand) }]"
+            :class="['stand-zone', stand.status, { 'is-interactive': isInteractive(stand), 'is-highlighted': stand.id === highlightId }]"
         />
 
         <text v-if="false" x="50%" y="50%" class="stand-text">
@@ -44,10 +44,17 @@
 
           <div v-if="selectedStand.status === 'occupied' && selectedStand.prestataire">
             <p class="prestataire-name">{{ selectedStand.prestataire.name }}</p>
-            <p class="prestataire-desc">{{ selectedStand.prestataire.description }}</p>
+            <div class="prestataire-desc" v-html="selectedStand.prestataire.description"></div>
 
-            <!-- TODO Link to presta page -->
-            <a href="#" class="btn-link">Voir la fiche</a>
+            <button
+                v-if="getPrestationLink(selectedStand.prestataire.id)"
+                @click="goToPrestation(selectedStand.prestataire.id)"
+                class="btn-link"
+                style="background:none; border:none; padding:0; font:inherit; cursor:pointer;"
+            >
+              Voir la fiche
+            </button>
+            <span v-else class="text-gray-400 text-sm italic">Fiche non disponible</span>
 
             <button v-if="canModerate" @click="updateStandStatus(selectedStand, 'free')" class="btn-danger mt-2">
               Admin: Libérer ce stand
@@ -70,14 +77,27 @@
 
           <div v-else-if="selectedStand.status === 'pending'">
             <p><strong>Demande en cours :</strong></p>
-            <p v-if="selectedStand.prestataire">{{ selectedStand.prestataire.name }}</p>
+
+            <div v-if="selectedStand.prestataire">
+              <p class="prestataire-name">{{ selectedStand.prestataire.name }}</p>
+
+              <div v-if="currentUser && selectedStand.prestataire.id === currentUser.id"
+                   class="prestataire-desc mt-2"
+                   v-html="currentUser.description">
+              </div>
+
+              <div v-else
+                   class="prestataire-desc mt-2"
+                   v-html="selectedStand.prestataire.description">
+              </div>
+            </div>
 
             <div v-if="canModerate" class="admin-actions">
               <button @click="updateStandStatus(selectedStand, 'occupied')" class="btn-success">Valider</button>
               <button @click="updateStandStatus(selectedStand, 'free')" class="btn-danger">Refuser</button>
             </div>
 
-            <p v-else>Demande en cours d'examen par l'organisation.</p>
+            <p v-else-if="!selectedStand.prestataire">Demande en cours d'examen par l'organisation.</p>
           </div>
 
         </div>
@@ -99,8 +119,14 @@ const props = defineProps({
   enableActions: {
     type: Boolean,
     default: true
+  },
+  highlightId: {
+    type: Number,
+    default: null
   }
 });
+
+const emit = defineEmits(['stand-updated']);
 
 const stands = ref([]);
 const loading = ref(true);
@@ -110,12 +136,12 @@ const popupPos = ref({x: 0, y: 0});
 
 const canModerate = computed(() => {
   if (!props.enableActions || !props.currentUser) return false;
-  return props.currentUser.roles.includes('admin') || props.currentUser.role === 'admin';
+  return props.currentUser.roles?.includes('admin') || props.currentUser.role === 'admin';
 });
 
 const canBook = computed(() => {
   if (!props.enableActions || !props.currentUser) return false;
-  return props.currentUser.roles.includes('prestataire') || props.currentUser.role === 'prestataire';
+  return props.currentUser.roles?.includes('prestataire') || props.currentUser.role === 'prestataire';
 });
 
 onMounted(async () => {
@@ -138,11 +164,13 @@ const visibleStands = computed(() => {
   if (loading.value) return [];
 
   return stands.value.filter(stand => {
-    // Si on est en mode admin/actions, on garde tout
     if (props.enableActions) return true;
 
-    // Sinon (visiteur), on ne garde que les occupés
-    return stand.status === 'occupied';
+    if (stand.status === 'occupied') return true;
+
+    if (props.highlightId && stand.id === props.highlightId) return true;
+
+    return false;
   });
 });
 
@@ -200,6 +228,7 @@ async function requestBooking(stand) {
   if (result) {
     await loadData();
     closePopup();
+    emit('stand-updated');
   }
 }
 
@@ -208,6 +237,7 @@ async function updateStandStatus(stand, newStatus) {
   if (result) {
     await loadData();
     closePopup();
+    emit('stand-updated');
   }
 }
 
@@ -221,6 +251,30 @@ function translateStatus(status) {
       return 'En attente';
     default:
       return status;
+  }
+}
+
+
+import { prestations } from '@/datasource/data.js';
+
+function getPrestationLink(prestataireId) {
+  const found = prestations.find(p => p.prestataireId === prestataireId);
+
+  if (found) {
+    return { name: 'PrestationDetail', params: { id: found.id } };
+  }
+  return null;
+}
+
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
+function goToPrestation(prestataireId) {
+  const route = getPrestationLink(prestataireId);
+  if (route) {
+    router.push(route);
+  } else {
+    console.warn("Aucune prestation trouvée pour ce prestataire");
   }
 }
 </script>
@@ -293,6 +347,14 @@ function translateStatus(status) {
   stroke: rgba(243, 156, 18, 0.8);
   stroke-dasharray: 8, 4;
   animation: pulseZone 2s infinite;
+}
+
+.stand-zone.is-highlighted {
+  stroke: #5aec00;
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 6px rgba(137, 255, 104, 0.8));
+  fill-opacity: 0.8;
+  z-index: 50;
 }
 
 @keyframes pulseZone {
@@ -433,4 +495,28 @@ function translateStatus(status) {
   color: #333;
   font-weight: bold;
 }
+
+.prestataire-desc {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 8px;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.prestataire-desc p {
+  margin: 0;
+}
+
+.btn-link {
+  color: #a855f7;
+  text-decoration: underline;
+  font-weight: bold;
+  margin-top: 8px;
+  display: inline-block;
+}
+.btn-link:hover {
+  color: #d8b4fe;
+}
+
 </style>

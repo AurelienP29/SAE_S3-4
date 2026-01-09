@@ -112,6 +112,7 @@ export const translations = {
         'prestataire.validated': 'Validé',
         'prestataire.location': 'Emplacement :',
         'prestataire.manage': 'Gérer mes prestations',
+        'prestataire.stand': 'Mon Stand',
 
         'globalSearch': 'Recherche globale...',
         'noResults': 'Aucun résultat trouvé.',
@@ -251,6 +252,7 @@ export const translations = {
         'prestataire.validated': 'Validated',
         'prestataire.location': 'Location:',
         'prestataire.manage': 'Manage my services',
+        'prestataire.stand': 'My Stand',
 
         'globalSearch': 'Global search...',
         'noResults': 'No results found.',

@@ -1,4 +1,4 @@
-import { mapStands } from '@/datasource/mapStands.js';
+import {mapStands} from '@/datasource/mapStands.js';
 
 const USE_API = false;
 const API_URL = 'http://localhost:3000/api';
@@ -29,7 +29,7 @@ export default {
                     localStands[index].prestataire = {
                         id: user.id,
                         name: user.name,
-                        description: "En attente de validation..."
+                        description: user.description
                     };
                     resolve({success: true});
                 }
@@ -45,10 +45,12 @@ export default {
                 const index = localStands.findIndex(s => s.id === standId);
                 if (index !== -1) {
                     localStands[index].status = newStatus;
+
                     if (newStatus === 'free') {
                         localStands[index].prestataire = null;
                     }
-                    resolve({ success: true, stand: localStands[index] });
+
+                    resolve({success: true, stand: localStands[index]});
                 }
             });
         }
