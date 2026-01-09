@@ -7,20 +7,24 @@
         <div class="header-section">
           <h1 class="text-3xl m-0 title-font">
             <i class="pi pi-cog spin-hover text-green mr-2" style="font-size: 1em; justify-content: center; margin: 0 1rem 0 0;"></i>
-            <span class="text-purple">Admin</span> Necronomi'Con
+            <span class="text-purple">{{ lang('admin.title') }}</span>
           </h1>
           <p class="text-muted mt-2">
-            Panneau de contrôle des prestataires, de la carte et des activités.
+            {{ lang('admin.subtitle') }}
           </p>
         </div>
 
         <TabView v-model:activeIndex="activeTab" class="necro-tabs">
-
+          <!-- 
+          <TabPanel header="Prestations">
+             <PrestataireManager />
+          </TabPanel>
+          !-->
           <TabPanel>
             <template #header>
               <div class="flex align-items-center gap-2 tab-header">
                 <i class="pi pi-users" />
-                <span class="font-bold">Prestataires</span>
+                <span class="font-bold">{{ lang('admin.providers') }}</span>
               </div>
             </template>
             <div class="tab-content">
@@ -32,7 +36,7 @@
             <template #header>
               <div class="flex align-items-center gap-2 tab-header">
                 <i class="pi pi-map" />
-                <span class="font-bold">Carte</span>
+                <span class="font-bold">{{ lang('admin.map') }}</span>
               </div>
             </template>
             <div class="tab-content">
@@ -47,7 +51,7 @@
             <template #header>
               <div class="flex align-items-center gap-2 tab-header">
                 <i class="pi pi-users" />
-                <span class="font-bold">Comptes</span>
+                <span class="font-bold">{{ lang('admin.accounts') }}</span>
               </div>
             </template>
             <div class="tab-content">
@@ -69,10 +73,15 @@ import { TabPanel, TabView } from 'primevue';
 import PrestataireManager from '@/components/adminComponents/AdminPrestataireManager.vue';
 import InteractiveMap from "@/components/InteractiveMap.vue";
 import {useAuthStore} from "@/stores/authStore.js";
+import { translations } from '@/datasource/lang.js';
 
 import AccountManager from '@/components/adminComponents/AdminAccountManager.vue';
 
 const authStore = useAuthStore();
+
+const lang = (key) => {
+  return translations[authStore.currentLanguage][key] || key;
+};
 
 const activeTab = ref(0);
 </script>

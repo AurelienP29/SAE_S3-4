@@ -6,7 +6,7 @@
     <div class="flex align-items-center gap-2 tab-header">
     </div>
     <div class="tab-content">
-      <AdminPrestataireWaitlist/>
+      <PrestationWaitlistManager/>
     </div>
 
     <h1 class="mb-2">Liste des prestataires</h1>
@@ -53,7 +53,7 @@
       </Column>
     </DataTable>
 
-    <!-- Dialogue create/ -->
+<!-- Create -->
     <Dialog
         v-model:visible="dialogVisible"
         :header="isEditMode ? 'Modifier un prestataire' : 'Nouveau prestataire'"
@@ -108,7 +108,7 @@
       </template>
     </Dialog>
 
-    <!-- Dialogue confirmation suppression -->
+<!-- Confirm del -->
     <Dialog
         v-model:visible="deleteDialogVisible"
         header="Confirmer la suppression"
@@ -138,7 +138,7 @@ import {DataTable, Column, Toolbar, Button, Dialog, InputText, Dropdown} from 'p
 import Editor from 'primevue/editor'
 
 import {useAdminPrestataireService} from '/src/services/adminPrestataireService.js'
-import AdminPrestataireWaitlist from "@/components/adminComponents/PrestataireWaitlistManagement.vue";
+import PrestationWaitlistManager from "@/components/adminComponents/PrestationWaitlistManager.vue";
 
 const {
   prestataires,

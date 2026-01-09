@@ -1,50 +1,54 @@
 <template>
   <div class="admin-prestataire-manager card">
-    <DataTable
-        v-model:filters="filters"
-        :value="data"
-        paginator
-        :rows="10"
+    <DataTable v-model:filters="filters"
         dataKey="id"
-        filterDisplay="row"
+        :value="data"
+        :rows="10"
         :loading="loading"
         :globalFilterFields="['name', 'Champ1', 'prestataireName', 'email', 'category']"
+        paginator
+        filterDisplay="row"
     >
       <template #header>
         <div class="flex justify-between items-center">
+
           <h3 class="text-xl font-bold uppercase text-white m-0">
-            {{ mode === 'prestations' ? 'Liste des Prestations' : 'Liste des Prestataires' }}
+            {{ mode === 'prestations' ? lang('prestataire.servicesList') : lang('admin.providerManager.list') }}
           </h3>
+
           <IconField>
             <InputIcon>
-              <i class="pi pi-search" />
+              <i class="pi pi-search"/>
             </InputIcon>
-            <InputText v-model="filters['global'].value" placeholder="Recherche globale..." />
+            <InputText v-model="filters['global'].value" :placeholder="lang('globalSearch')"/>
           </IconField>
         </div>
       </template>
 
-      <template #empty> Aucun résultat trouvé. </template>
+      <template #empty> {{ lang('noResults') }}</template>
 
-      <Column field="name" :header="mode === 'prestations' ? 'Prestation' : 'Nom'" sortable style="min-width: 12rem">
+      <Column field="name" :header="mode === 'prestations' ? lang('prestation') : lang('name')" sortable
+              style="min-width: 12rem">
         <template #body="{ data }">
-          <router-link v-if="mode === 'prestations'" :to="{ name: 'PrestationDetail', params: { id: data.id } }" class="text-purple-400 font-bold hover:text-purple-300 no-underline">
+          <router-link v-if="mode === 'prestations'" :to="{ name: 'PrestationDetail', params: { id: data.id } }"
+                       class="text-purple-400 font-bold hover:text-purple-300 no-underline">
             {{ data.name }}
           </router-link>
           <span v-else>{{ data.name }}</span>
         </template>
+
         <template #filter="{ filterModel, filterCallback }">
           <InputText
               v-model="filterModel.value"
               type="text"
               @input="filterCallback()"
-              placeholder="Filtrer par nom"
+              :placeholder="lang('filterByName')"
               class="p-column-filter"
           />
         </template>
       </Column>
 
-      <Column v-if="mode === 'prestations'" field="Champ1" header="Zone" sortable style="min-width: 12rem">
+      <Column v-if="mode === 'prestations'" field="Champ1" :header="lang('zone')" sortable style="min-width: 12rem">
         <template #body="{ data }">
           {{ data.Champ1 }}
         </template>
@@ -59,8 +63,10 @@
         </template>
       </Column>
 
-      <Column v-if="mode === 'prestations'" field="prestataireName" header="Prestataire lié" sortable style="min-width: 12rem">
+      <Column v-if="mode === 'prestations'" field="prestataireName" :header="lang('linkedProvider')" sortable
+              style="min-width: 12rem">
         <template #body="{ data }">
+          <!-- {{ data.Champ2 }} !-->
           {{ data.prestataireName }}
         </template>
         <template #filter="{ filterModel, filterCallback }">
@@ -89,21 +95,21 @@
         </template>
       </Column>
 
-      <Column field="category" header="Catégorie" :showFilterMenu="false" style="min-width: 12rem">
+      <Column field="category" :header="lang('category')" :showFilterMenu="false" style="min-width: 12rem">
         <template #body="{ data }">
-          <span class="font-bold">{{ data.category }}</span>
+          <span class="font-bold">{{ lang('category.' + data.category) }}</span>
         </template>
         <template #filter="{ filterModel, filterCallback }">
           <Select
               v-model="filterModel.value"
               @change="filterCallback()"
               :options="uniqueCategories"
-              placeholder="Choisir une catégorie"
+              :placeholder="lang('chooseCategory')"
               style="min-width: 12rem"
               :showClear="true"
           >
             <template #option="slotProps">
-              {{ slotProps.option }}
+              {{ lang('category.' + slotProps.option) }}
             </template>
           </Select>
         </template>
@@ -114,22 +120,31 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { FilterMatchMode } from '@primevue/core/api'; // Or 'primevue/api' depending on version
-import { prestations, prestataires } from '@/datasource/data.js';
+import {ref, computed, onMounted} from 'vue';
+import {FilterMatchMode} from '@primevue/core/api';
+import {prestations, prestataires} from '@/datasource/data.js';
+import {useAuthStore} from '@/stores/authStore.js';
+import {translations} from '@/datasource/lang.js';
 
-import { DataTable, Column, InputText, Select, IconField, InputIcon} from 'primevue';
+import {DataTable, Column, InputText, Select, IconField, InputIcon} from 'primevue';
 
 const props = defineProps({
   mode: {
     type: String,
-    default: 'prestations' // 'prestations' or 'prestataires'
+    default: 'prestations'
   }
 });
+
+const authStore = useAuthStore();
+const lang = (key) => {
+  return translations[authStore.currentLanguage][key] || key;
+};
 
 const loading = ref(true);
 
 const data = computed(() => {
+  // return props.mode === 'prestataires' ? prestataires : prestations;
+
   if (props.mode === 'prestataires') {
     return prestataires;
   }
@@ -137,33 +152,33 @@ const data = computed(() => {
     const prestataire = prestataires.find(pr => pr.id === p.prestataireId);
     return {
       ...p,
-      prestataireName: prestataire ? prestataire.name : 'Indépendant'
+      prestataireName: prestataire ? prestataire.name : lang('independent')
     };
   });
 });
 
 const filters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  name: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  Champ1: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  prestataireName: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  email: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  category: { value: null, matchMode: FilterMatchMode.EQUALS }
+  global: {value: null, matchMode: FilterMatchMode.CONTAINS},
+  name: {value: null, matchMode: FilterMatchMode.CONTAINS},
+  Champ1: {value: null, matchMode: FilterMatchMode.CONTAINS},
+  prestataireName: {value: null, matchMode: FilterMatchMode.CONTAINS},
+  email: {value: null, matchMode: FilterMatchMode.CONTAINS},
+  category: {value: null, matchMode: FilterMatchMode.EQUALS}
 });
 
-// 2. Extract unique categories dynamically from the data for the dropdown
 const uniqueCategories = computed(() => {
   const currentData = data.value;
   if (!currentData || currentData.length === 0) return [];
-  // Create a Set to get unique values, then convert back to array
+
   const categories = [...new Set(currentData.map(item => item.category))];
   return categories.sort();
 });
 
 onMounted(() => {
-  // Simulate a small delay or just stop loading immediately since data is local
+
   loading.value = false;
 });
+
 </script>
 
 <style scoped>
@@ -172,19 +187,22 @@ onMounted(() => {
   padding: 1rem;
 }
 
-/* Optional: Helper to space out the search icon */
 .flex {
   display: flex;
 }
+
 .justify-between {
   justify-content: space-between;
 }
+
 .items-center {
   align-items: center;
 }
+
 .justify-end {
   justify-content: flex-end;
 }
+
 .gap-2 {
   gap: 0.5rem;
 }
