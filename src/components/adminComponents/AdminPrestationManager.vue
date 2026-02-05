@@ -85,7 +85,7 @@
               id="category"
               v-model="form.category"
               :options="categoryOptions"
-              optionlabel=" label"
+              optionLabel="label"
               optionValue="value"
               placeholder="Sélectionner"
           />

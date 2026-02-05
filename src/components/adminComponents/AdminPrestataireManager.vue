@@ -107,7 +107,7 @@
               id="category"
               v-model="form.category"
               :options="translatedCategoryOptions"
-              optionlabel=" label"
+              optionLabel="label"
               optionValue="value"
               placeholder="Sélectionner"
           />
