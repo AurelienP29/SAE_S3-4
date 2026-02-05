@@ -91,6 +91,15 @@
     font-size: 1.4rem !important;
 }
 
+.provider-request-trigger {
+    color: black !important;
+}
+
+.provider-request-trigger.p-button {
+    font-size: 0.95rem;
+    padding: 0.6rem 1.1rem;
+}
+
 .cart-container:hover {
     transform: scale(1.1);
     color: #bd2cd1;

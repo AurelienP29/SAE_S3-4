@@ -147,6 +147,7 @@ export const translations = {
         'admin.waitlist.colServices': 'Services demandés',
         'admin.waitlist.accept': 'Accepter',
         'admin.waitlist.reject': 'Refuser',
+        'nav.provideService': 'Fournir une prestation',
 
         'category.artisan': 'Artisan',
         'category.atelier': 'Atelier',
@@ -295,6 +296,7 @@ export const translations = {
         'admin.waitlist.colServices': 'Requested services',
         'admin.waitlist.accept': 'Accept',
         'admin.waitlist.reject': 'Reject',
+        'nav.provideService': 'Provide a service',
 
         'category.artisan': 'Craftsman',
         'category.atelier': 'Workshop',

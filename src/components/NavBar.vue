@@ -20,6 +20,13 @@
       <template #end>
         <div class="navbar-actions">
 
+          <ProviderRequestForm
+              buttonIcon="pi pi-user-plus"
+              :buttonRounded="true"
+              :buttonLabel="lang('nav.provideService')"
+              buttonClass="provider-request-trigger"
+          />
+
           <router-link to="/cart" class="cart-container">
             <i class="pi pi-shopping-cart" style="font-size: 1.2rem;"></i>
             <span v-if="cartStore.itemsCount > 0" class="cart-badge">
@@ -90,6 +97,7 @@ import Ripple from 'primevue/ripple'
 import '/src/assets/styles/NavBar.css'
 import { translations } from '@/datasource/lang.js'
 import {useCartStore} from "@/stores/cartStore.js";
+import ProviderRequestForm from '@/components/ProviderRequestForm.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
