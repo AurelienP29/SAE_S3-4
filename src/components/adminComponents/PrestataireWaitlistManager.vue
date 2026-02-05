@@ -15,6 +15,11 @@
           {{ lang('category.' + slotProps.data.category) }}
         </template>
       </Column>
+      <Column :header="lang('admin.waitlist.colServices')">
+        <template #body="slotProps">
+          {{ formatServices(slotProps.data.services) }}
+        </template>
+      </Column>
       <Column field="requestDate" :header="lang('admin.waitlist.colDate')" sortable></Column>
       <Column :header="lang('admin.action')">
         <template #body="slotProps">
@@ -42,6 +47,13 @@ const lang = (key) => {
 const waitlist = ref([...initialWaitlist]);
 const prestataireStore = usePrestataireStore()
 
+const formatServices = (services) => {
+  if (!Array.isArray(services) || services.length === 0) {
+    return '-';
+  }
+
+  return services.map((service) => lang(`service.${service}`)).join(', ');
+};
 
 const acceptPrestataire = (prestataire) => {
 

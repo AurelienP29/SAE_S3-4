@@ -366,6 +366,16 @@ let categoryOptions = [
     {label: 'Restauration', value: 'restauration'},
 ]
 
+let serviceOptions = [
+    {label: 'Boissons et snacks', value: 'boissons_snacks'},
+    {label: 'Restauration chaude', value: 'restauration_chaude'},
+    {label: 'Vente produits dérivés', value: 'vente_produits_derives'},
+    {label: 'Vente répliques armes', value: 'vente_repliques_armes'},
+    {label: 'Animation arcade', value: 'animation_arcade'},
+    {label: 'Démonstration VR', value: 'demo_vr'},
+    {label: 'Réparation costumes', value: 'reparation_costumes'},
+]
+
 let waitingList = [
     {
         id: 101,
@@ -374,6 +384,7 @@ let waitingList = [
         phone: '06 00 00 00 01',
         category: 'atelier',
         description: '<p>Atelier de forge pour débutants.</p>',
+        services: ['animation_arcade', 'reparation_costumes'],
         requestDate: ' 2024-12-01'
     },
     {
@@ -383,6 +394,7 @@ let waitingList = [
         phone: '06 00 00 00 02',
         category: 'restauration',
         description: '<p>Le meilleur kebab de la galaxie.</p>',
+        services: ['restauration_chaude'],
         requestDate: ' 2024-12-05'
     },
     {
@@ -392,6 +404,7 @@ let waitingList = [
         phone: '06 00 00 00 03',
         category: 'atelier',
         description: '<p>Initiation et perfectionnement au pixel art.</p>',
+        services: ['animation_arcade'],
         requestDate: ' 2025-01-03'
     },
     {
@@ -401,6 +414,7 @@ let waitingList = [
         phone: '06 00 00 00 04',
         category: 'restauration',
         description: '<p>Pains et pâtisseries cuits au feu de dragon.</p>',
+        services: ['boissons_snacks', 'restauration_chaude'],
         requestDate: ' 2025-01-12'
     },
     {
@@ -410,6 +424,7 @@ let waitingList = [
         phone: '06 00 00 00 05',
         category: 'atelier',
         description: '<p>Travail du bois enchanté, sculptures et créations.</p>',
+        services: ['vente_produits_derives'],
         requestDate: ' 2025-01-20'
     },
     {
@@ -419,6 +434,7 @@ let waitingList = [
         phone: '06 00 00 00 06',
         category: 'restauration',
         description: '<p>Café futuriste avec boissons interstellaires.</p>',
+        services: ['boissons_snacks'],
         requestDate: ' 2025-02-02'
     },
     {
@@ -428,6 +444,7 @@ let waitingList = [
         phone: '06 00 00 00 07',
         category: 'atelier',
         description: '<p>Cours de couture spécialisés dans les tissus elfiques.</p>',
+        services: ['reparation_costumes'],
         requestDate: ' 2025-02-15'
     }
 ];
@@ -464,6 +481,7 @@ export {
     waitingList,
     prestationWaitingList,
     categoryOptions,
+    serviceOptions,
 }
 
 export const users = [

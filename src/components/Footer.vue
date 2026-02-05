@@ -54,17 +54,17 @@
 
           <div class="option-line">
             <div class="option-item">
-              <input type="checkbox" id="day1" value="day1" v-model="formData.daysOfPresence" />
+              <input type="checkbox" id="day1" :value="t('day1')" v-model="formData.daysOfPresence" />
               <label for="day1">{{ t('day1') }}</label>
             </div>
 
             <div class="option-item">
-              <input type="checkbox" id="day2" value="day2" v-model="formData.daysOfPresence" />
+              <input type="checkbox" id="day2" :value="t('day2')" v-model="formData.daysOfPresence" />
               <label for="day2">{{ t('day2') }}</label>
             </div>
 
             <div class="option-item">
-              <input type="checkbox" id="day3" value="day3" v-model="formData.daysOfPresence" />
+              <input type="checkbox" id="day3" :value="t('day3')" v-model="formData.daysOfPresence" />
               <label for="day3">{{ t('day3') }}</label>
             </div>
           </div>
@@ -77,19 +77,15 @@
           <label>{{ t('typeOfShop') }}</label>
 
           <div class="option-line">
-            <div class="option-item">
-              <input type="radio" id="shop1" name="typeOfShop" value="shop1" v-model="formData.shopType" />
-              <label for="shop1">{{ t('shop1') }}</label>
-            </div>
-
-            <div class="option-item">
-              <input type="radio" id="shop2" name="typeOfShop" value="shop2" v-model="formData.shopType" />
-              <label for="shop2">{{ t('shop2') }}</label>
-            </div>
-
-            <div class="option-item">
-              <input type="radio" id="shop3" name="typeOfShop" value="shop3" v-model="formData.shopType" />
-              <label for="shop3">{{ t('shop3') }}</label>
+            <div v-for="option in categoryOptions" :key="option.value" class="option-item">
+              <input
+                  type="radio"
+                  :id="`shop-${option.value}`"
+                  name="typeOfShop"
+                  :value="option.value"
+                  v-model="formData.shopType"
+              />
+              <label :for="`shop-${option.value}`">{{ lang(`category.${option.value}`) }}</label>
             </div>
           </div>
 
@@ -101,19 +97,14 @@
           <label>{{ t('proposedServices') }}</label>
 
           <div class="option-line">
-            <div class="option-item">
-              <input type="checkbox" id="service1" value="service1" v-model="formData.services" />
-              <label for="service1">{{ t('service1') }}</label>
-            </div>
-
-            <div class="option-item">
-              <input type="checkbox" id="service2" value="service2" v-model="formData.services" />
-              <label for="service2">{{ t('service2') }}</label>
-            </div>
-
-            <div class="option-item">
-              <input type="checkbox" id="service3" value="service3" v-model="formData.services" />
-              <label for="service3">{{ t('service3') }}</label>
+            <div v-for="option in serviceOptions" :key="option.value" class="option-item">
+              <input
+                  type="checkbox"
+                  :id="`service-${option.value}`"
+                  :value="option.value"
+                  v-model="formData.services"
+              />
+              <label :for="`service-${option.value}`">{{ lang(`service.${option.value}`) }}</label>
             </div>
           </div>
         </div>
@@ -134,6 +125,8 @@
 <script setup>
 import {reactive, ref} from 'vue'
 import {useAuthStore} from '@/stores/authStore.js'
+import {categoryOptions, serviceOptions} from '@/datasource/data.js'
+import {translations as appTranslations} from '@/datasource/lang.js'
 import {Dialog, Button} from 'primevue'
 
 //import {EmailTemplate} from "@/components/EmailTemplate.vue";
@@ -164,13 +157,7 @@ const translations = {
     day2: 'Samedi',
     day3: 'Dimanche',
     typeOfShop: 'Type de boutique',
-    shop1: 'Boutique 1',
-    shop2: 'Boutique 2',
-    shop3: 'Boutique 3',
     proposedServices: "Quels services proposez-vous ?",
-    service1: 'Service 1',
-    service2: 'Service 2',
-    service3: 'Service 3',
     cancel: 'Annuler',
     send: 'Envoyer',
     daysError: 'Il faut sélectionner au moins un jour de présence',
@@ -206,13 +193,7 @@ const translations = {
     day2: 'Saturday',
     day3: 'Sunday',
     typeOfShop: 'Type of Shop',
-    Shop1: 'Shop 1',
-    Shop2: 'Shop 2',
-    Shop3: 'Shop 3',
     proposedServices: "What services do you offer?",
-    service1: 'Service 1',
-    service2: 'Service 2',
-    service3: 'Service 3',
     cancel: 'Cancel',
     send: 'Send',
     title_mail: 'Thank you for your registration!',
@@ -253,6 +234,10 @@ const errors = reactive({
 
 const t = (key) => {
   return translations[authStore.currentLanguage]?.[key] || translations.fr[key]
+}
+
+const lang = (key) => {
+  return appTranslations[authStore.currentLanguage]?.[key] || appTranslations.fr[key] || key
 }
 
 function openModal() {
@@ -305,6 +290,9 @@ function validateAndSend() {
 async function registerProvider() {
   console.log("Register provider : ", formData);
 
+  const shopTypeLabel = formData.shopType ? lang(`category.${formData.shopType}`) : '';
+  const servicesLabel = formData.services.map((service) => lang(`service.${service}`)).join(', ');
+
   const templateData = {
     title: t('title_mail'),
     remerciement: t('remerciement'),
@@ -318,8 +306,8 @@ async function registerProvider() {
     email: formData.email,
     website: formData.website,
     days_of_presence: formData.daysOfPresence.join(', '),
-    shop_type: formData.shopType,
-    services: formData.services.join(', '),
+    shop_type: shopTypeLabel || formData.shopType,
+    services: servicesLabel || formData.services.join(', '),
     msg_name: t('msg_name'),
     msg_boutique: t('msg_boutique'),
     msg_services: t('msg_services'),

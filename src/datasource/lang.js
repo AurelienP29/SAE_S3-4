@@ -144,6 +144,7 @@ export const translations = {
         'admin.waitlist.title': 'File d\'attente Prestataires',
         'admin.waitlist.empty': 'Aucune demande en attente.',
         'admin.waitlist.colDate': 'Date de demande',
+        'admin.waitlist.colServices': 'Services demandés',
         'admin.waitlist.accept': 'Accepter',
         'admin.waitlist.reject': 'Refuser',
 
@@ -153,6 +154,13 @@ export const translations = {
         'category.jeu_plateau': 'Jeu de Plateau',
         'category.boutique': 'Boutique',
         'category.restauration': 'Restauration',
+        'service.boissons_snacks': 'Boissons et snacks',
+        'service.restauration_chaude': 'Restauration chaude',
+        'service.vente_produits_derives': 'Vente produits dérivés',
+        'service.vente_repliques_armes': 'Vente répliques armes',
+        'service.animation_arcade': 'Animation arcade',
+        'service.demo_vr': 'Démonstration VR',
+        'service.reparation_costumes': 'Réparation costumes',
     },
     en: {
         home: 'Home',
@@ -284,6 +292,7 @@ export const translations = {
         'admin.waitlist.title': 'Provider Waitlist',
         'admin.waitlist.empty': 'No pending requests.',
         'admin.waitlist.colDate': 'Request Date',
+        'admin.waitlist.colServices': 'Requested services',
         'admin.waitlist.accept': 'Accept',
         'admin.waitlist.reject': 'Reject',
 
@@ -293,5 +302,12 @@ export const translations = {
         'category.jeu_plateau': 'Board Game',
         'category.boutique': 'Shop',
         'category.restauration': 'Catering',
+        'service.boissons_snacks': 'Drinks and snacks',
+        'service.restauration_chaude': 'Hot food',
+        'service.vente_produits_derives': 'Merchandise sales',
+        'service.vente_repliques_armes': 'Weapon replica sales',
+        'service.animation_arcade': 'Arcade animation',
+        'service.demo_vr': 'VR demo',
+        'service.reparation_costumes': 'Costume repair',
     }
 }
