@@ -32,9 +32,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { DataTable, Column, Button } from 'primevue';
-import {waitingList as initialWaitlist, prestataires, initialPrestataires} from '@/datasource/data.js';
+import {waitingList, prestataires, initialPrestataires} from '@/datasource/data.js';
 import {usePrestataireStore} from "@/stores/prestataire.js";
 import { useAuthStore } from '@/stores/authStore.js';
 import { translations } from '@/datasource/lang.js';
@@ -44,7 +43,7 @@ const lang = (key) => {
   return translations[authStore.currentLanguage][key] || key;
 };
 
-const waitlist = ref([...initialWaitlist]);
+const waitlist = waitingList;
 const prestataireStore = usePrestataireStore()
 
 const formatServices = (services) => {
@@ -73,9 +72,6 @@ const rejectPrestataire = (prestataire) => {
 
 const removeFromWaitlist = (id) => {
   waitlist.value = waitlist.value.filter(p => p.id !== id);
-  
-  const index = initialWaitlist.findIndex(p => p.id === id);
-  if (index !== -1) initialWaitlist.splice(index, 1);
 };
 </script>
 

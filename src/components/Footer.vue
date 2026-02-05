@@ -125,7 +125,7 @@
 <script setup>
 import {reactive, ref} from 'vue'
 import {useAuthStore} from '@/stores/authStore.js'
-import {categoryOptions, serviceOptions} from '@/datasource/data.js'
+import {categoryOptions, serviceOptions, waitingList} from '@/datasource/data.js'
 import {translations as appTranslations} from '@/datasource/lang.js'
 import {Dialog, Button} from 'primevue'
 
@@ -292,6 +292,11 @@ async function registerProvider() {
 
   const shopTypeLabel = formData.shopType ? lang(`category.${formData.shopType}`) : '';
   const servicesLabel = formData.services.map((service) => lang(`service.${service}`)).join(', ');
+  const requestDate = new Date().toISOString().slice(0, 10);
+
+  const newWaitlistId = waitingList.value.length > 0
+      ? Math.max(...waitingList.value.map(p => p.id)) + 1
+      : 1;
 
   const templateData = {
     title: t('title_mail'),
@@ -317,6 +322,17 @@ async function registerProvider() {
     msg_email: t('msg_email'),
     msg_type: t('msg_type'),
   };
+
+  waitingList.value.push({
+    id: newWaitlistId,
+    name: formData.shopName || formData.providerName,
+    email: formData.email,
+    phone: formData.phone,
+    category: formData.shopType,
+    description: '',
+    services: [...formData.services],
+    requestDate: requestDate
+  });
 
   emailjs.send('service_2zpxqyi', 'inscription_provider',  templateData)
       .then((message) => {

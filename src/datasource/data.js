@@ -376,7 +376,7 @@ let serviceOptions = [
     {label: 'Réparation costumes', value: 'reparation_costumes'},
 ]
 
-let waitingList = [
+const waitingList = ref([
     {
         id: 101,
         name: 'Atelier Forge',
@@ -447,7 +447,7 @@ let waitingList = [
         services: ['reparation_costumes'],
         requestDate: ' 2025-02-15'
     }
-];
+]);
 
 
 let prestationWaitingList = [
