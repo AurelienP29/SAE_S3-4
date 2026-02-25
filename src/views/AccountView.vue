@@ -265,7 +265,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore.js';
 import { useCartStore } from '@/stores/cartStore.js';
 import { useReviewStore } from '@/stores/reviewStore.js';
-import { prestations } from '@/datasource/data.js';
+import { prestations } from '@/datasource/data.mjs';
 import { translations } from '@/datasource/lang.js';
 
 import {

@@ -131,7 +131,7 @@
 <script setup>
 import {reactive, ref, computed} from 'vue'
 import {useAuthStore} from '@/stores/authStore.js'
-import {categoryOptions, serviceOptions, waitingList} from '@/datasource/data.js'
+import {categoryOptions, serviceOptions, waitingList} from '@/datasource/data.mjs'
 import {translations as appTranslations} from '@/datasource/lang.js'
 import {Dialog, Button} from 'primevue'
 import emailjs from '@emailjs/browser'

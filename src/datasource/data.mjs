@@ -590,3 +590,25 @@ export const users = [
     }
 ]
 
+export const mainPageTextPresentation = {
+    fr: {
+        banner: "Bienvenue à la Necronomi'con !",
+        intro: "Venez découvrir notre évènement, son intérêt, ses moments forts !",
+        description: "La Nécronomi’Con est une convention dédiée aux cultures de l’imaginaire, réunissant chaque année passionnés de science-fiction, de fantastique, d’horreur, de jeux vidéo et de jeux de rôle. Conçue comme un espace d’échange, de créativité et de célébration du geekverse, elle propose rencontres avec des auteurs et artistes, animations variées, conférences, ateliers et expositions, le tout dans une ambiance conviviale et immersive.",
+        locationTitle: "Emplacement de l'évènement",
+        mapTitle: "Map Visiteur",
+        originTitle: "Origine de l’événement",
+        originDescription: "La Nécronomi’Con a été créée dans l’initiative d’un groupe d'étudiant de l'IUT Nord Franche-Comté, passionnés, souhaitant dynamiser la scène geek du Nord Franche-Comté. Au fil des années, l’événement a grandi, s’est professionnalisé et a gagner l'attention d'un public de plus en plus large, devenant un événement incontournable pour la communauté geek régionale.",
+        supportersTitle: "Nos partenaires"
+    },
+    en: {
+        banner: "Welcome to Necronomi'con!",
+        intro: "Come and discover our event, its purpose, and its highlights!",
+        description: "Necronomi'Con is a convention dedicated to imaginary cultures, bringing together science fiction, fantasy, horror, video game and role-playing enthusiasts every year. Designed as a space for exchange, creativity and celebration of the geekverse, it offers meetings with authors and artists, varied activities, conferences, workshops and exhibitions, all in a friendly and immersive atmosphere.",
+        locationTitle: "Event Location",
+        mapTitle: "Visitor Map",
+        originTitle: "Origins of the Event",
+        originDescription: "Necronomi'Con was created on the initiative of a group of passionate students from IUT Nord Franche-Comté, wishing to boost the geek scene in Nord Franche-Comté. Over the years, the event has grown, professionalized and gained the attention of an increasingly large audience, becoming a key event for the regional geek community.",
+        supportersTitle: "Our Partners"
+    }
+}

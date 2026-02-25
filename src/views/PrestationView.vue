@@ -163,7 +163,7 @@ import { ref, onMounted, computed, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore.js';
 import { useReviewStore } from '@/stores/reviewStore.js';
-import { prestations, prestataires } from '@/datasource/data.js';
+import { prestations, prestataires } from '@/datasource/data.mjs';
 import { prestationsDetails } from '@/datasource/prestations_data.js'
 
 import { 

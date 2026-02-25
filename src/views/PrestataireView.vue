@@ -253,7 +253,7 @@ import {ref, onMounted, computed, reactive} from 'vue';
 import {useRouter} from 'vue-router';
 import {useAuthStore} from '@/stores/authStore.js';
 import {useReviewStore} from '@/stores/reviewStore.js';
-import {prestataires, prestations, categoryOptions} from '@/datasource/data.js';
+import {prestataires, prestations, categoryOptions} from '@/datasource/data.mjs';
 import {translations} from '@/datasource/lang.js';
 import {
   Tabs, TabList, Tab, TabPanels, TabPanel,

@@ -255,7 +255,7 @@ function translateStatus(status) {
 }
 
 
-import { prestations } from '@/datasource/data.js';
+import { prestations } from '@/datasource/data.mjs';
 
 function getPrestationLink(prestataireId) {
   const found = prestations.find(p => p.prestataireId === prestataireId);

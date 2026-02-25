@@ -33,7 +33,7 @@
 
 <script setup>
 import { DataTable, Column, Button } from 'primevue';
-import {waitingList, prestataires, initialPrestataires} from '@/datasource/data.js';
+import {waitingList, prestataires, initialPrestataires} from '@/datasource/data.mjs';
 import {usePrestataireStore} from "@/stores/prestataire.js";
 import { useAuthStore } from '@/stores/authStore.js';
 import { translations } from '@/datasource/lang.js';

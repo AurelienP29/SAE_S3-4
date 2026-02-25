@@ -29,7 +29,7 @@
 <script setup>
 import { ref } from 'vue';
 import { DataTable, Column, Button } from 'primevue';
-import {prestationWaitingList as initialWaitlist, prestations} from '@/datasource/data.js';
+import {prestationWaitingList as initialWaitlist, prestations} from '@/datasource/data.mjs';
 import {usePrestationStore} from "@/stores/prestation.js";
 import { useAuthStore } from '@/stores/authStore.js';
 import { translations } from '@/datasource/lang.js';

@@ -125,7 +125,7 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue';
 import {FilterMatchMode} from '@primevue/core/api';
-import {prestations, prestataires} from '@/datasource/data.js';
+import {prestations, prestataires} from '@/datasource/data.mjs';
 import {useAuthStore} from '@/stores/authStore.js';
 import {translations} from '@/datasource/lang.js';
 

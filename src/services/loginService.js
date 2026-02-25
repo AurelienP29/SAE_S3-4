@@ -1,7 +1,7 @@
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {useAuthStore} from '@/stores/authStore.js'
-import {users} from '@/datasource/data.js'
+import {users} from '@/datasource/data.mjs'
 
 export function useLoginService() {
     const router = useRouter()

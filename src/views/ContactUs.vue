@@ -247,7 +247,7 @@ async function handleSubmit() {
         console.log('FAILED...', err);
       })
 
-  //envoyer le message et le sujet aux admins - data.js
+  //envoyer le message et le sujet aux admins - data.mjs
 }
 
 </script>

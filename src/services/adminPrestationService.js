@@ -1,6 +1,6 @@
 import {ref, reactive} from 'vue'
 import {usePrestationStore} from '@/stores/prestation.js'
-import {categoryOptions, prestataires} from '@/datasource/data.js'
+import {categoryOptions, prestataires} from '@/datasource/data.mjs'
 
 export function useAdminPrestationService() {
     const prestationStore = usePrestationStore()
