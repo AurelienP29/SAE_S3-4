@@ -1,6 +1,6 @@
 <template>
-  <div class="admin-prestataire-manager">
-    <h1 class="mb-4">Gestion des prestataires</h1>
+  <div class="admin-prestation-manager">
+    <h1 class="mb-4">Gestion des prestations</h1>
 
     <h1 class="mb-2">Liste d'attente</h1>
     <div class="flex align-items-center gap-2 tab-header">
@@ -9,11 +9,11 @@
       <PrestationWaitlistManager/>
     </div>
 
-    <h1 class="mb-2">Liste des prestataires</h1>
+    <h1 class="mb-2">Liste des prestations</h1>
     <Toolbar class="mb-3">
       <template #start>
         <Button
-            label=" Nouveau prestataire"
+            label=" Nouvelle prestation"
             icon="pi pi-plus"
             severity="secondary"
             @click="openCreateDialog"
@@ -21,7 +21,7 @@
       </template>
     </Toolbar>
     <DataTable
-        :value="prestataires"
+        :value="prestations"
         dataKey="id"
         paginator
         :rows="10"
@@ -29,8 +29,7 @@
         :loading="loading"
     >
       <Column field="name" header="Nom" sortable/>
-      <Column field="email" header="Email" sortable/>
-      <Column field="phone" header="Téléphone"/>
+      <Column field="Champ1" header="Zone" sortable/>
       <Column field="category" header="Catégorie"/>
       <Column header="Actions" :exportable="false" style="width: 10rem">
         <template #body="slotProps">
@@ -56,7 +55,7 @@
 <!-- Create -->
     <Dialog
         v-model:visible="dialogVisible"
-        :header="isEditMode ? 'Modifier un prestataire' : 'Nouveau prestataire'"
+        :header="isEditMode ? 'Modifier une prestation' : 'Nouvelle prestation'"
         :modal="true"
         :style="{ width: '700px' }"
         :closable="false"
@@ -69,14 +68,9 @@
         </div>
 
         <div class="field col-12 md:col-6">
-          <label for="email">Email</label>
-          <InputText id="email" v-model="form.email" :class="{ 'p-invalid': errors.email }"/>
-          <small v-if="errors.email" style="color: red;">{{ errors.email }}</small>
-        </div>
-
-        <div class="field col-12 md:col-6">
-          <label for="phone">Téléphone</label>
-          <InputText id="phone" v-model="form.phone"/>
+          <label for="zone">Zone</label>
+          <InputText id="zone" v-model="form.Champ1" :class="{ 'p-invalid': errors.Champ1 }"/>
+          <small v-if="errors.Champ1" style="color: red;">{{ errors.Champ1 }}</small>
         </div>
 
         <div class="field col-12 md:col-6">
@@ -87,6 +81,18 @@
               :options="categoryOptions"
               optionLabel="label"
               optionValue="value"
+              placeholder="Sélectionner"
+          />
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="prestataire">Prestataire</label>
+          <Dropdown
+              id="prestataire"
+              v-model="form.prestataireId"
+              :options="prestataires"
+              optionLabel="name"
+              optionValue="id"
               placeholder="Sélectionner"
           />
         </div>
@@ -103,7 +109,7 @@
             :label=" isEditMode ? 'Mettre à jour' : 'Créer'"
             icon="pi pi-check"
             severity="primary"
-            @click="savePrestataire"
+            @click="savePrestation"
         />
       </template>
     </Dialog>
@@ -116,7 +122,7 @@
         :style="{ width: '450px' }"
     >
       <p>
-        Voulez-vous vraiment supprimer le prestataire
+        Voulez-vous vraiment supprimer la prestation
         <strong>{{ selectedToDelete?.name }}</strong> ?
       </p>
 
@@ -126,7 +132,7 @@
             label=" Supprimer"
             icon="pi pi-trash"
             severity="danger"
-            @click="deletePrestataire"
+            @click="deletePrestation"
         />
       </template>
     </Dialog>
@@ -137,11 +143,11 @@
 import {DataTable, Column, Toolbar, Button, Dialog, InputText, Dropdown} from 'primevue'
 import Editor from 'primevue/editor'
 
-import {useAdminPrestataireService} from '/src/services/adminPrestataireService.js'
+import {useAdminPrestationService} from '/src/services/adminPrestationService.js'
 import PrestationWaitlistManager from "@/components/adminComponents/PrestationWaitlistManager.vue";
 
 const {
-  prestataires,
+  prestations,
   loading,
   dialogVisible,
   deleteDialogVisible,
@@ -150,11 +156,12 @@ const {
   form,
   errors,
   categoryOptions,
+  prestataires,
   openCreateDialog,
   openEditDialog,
   closeDialog,
-  savePrestataire,
+  savePrestation,
   confirmDelete,
-  deletePrestataire
-} = useAdminPrestataireService()
+  deletePrestation
+} = useAdminPrestationService()
 </script>

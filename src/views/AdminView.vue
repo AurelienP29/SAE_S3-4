@@ -15,11 +15,18 @@
         </div>
 
         <TabView v-model:activeIndex="activeTab" class="necro-tabs">
-          <!-- 
-          <TabPanel header="Prestations">
-             <PrestataireManager />
+          <TabPanel>
+            <template #header>
+              <div class="flex align-items-center gap-2 tab-header">
+                <i class="pi pi-list" />
+                <span class="font-bold">{{ lang('admin.prestations') }}</span>
+              </div>
+            </template>
+            <div class="tab-content">
+              <AdminPrestationManager />
+            </div>
           </TabPanel>
-          !-->
+
           <TabPanel>
             <template #header>
               <div class="flex align-items-center gap-2 tab-header">
@@ -76,6 +83,7 @@ import {useAuthStore} from "@/stores/authStore.js";
 import { translations } from '@/datasource/lang.js';
 
 import AccountManager from '@/components/adminComponents/AdminAccountManager.vue';
+import AdminPrestationManager from '@/components/adminComponents/AdminPrestationManager.vue';
 
 const authStore = useAuthStore();
 

@@ -3,7 +3,7 @@
     <DataTable :value="waitlist" tableStyle="min-width: 50rem" paginator :rows="10">
       <template #header>
         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
-          <span class="text-xl text-900 font-bold">{{ lang('admin.prestataireWaitlist.title') }}</span>
+          <span class="text-xl text-900 font-bold">{{ lang('admin.providerManager.title') }}</span>
         </div>
       </template>
       <template #empty> {{ lang('admin.waitlist.empty') }} </template>

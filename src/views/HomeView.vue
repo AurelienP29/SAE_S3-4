@@ -159,7 +159,7 @@ const supporterItems = supporters.map(s => ({...s, src: getImageUrl(s.imgName)})
 
 /* --- VARIABLES --- */
 :root {
-  --necro-bg: #0b0914;
+  --necro-bg: #000000;
   --necro-accent: #a855f7; /* Purple */
   --necro-glow: #22c55e; /* Green */
   --necro-text: #f1f5f9;
@@ -261,6 +261,7 @@ const supporterItems = supporters.map(s => ({...s, src: getImageUrl(s.imgName)})
   padding: 2rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   position: relative;
+  font-size: 1.2rem;
 }
 
 /* Green accent line on left of text */
