@@ -1,6 +1,6 @@
 import {ref} from 'vue'
 import {defineStore} from 'pinia'
-import {prestations as initialPrestations} from '@/datasource/data.js'
+import {prestations as initialPrestations} from '@/datasource/data.mjs'
 
 export const usePrestationStore = defineStore('prestation', () => {
     const prestations = ref([...initialPrestations])

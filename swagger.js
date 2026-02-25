@@ -1,7 +1,7 @@
 import express from 'express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { users, prestataires, prestations, activities } from './src/datasource/data.js';
+import { users, prestataires, prestations, activities } from '@/datasource/data.mjs';
 
 const app = express();
 const port = process.env.PORT || 3000;

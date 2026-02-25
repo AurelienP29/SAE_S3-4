@@ -1,5 +1,5 @@
 import {ref, reactive} from 'vue'
-import {users, prestataires, prestations} from '@/datasource/data.js'
+import {users, prestataires, prestations} from '@/datasource/data.mjs'
 
 export function useAdminAccountService() {
     const accounts = ref(users)

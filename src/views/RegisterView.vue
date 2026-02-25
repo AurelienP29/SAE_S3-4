@@ -103,7 +103,7 @@ import { translations } from '@/datasource/lang.js'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
-import { users } from '@/datasource/data.js'
+import { users } from '@/datasource/data.mjs'
 import { useLoginService } from '@/services/loginService.js'
 
 const authStore = useAuthStore()
