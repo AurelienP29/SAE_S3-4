@@ -102,7 +102,7 @@
 <script setup>
 import PrestataireTable from "@/components/PrestataireTable.vue";
 import {useAuthStore} from '@/stores/authStore.js';
-import {mainPageTextPresentation} from '@/datasource/data.js';
+import {mainPageTextPresentation} from '@/datasource/lang.js';
 import {computed, onMounted} from 'vue';
 import InfiniteCarousel from '@/components/homeComponents/infiniteCarousel.vue';
 import InteractiveMap from "@/components/InteractiveMap.vue";

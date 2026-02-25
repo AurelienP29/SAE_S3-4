@@ -24,11 +24,16 @@ export const usePrestataireStore = defineStore('prestataire', () => {
         prestataires.value = prestataires.value.filter(p => p.id !== id)
     }
 
+    function getPrestataireById(id) {
+        return prestataires.value.find(p => p.id === parseInt(id))
+    }
+
     return {
         prestataires,
         loading,
         addPrestataire,
         updatePrestataire,
-        deletePrestataire
+        deletePrestataire,
+        getPrestataireById
     }
 })

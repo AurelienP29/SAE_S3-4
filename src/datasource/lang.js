@@ -79,6 +79,7 @@ export const translations = {
         'admin.title': 'Admin Necronomi\'Con',
         'admin.subtitle': 'Panneau de contrôle des prestataires, de la carte et des activités.',
         'admin.providers': 'Prestataires',
+        'admin.prestations': 'Prestations',
         'admin.map': 'Carte',
         'admin.accounts': 'Comptes',
 
@@ -111,7 +112,14 @@ export const translations = {
         'prestataire.status': 'Statut du stand :',
         'prestataire.validated': 'Validé',
         'prestataire.location': 'Emplacement :',
-        'prestataire.manage': 'Gérer mes prestations',
+        'prestataire.manage': 'Gérer mon espace',
+        'prestataire.public_page': 'Ma Page Publique',
+        'prestataire.public_page_title': 'Personnalisation de ma page publique',
+        'prestataire.public_text': 'Texte de présentation personnalisé',
+        'prestataire.public_images': 'Images (URLs séparées par des virgules)',
+        'prestataire.public.presentation': 'Présentation',
+        'prestataire.not_found': 'Prestataire non trouvé',
+        'view_page': 'Voir ma page',
         'prestataire.stand': 'Mon Stand',
 
         'globalSearch': 'Recherche globale...',
@@ -148,6 +156,10 @@ export const translations = {
         'admin.waitlist.accept': 'Accepter',
         'admin.waitlist.reject': 'Refuser',
         'nav.provideService': 'Fournir une prestation',
+        'provider.request.success': 'Demande envoyée !',
+        'provider.request.success.msg': 'Votre demande pour devenir prestataire a été enregistrée.',
+        'provider.request.createAccount.prompt': 'Pour suivre l\'avancement de votre demande et gérer votre futur stand, nous vous recommandons de créer un compte.',
+        'provider.request.createAccount.btn': 'Créer un compte',
 
         'category.artisan': 'Artisan',
         'category.atelier': 'Atelier',
@@ -228,6 +240,7 @@ export const translations = {
         'admin.title': 'Necronomi\'Con Admin',
         'admin.subtitle': 'Provider, map and activity control panel.',
         'admin.providers': 'Providers',
+        'admin.prestations': 'Services',
         'admin.map': 'Map',
         'admin.accounts': 'Accounts',
 
@@ -260,7 +273,14 @@ export const translations = {
         'prestataire.status': 'Booth Status:',
         'prestataire.validated': 'Validated',
         'prestataire.location': 'Location:',
-        'prestataire.manage': 'Manage my services',
+        'prestataire.manage': 'Manage my space',
+        'prestataire.public_page': 'My Public Page',
+        'prestataire.public_page_title': 'Customize my public page',
+        'prestataire.public_text': 'Custom presentation text',
+        'prestataire.public_images': 'Images (URLs separated by commas)',
+        'prestataire.public.presentation': 'Presentation',
+        'prestataire.not_found': 'Provider not found',
+        'view_page': 'View my page',
         'prestataire.stand': 'My Stand',
 
         'globalSearch': 'Global search...',
@@ -297,6 +317,10 @@ export const translations = {
         'admin.waitlist.accept': 'Accept',
         'admin.waitlist.reject': 'Reject',
         'nav.provideService': 'Provide a service',
+        'provider.request.success': 'Request sent!',
+        'provider.request.success.msg': 'Your request to become a provider has been registered.',
+        'provider.request.createAccount.prompt': 'To track the progress of your request and manage your future booth, we recommend creating an account.',
+        'provider.request.createAccount.btn': 'Create an account',
 
         'category.artisan': 'Craftsman',
         'category.atelier': 'Workshop',
@@ -311,5 +335,28 @@ export const translations = {
         'service.animation_arcade': 'Arcade animation',
         'service.demo_vr': 'VR demo',
         'service.reparation_costumes': 'Costume repair',
+    }
+}
+
+export const mainPageTextPresentation = {
+    fr: {
+        banner: "Bienvenue à la Necronomi'con !",
+        intro: "Venez découvrir notre évènement, son intérêt, ses moments forts !",
+        description: "La Nécronomi’Con est une convention dédiée aux cultures de l’imaginaire, réunissant chaque année passionnés de science-fiction, de fantastique, d’horreur, de jeux vidéo et de jeux de rôle. Conçue comme un espace d’échange, de créativité et de célébration du geekverse, elle propose rencontres avec des auteurs et artistes, animations variées, conférences, ateliers et expositions, le tout dans une ambiance conviviale et immersive.",
+        locationTitle: "Emplacement de l'évènement",
+        mapTitle: "Map Visiteur",
+        originTitle: "Origine de l’événement",
+        originDescription: "La Nécronomi’Con a été créée dans l’initiative d’un groupe d'étudiant de l'IUT Nord Franche-Comté, passionnés, souhaitant dynamiser la scène geek du Nord Franche-Comté. Au fil des années, l’événement a grandi, s’est professionnalisé et a gagner l'attention d'un public de plus en plus large, devenant un événement incontournable pour la communauté geek régionale.",
+        supportersTitle: "Nos partenaires"
+    },
+    en: {
+        banner: "Welcome to Necronomi'con!",
+        intro: "Come and discover our event, its purpose, and its highlights!",
+        description: "Necronomi'Con is a convention dedicated to imaginary cultures, bringing together science fiction, fantasy, horror, video game and role-playing enthusiasts every year. Designed as a space for exchange, creativity and celebration of the geekverse, it offers meetings with authors and artists, varied activities, conferences, workshops and exhibitions, all in a friendly and immersive atmosphere.",
+        locationTitle: "Event Location",
+        mapTitle: "Visitor Map",
+        originTitle: "Origins of the Event",
+        originDescription: "Necronomi'Con was created on the initiative of a group of passionate students from IUT Nord Franche-Comté, wishing to boost the geek scene in Nord Franche-Comté. Over the years, the event has grown, professionalized and gained the attention of an increasingly large audience, becoming a key event for the regional geek community.",
+        supportersTitle: "Our Partners"
     }
 }

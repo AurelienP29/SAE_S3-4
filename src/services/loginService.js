@@ -60,8 +60,7 @@ export function useLoginService() {
             return;
         }
 
-        //TODO:
-        // Simulation ouverture
+        // Simulation ouverture, à changer
         const oauthUrls = {
             GitHub: 'https://github.com/login/oauth/authorize?client_id=YOUR_GITHUB_CLIENT_ID',
             Facebook: 'https://www.facebook.com/v12.0/dialog/oauth?client_id=YOUR_FB_CLIENT_ID',
@@ -86,13 +85,13 @@ export function useLoginService() {
     }
 
     function handleGoogleCallback(response) {
-        // TODO: fenêtre de connection -> refus
+        // à revoir https://developers.google.com/identity/sign-in/web/sign-in?hl=fr
+        // PB fenêtre de connection -> refus
         /*
         console.log("Google response:", response);
         authStore.login({ name: "Google User", role: "visiteur" });
         */
         try {
-            // Décodage du JWT renvoyé par Google
             const base64Url = response.credential.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
             const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {

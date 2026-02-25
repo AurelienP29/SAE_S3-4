@@ -24,6 +24,8 @@ import PrestationView from "@/views/PrestationView.vue";
 const routes = [
     {path: '/', name: 'Home', component: HomeView},
     {path: '/prestataire', name: 'PrestataireView', component: PrestataireView},
+    {path: '/prestatairedashboard', name: 'PrestataireView', component: PrestataireView},
+    {path: '/prestataire/:id', name: 'PrestatairePublic', component: () => import('@/views/PrestatairePublicView.vue')},
     {path: '/login', name: 'Login', component: LoginView},
     {path: '/register', name: 'Register', component: RegisterView},
 

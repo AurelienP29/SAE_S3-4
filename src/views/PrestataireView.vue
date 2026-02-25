@@ -23,6 +23,9 @@
           <Tab value="3">
             <i class="pi pi-map-marker mr-2"></i>{{ lang('prestataire.stand') }}
           </Tab>
+          <Tab value="4">
+            <i class="pi pi-globe mr-2"></i>{{ lang('prestataire.public_page') || 'Ma Page Publique' }}
+          </Tab>
         </TabList>
         <TabPanels>
           <!-- tab Profil -->
@@ -180,6 +183,33 @@
               </div>
             </div>
           </TabPanel>
+
+          <!-- Tab Public Page -->
+          <TabPanel value="4">
+            <div class="g-panel p-6 mt-4">
+              <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-purple-400 uppercase">{{ lang('prestataire.public_page_title') || 'Personnalisation de ma page publique' }}</h2>
+                <Button :label="lang('view_page') || 'Voir ma page'" icon="pi pi-external-link" text @click="router.push({ name: 'PrestatairePublic', params: { id: prestataire.id } })" />
+              </div>
+
+              <div class="grid grid-cols-1 gap-6">
+                <div class="flex flex-col gap-2">
+                  <label class="font-bold text-gray-300">{{ lang('prestataire.public_text') || 'Texte de présentation personnalisé' }}</label>
+                  <Editor v-model="profileForm.publicPageText" editorStyle="height: 300px"/>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <label class="font-bold text-gray-300">{{ lang('prestataire.public_images') || 'Images (URLs séparées par des virgules)' }}</label>
+                  <Textarea v-model="publicPageImagesRaw" rows="3" placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg" />
+                  <small class="text-gray-500">Ajoutez des liens vers vos images pour illustrer votre page.</small>
+                </div>
+                
+                <div class="mt-4 flex justify-end">
+                  <Button :label="lang('prestataire.saveProfile')" icon="pi pi-check" severity="success" @click="saveProfile" />
+                </div>
+              </div>
+            </div>
+          </TabPanel>
         </TabPanels>
       </Tabs>
     </div>
@@ -228,7 +258,7 @@ import {translations} from '@/datasource/lang.js';
 import {
   Tabs, TabList, Tab, TabPanels, TabPanel,
   InputText, Button, Select,
-  DataTable, Column, Dialog, Message,
+  DataTable, Column, Dialog, Message, Textarea,
   Toast, ConfirmDialog, Rating, Avatar
 } from 'primevue';
 import Editor from 'primevue/editor'
@@ -290,8 +320,12 @@ const profileForm = reactive({
   email: '',
   phone: '',
   category: '',
-  description: ''
+  description: '',
+  publicPageText: '',
+  publicPageImages: []
 });
+
+const publicPageImagesRaw = ref('');
 
 
 const prestationDialog = ref(false);
@@ -310,6 +344,7 @@ onMounted(() => {
     if (found) {
       prestataire.value = found;
       Object.assign(profileForm, found);
+      publicPageImagesRaw.value = found.publicPageImages ? found.publicPageImages.join(', ') : '';
       loadPrestations();
       loadMyStandData();
     }
@@ -324,6 +359,11 @@ function loadPrestations() {
 
 function saveProfile() {
   if (prestataire.value) {
+    // Traitement des images
+    profileForm.publicPageImages = publicPageImagesRaw.value
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s !== '');
 
     const index = prestataires.findIndex(p => p.id === prestataire.value.id);
     if (index !== -1) {

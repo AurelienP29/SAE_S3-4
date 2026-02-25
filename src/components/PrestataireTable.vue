@@ -34,7 +34,10 @@
                        class="text-purple-400 font-bold hover:text-purple-300 no-underline">
             {{ data.name }}
           </router-link>
-          <span v-else>{{ data.name }}</span>
+          <router-link v-else :to="{ name: 'PrestatairePublic', params: { id: data.id } }"
+                       class="text-purple-400 font-bold hover:text-purple-300 no-underline">
+            {{ data.name }}
+          </router-link>
         </template>
 
         <template #filter="{ filterModel, filterCallback }">
