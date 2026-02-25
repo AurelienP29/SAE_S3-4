@@ -111,7 +111,7 @@ export function useAdminAccountService() {
     }
 
     function deleteAccount() {
-        if (!selectedAccount.value) return
+        if (!selectedAccount.value || selectedAccount.value.role === 'admin') return
 
         const userEmail = selectedAccount.value.email
         const userRole = selectedAccount.value.role

@@ -217,7 +217,7 @@
                   <div class="resa-item-glass p-6 rounded">
                     <p class="mb-2">{{ lang('prestataire.status') }} <span class="text-green-400 font-bold">{{ lang('prestataire.validated') }}</span></p>
                     <p>{{ lang('prestataire.location') }} <span class="text-white font-bold">Hall B - Stand 12</span></p>
-                    <Button :label="' ' + lang('prestataire.manage')" icon="pi pi-box" @click="router.push('/prestataire')" class="mt-4" />
+                    <Button :label="' ' + lang('prestataire.manage')" icon="pi pi-box" @click="router.push('/prestatairedashboard')" class="mt-4" />
                   </div>
                 </div>
               </div>

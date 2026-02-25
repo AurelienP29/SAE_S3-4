@@ -60,6 +60,35 @@ const acceptPrestataire = (prestataire) => {
   const newPrestataire = { ...prestataire, id: newId };
   delete newPrestataire.requestDate;
 
+  const existingUser = users.find(u => u.email.toLowerCase() === prestataire.email.toLowerCase());
+
+  if (existingUser) {
+    existingUser.role = 'prestataire';
+    if (!existingUser.roles.includes('prestataire')) {
+      existingUser.roles.push('prestataire');
+    }
+    if (!existingUser.phone && prestataire.phone) existingUser.phone = prestataire.phone;
+
+    if (authStore.user && authStore.user.email.toLowerCase() === existingUser.email.toLowerCase()) {
+      authStore.updateUser({
+        role: 'prestataire',
+        roles: existingUser.roles
+      });
+    }
+  } else {
+    const newUser = {
+      id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+      name: prestataire.name,
+      email: prestataire.email,
+      password: 'presta',
+      role: 'prestataire',
+      roles: ['prestataire'],
+      phone: prestataire.phone || '',
+      description: prestataire.description || ''
+    };
+    users.push(newUser);
+  }
+
   prestataires.push(newPrestataire);
   initialPrestataires.push(newPrestataire);
   prestataireStore.addPrestataire(newPrestataire);
@@ -71,7 +100,10 @@ const rejectPrestataire = (prestataire) => {
 };
 
 const removeFromWaitlist = (id) => {
-  waitlist.value = waitlist.value.filter(p => p.id !== id);
+  const index = waitingList.value.findIndex(p => p.id === id);
+  if (index !== -1) {
+    waitingList.value.splice(index, 1);
+  }
 };
 </script>
 

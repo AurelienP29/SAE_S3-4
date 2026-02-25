@@ -28,6 +28,7 @@
               @click="openEditDialog(slotProps.data)"
           />
           <Button
+              v-if="slotProps.data.role !== 'admin'"
               icon="pi pi-trash"
               rounded
               text

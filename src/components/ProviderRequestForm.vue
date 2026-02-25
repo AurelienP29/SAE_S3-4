@@ -125,11 +125,27 @@
 
       </form>
     </Dialog>
+
+    <!-- Success prompt for non-connected users -->
+    <Dialog v-model:visible="successDialogVisible" :header="lang('provider.request.success')" :modal="true" :style="{ width: '450px' }">
+      <div class="flex flex-column align-items-center gap-3 py-3 text-center">
+        <i class="pi pi-check-circle text-6xl text-green-500"></i>
+        <p class="text-xl font-medium">{{ lang('provider.request.success.msg') }}</p>
+        <p class="text-gray-400">{{ lang('provider.request.createAccount.prompt') }}</p>
+      </div>
+      <template #footer>
+        <div class="flex justify-content-center gap-2">
+          <Button :label="lang('cancel')" severity="secondary" @click="successDialogVisible = false" />
+          <Button :label="lang('provider.request.createAccount.btn')" @click="goToRegister" />
+        </div>
+      </template>
+    </Dialog>
   </div>
 </template>
 
 <script setup>
 import {reactive, ref, computed} from 'vue'
+import {useRouter} from 'vue-router'
 import {useAuthStore} from '@/stores/authStore.js'
 import {categoryOptions, serviceOptions, waitingList} from '@/datasource/data.mjs'
 import {translations as appTranslations} from '@/datasource/lang.js'
@@ -176,7 +192,9 @@ const props = defineProps({
 });
 
 const authStore = useAuthStore()
+const router = useRouter()
 const visible = ref(false)
+const successDialogVisible = ref(false)
 
 const displayLabel = computed(() => {
   if (props.hideLabel) return ''
@@ -286,6 +304,12 @@ const lang = (key) => {
 }
 
 function openModal() {
+  // Pré-remplir avec les données de l'utilisateur connecté s'il y en a un
+  if (authStore.user) {
+    formData.providerName = authStore.user.name;
+    formData.email = authStore.user.email;
+    formData.phone = authStore.user.phone || '';
+  }
   visible.value = true
 }
 
@@ -388,6 +412,15 @@ async function registerProvider() {
       )
 
   visible.value = false;
+
+  if (!authStore.isAuthenticated) {
+    successDialogVisible.value = true;
+  }
+}
+
+function goToRegister() {
+  successDialogVisible.value = false;
+  router.push({ name: 'Register' });
 }
 </script>
 
