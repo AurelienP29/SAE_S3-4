@@ -74,7 +74,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { usePrestataireStore } from '@/stores/prestataire.js';
 import { useAuthStore } from '@/stores/authStore.js';
 import { translations } from '@/datasource/lang.js';
-import { prestations } from '@/datasource/data.js';
+import { prestations } from '@/datasource/data.mjs';
 import { Avatar, Tag, Button } from 'primevue';
 
 const route = useRoute();
