@@ -1,13 +1,15 @@
-import {ref, reactive} from 'vue'
-import {users, prestataires, prestations} from '@/datasource/data.mjs'
+import { ref, reactive, onMounted } from 'vue'
+import { prestataires, prestations } from '@/datasource/data.mjs' // Géré partiellement en mock pour presta/prestation
 
 export function useAdminAccountService() {
-    const accounts = ref(users)
+    const accounts = ref([])
     const loading = ref(false)
     const dialogVisible = ref(false)
     const deleteDialogVisible = ref(false)
     const isEditMode = ref(false)
     const selectedAccount = ref(null)
+
+    const API_URL = 'http://localhost:3000/users'
 
     const form = reactive({
         id: null,
@@ -20,20 +22,49 @@ export function useAdminAccountService() {
 
     const errors = reactive({
         name: '',
-        email: ''
+        email: '',
+        global: ''
     })
 
     const roleOptions = [
-        {label: 'Administrateur', value: 'admin'},
-        {label: 'Prestataire', value: 'prestataire'},
-        {label: 'Visiteur', value: 'visiteur'},
-        {label: 'Organisateur', value: 'organisateur'}
+        { label: 'Administrateur', value: 'admin' },
+        { label: 'Prestataire', value: 'prestataire' },
+        { label: 'Visiteur', value: 'visiteur' },
+        { label: 'Organisateur', value: 'organisateur' }
     ]
 
+    async function fetchAccounts() {
+        loading.value = true
+        try {
+            const response = await fetch(API_URL)
+            if (response.ok) {
+                const data = await response.json()
+                accounts.value = data.users.map(u => ({ ...u, id: u._id }))
+            } else {
+                console.error('Erreur de récupération des utilisateurs')
+            }
+        } catch (error) {
+            console.error('Erreur réseau:', error)
+        } finally {
+            loading.value = false
+        }
+    }
+
+    onMounted(() => {
+        fetchAccounts()
+    })
+
     function openEditDialog(account) {
-        isEditMode.value = true
-        selectedAccount.value = account
-        Object.assign(form, account)
+        if (account) {
+            isEditMode.value = true
+            selectedAccount.value = account
+            Object.assign(form, account)
+            form.id = account._id || account.id // Gérer _id
+        } else {
+            isEditMode.value = false
+            selectedAccount.value = null
+            resetForm()
+        }
         dialogVisible.value = true
     }
 
@@ -51,12 +82,14 @@ export function useAdminAccountService() {
         form.description = ''
         errors.name = ''
         errors.email = ''
+        errors.global = ''
     }
 
     function validate() {
         let isValid = true
         errors.name = ''
         errors.email = ''
+        errors.global = ''
 
         if (!form.name) {
             errors.name = 'Le nom est requis.'
@@ -70,39 +103,40 @@ export function useAdminAccountService() {
         return isValid
     }
 
-    function saveAccount() {
+    async function saveAccount() {
         if (!validate()) return
 
-        /*
-        const user = users.find(u => u.id === form.id);
-        user.name = form.name;
-        user.email = form.email;
-        */
+        loading.value = true
+        try {
+            const url = isEditMode.value ? `${API_URL}/${form.id}` : API_URL
+            const method = isEditMode.value ? 'PUT' : 'POST'
 
-        const index = users.findIndex(u => u.id === form.id)
-        if (index !== -1) {
-            // => Garder le mdp et roles
-
-            const existingUser = users[index]
-            users[index] = {
-                ...existingUser,
-                name: form.name,
-                email: form.email,
-                role: form.role,
-                roles: existingUser.roles.includes(form.role) ? existingUser.roles : [form.role, ...existingUser.roles.filter(r => r !== existingUser.role)],
-                phone: form.phone,
-                description: form.description
+            const payload = { ...form }
+            if (!isEditMode.value && !payload.password) {
+                payload.password = 'password123' // Mot de passe par défaut pour création admin
             }
 
-            // maj presta si existe déjà
-            const prestaIndex = prestataires.findIndex(p => p.email === existingUser.email)
-            if (prestaIndex !== -1) {
-                prestataires[prestaIndex].name = form.name
-                prestataires[prestaIndex].email = form.email
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+
+            if (response.ok) {
+                await fetchAccounts() // Rafraîchir la liste
+                closeDialog()
+            } else {
+                const data = await response.json()
+                errors.global = data.error || 'Erreur lors de la sauvegarde'
             }
+        } catch (error) {
+            console.error('Erreur réseau:', error)
+            errors.global = 'Erreur réseau lors de la sauvegarde.'
+        } finally {
+            loading.value = false
         }
-
-        closeDialog()
     }
 
     function confirmDelete(account) {
@@ -110,55 +144,45 @@ export function useAdminAccountService() {
         deleteDialogVisible.value = true
     }
 
-    function deleteAccount() {
+    async function deleteAccount() {
         if (!selectedAccount.value || selectedAccount.value.role === 'admin') return
 
         const userEmail = selectedAccount.value.email
         const userRole = selectedAccount.value.role
+        const userId = selectedAccount.value._id || selectedAccount.value.id
 
-        /*
-        // TODO : ==> Prestataire -> suppr cascade
+        loading.value = true
+        try {
+            const response = await fetch(`${API_URL}/${userId}`, {
+                method: 'DELETE'
+            })
 
-        // Simple del (pas cascade)
-        const idx = users.findIndex(u => u.id === selectedAccount.value.id);
-        users.splice(idx, 1);
-        return;
-        */
-
-        /*
-
-        const idx = users.findIndex(u => u.id === selectedAccount.value.id);
-        users.splice(idx, 1);
-        */
-
-        // suppr user
-        const userIndex = users.findIndex(u => u.id === selectedAccount.value.id)
-        if (userIndex !== -1) {
-            users.splice(userIndex, 1)
-        }
-
-
-        if (userRole === 'prestataire') {
-
-
-            const prestaIndex = prestataires.findIndex(p => p.email === userEmail)
-            if (prestaIndex !== -1) {
-                const prestataireId = prestataires[prestaIndex].id
-
-                // suppr profil prestataire
-                prestataires.splice(prestaIndex, 1)
-
-                // + suppr prestations liées
-                for (let i = prestations.length - 1; i >= 0; i--) {
-                    if (prestations[i].prestataireId === prestataireId) {
-                        prestations.splice(i, 1)
+            if (response.ok) {
+                // Suppr locaux liés (pour ne pas casser le reste qui est mocké)
+                if (userRole === 'prestataire') {
+                    const prestaIndex = prestataires.findIndex(p => p.email === userEmail)
+                    if (prestaIndex !== -1) {
+                        const prestataireId = prestataires[prestaIndex].id
+                        prestataires.splice(prestaIndex, 1)
+                        for (let i = prestations.length - 1; i >= 0; i--) {
+                            if (prestations[i].prestataireId === prestataireId) {
+                                prestations.splice(i, 1)
+                            }
+                        }
                     }
                 }
-            }
-        }
 
-        deleteDialogVisible.value = false
-        selectedAccount.value = null
+                await fetchAccounts()
+                deleteDialogVisible.value = false
+                selectedAccount.value = null
+            } else {
+                console.error("Erreur de suppression")
+            }
+        } catch (error) {
+            console.error('Erreur réseau suppression:', error)
+        } finally {
+            loading.value = false
+        }
     }
 
     return {
@@ -178,3 +202,4 @@ export function useAdminAccountService() {
         deleteAccount
     }
 }
+

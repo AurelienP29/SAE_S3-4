@@ -58,6 +58,7 @@ router.post('/register', async (req, res) => {
         _id: user._id,
         email: user.email,
         name: user.name,
+        role: user.role,
         provider: user.provider
       },
       token,
@@ -113,6 +114,7 @@ router.post('/login', async (req, res) => {
         _id: user._id,
         email: user.email,
         name: user.name,
+        role: user.role,
         provider: user.provider,
         picture: user.picture
       },
@@ -143,22 +145,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
   }
 });
 
-// GET /api/auth/users - Liste des utilisateurs (debug)
-router.get('/users', async (req, res) => {
-  try {
-    const users = await User.find().select('-password');
-    res.json({
-      message: 'Liste des utilisateurs',
-      count: users.length,
-      users
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: 'Erreur serveur',
-      message: error.message
-    });
-  }
-});
+// (Route GET /api/auth/users retirée car déplacée vers routes/users.js)
 
 // Route pour initier l'authentification Google
 router.get('/google', passport.authenticate('google', {

@@ -15,6 +15,28 @@ async function findUserById(db, userId) {
   return await db.collection('users').findOne({ _id: new ObjectId(userId) });
 }
 
+// Récupérer tous les utilisateurs
+async function findAllUsers(db) {
+  return await db.collection('users').find({}).toArray();
+}
+
+// Mettre à jour un utilisateur par son ID
+async function updateUserById(db, userId, updateData) {
+  // on retire _id pour ne pas le modifier par erreur
+  const { _id, ...safeData } = updateData;
+  const result = await db.collection('users').findOneAndUpdate(
+    { _id: new ObjectId(userId) },
+    { $set: safeData },
+    { returnDocument: 'after' }
+  );
+  return result;
+}
+
+// Supprimer un utilisateur
+async function deleteUserById(db, userId) {
+  return await db.collection('users').deleteOne({ _id: new ObjectId(userId) });
+}
+
 // Créer un utilisateur (inscription classique email/password)
 async function createUser(db, { email, password, name }) {
   // Hash du mot de passe
@@ -78,12 +100,11 @@ async function createUserFromGoogle(db, { googleId, email, name, picture }) {
 module.exports = {
   findUserByEmail,
   findUserById,
+  findAllUsers,
+  updateUserById,
+  deleteUserById,
   createUser,
   comparePassword,
   findUserByGoogleId,
-  createUserFromGoogle,
-  findUserByGithubId,
-  createUserFromGithub,
-  findUserByDiscordId,
-  createUserFromDiscord
+  createUserFromGoogle
 };

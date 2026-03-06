@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const {
     User,
     Prestataire,
@@ -6,9 +7,10 @@ const {
     Activity,
     Message,
     WaitingListPrestataire
-} = require('./models');
+} = require('./models/models');
 
-const MONGO_URI = 'mongodb://localhost:27017/festival_db';
+require('dotenv').config();
+const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/sae_s3';
 
 const rawUsers = [
     { id: 1, name: 'Admin User', email: 'admin@test.com', password: 'admin', role: 'admin', phone: '0123456789', description: 'Administrateur de la plateforme Necronomi\'con.', picture: '' },
@@ -113,10 +115,16 @@ async function seed() {
         const userMap = {};
 
         for (const u of rawUsers) {
+            let userPassword = u.password;
+            if (userPassword) {
+                const salt = await bcrypt.genSalt(10);
+                userPassword = await bcrypt.hash(userPassword, salt);
+            }
+
             const newUser = await User.create({
                 name: u.name,
                 email: u.email,
-                password: u.password,
+                password: userPassword,
                 role: u.role,
                 phone: u.phone,
                 description: u.description,

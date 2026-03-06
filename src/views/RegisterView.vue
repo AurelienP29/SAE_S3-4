@@ -98,13 +98,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore.js'
 import { translations } from '@/datasource/lang.js'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 import { users } from '@/datasource/data.mjs'
 import { useLoginService } from '@/services/loginService.js'
+import { useAuthStore } from '@/stores/authStore.js'
 
 const authStore = useAuthStore()
 const lang = (key) => {
@@ -159,9 +159,6 @@ function validate() {
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
     emailError.value = "Veuillez entrer une adresse email valide."
     isValid = false
-  } else if (users.find(u => u.email === email.value)) {
-    emailError.value = "Cet email est déjà utilisé."
-    isValid = false
   }
 
   if (!password.value) {
@@ -177,21 +174,40 @@ function validate() {
   return isValid
 }
 
-function handleRegister() {
+async function handleRegister() {
   if (!validate()) return
 
-  const newUser = {
-    id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-    name: name.value,
-    email: email.value,
-    password: password.value,
-    role: 'visiteur',
-    roles: ['visiteur']
+  try {
+    const response = await fetch('http://localhost:3000/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name.value,
+        email: email.value,
+        password: password.value
+      })
+    })
+
+    const data = await response.json()
+
+    if (response.ok) {
+      // Inscription réussie, utiliser les données retournées par l'API
+      const newUser = data.user
+      // On peut ajouter le mock initial ici si on veut forcer le store, ou juste rediriger
+      router.push({ name: 'Login' })
+    } else {
+      if (data.error === 'Email déjà utilisé') {
+        emailError.value = "Cet email est déjà pris."
+      } else {
+        alert(data.message || "Erreur lors de l'inscription")
+      }
+    }
+  } catch (err) {
+    console.error("Erreur serveur:", err)
+    alert("Impossible de contacter le serveur.")
   }
-
-  users.push(newUser)
-
-  router.push({ name: 'Login' })
 }
 
 function goToLogin() {

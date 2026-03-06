@@ -198,7 +198,7 @@
                   <Button :label="' ' + lang('reservation.view')" icon="pi pi-calendar" @click="router.push('/activities')" class="mt-4" text />
                 </div>
 
-                <div v-else-if="authStore.user.role === 'organisateur'">
+                <div v-else-if="authStore.user.role === 'organisateur' || authStore.user.role === 'admin'">
                    <h3 class="text-xl font-bold text-purple-400 mb-4">{{ lang('admin.globalTracking') }}</h3>
                    <DataTable :value="authStore.reservations" class="p-datatable-sm">
                       <Column field="userEmail" :header="lang('admin.client')"></Column>

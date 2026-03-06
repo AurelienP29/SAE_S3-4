@@ -5,13 +5,14 @@ const cors = require('cors');
 const passport = require('./config/passport');
 
 const authRoutes = require('./routes/auth');
+const usersRoutes = require('./routes/users');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Configuration CORS pour Vue.js
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:5174'],
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -39,6 +40,7 @@ client.connect()
 
 // Routes
 app.use('/auth', authRoutes);
+app.use('/users', usersRoutes);
 
 // Route de test
 app.get('/', (req, res) => {

@@ -1,7 +1,6 @@
-import {ref} from 'vue'
-import {useRouter} from 'vue-router'
-import {useAuthStore} from '@/stores/authStore.js'
-import {users} from '@/datasource/data.mjs'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore.js'
 
 export function useLoginService() {
     const router = useRouter()
@@ -33,23 +32,43 @@ export function useLoginService() {
         return isValid
     }
 
-    function handleLogin() {
+    async function handleLogin() {
         if (!validate()) return
 
-        const user = users.find(
-            u => u.email === email.value && u.password === password.value
-        )
+        try {
+            const response = await fetch('http://localhost:3000/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email.value,
+                    password: password.value
+                })
+            })
 
-        if (user) {
-            authStore.login(user)
-            router.push({name: 'Home'})
-        } else {
-            passwordError.value = 'Email ou mot de passe incorrect.'
+            const data = await response.json()
+
+            if (response.ok) {
+                // Succès : L'API nous retourne { message, user, token, expiresIn }
+                // On pourrait stocker le token ici, ex: localStorage.setItem('token', data.token)
+                authStore.login(data.user)
+                router.push({ name: 'Home' })
+            } else {
+                if (data.error === 'Identifiants invalides') {
+                    passwordError.value = 'Email ou mot de passe incorrect.'
+                } else {
+                    passwordError.value = data.message || 'Erreur lors de la connexion'
+                }
+            }
+        } catch (error) {
+            console.error('Erreur serveur:', error)
+            passwordError.value = 'Impossible de contacter le serveur.'
         }
     }
 
     function goToCreateAccount() {
-        router.push({name: 'Register'})
+        router.push({ name: 'Register' })
     }
 
     function handleSocialLogin(provider) {
@@ -79,7 +98,7 @@ export function useLoginService() {
                     roles: ['visiteur']
                 };
                 authStore.login(socialUser);
-                router.push({name: 'Home'});
+                router.push({ name: 'Home' });
             });
         }
     }
@@ -110,7 +129,7 @@ export function useLoginService() {
             };
 
             authStore.login(user);
-            router.push({name: 'Home'});
+            router.push({ name: 'Home' });
         } catch (e) {
             console.error("Erreur lors du décodage du token Google", e);
         }

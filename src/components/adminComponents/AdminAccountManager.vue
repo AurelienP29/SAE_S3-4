@@ -1,6 +1,14 @@
 <template>
   <div class="admin-account-manager">
-    <h1 class="mb-4">{{ lang('admin.accountManager.title') }}</h1>
+    <div class="flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">{{ lang('admin.accountManager.title') }}</h1>
+      <Button 
+        :label="lang('add')" 
+        icon="pi pi-plus" 
+        severity="success" 
+        @click="openEditDialog(null)" 
+      />
+    </div>
 
     <DataTable class="p-datatable-sm"
                :value="accounts"
