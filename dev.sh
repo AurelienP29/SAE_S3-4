@@ -14,6 +14,9 @@ cleanup() {
 # Intercepter le signal d'interruption (Ctrl+C)
 trap cleanup SIGINT
 
+echo "Initialisation de la base de données..."
+node src/seed.mjs
+
 echo "Démarrage du Backend (port 3000)..."
 (cd backend && npm run dev) &
 

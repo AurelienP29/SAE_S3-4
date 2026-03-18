@@ -107,7 +107,7 @@ const hasRole = (roleTarget) => {
   const userRoles = authStore.user?.roles || []
   const singleRole = authStore.user?.role
 
-  if (roleTarget === 'organisateur' && (singleRole === 'organisateur' || singleRole === 'admin' || userRoles.includes('admin'))) return true
+  if (singleRole === 'admin' || userRoles.includes('admin')) return true
 
   return userRoles.includes(roleTarget) || singleRole === roleTarget
 }

@@ -122,6 +122,14 @@ export const translations = {
         'view_page': 'Voir ma page',
         'prestataire.stand': 'Mon Stand',
 
+        'prestation.colName': 'Nom de la prestation',
+        'prestation.colZone': 'Zone / Emplacement',
+        'prestation.colCategory': 'Catégorie',
+        'prestation.description': 'Description détaillée',
+        'prestations.colName': 'Nom de la prestation',
+        'prestations.colZone': 'Zone / Emplacement',
+        'prestations.colCategory': 'Catégorie',
+
         'globalSearch': 'Recherche globale...',
         'noResults': 'Aucun résultat trouvé.',
         'filterByName': 'Filtrer par nom',
@@ -297,6 +305,14 @@ export const translations = {
         'admin.providerManager.edit': 'Edit Provider',
         'admin.providerManager.confirmDelete': 'Confirm Deletion',
         'admin.providerManager.deletePrompt': 'Do you really want to delete provider',
+
+        'prestation.colName': 'Service name',
+        'prestation.colZone': 'Zone / Location',
+        'prestation.colCategory': 'Category',
+        'prestation.description': 'Detailed description',
+        'prestations.colName': 'Service name',
+        'prestations.colZone': 'Zone / Location',
+        'prestations.colCategory': 'Category',
 
         'admin.accountManager.title': 'Account Management',
         'admin.accountManager.colName': 'Name',

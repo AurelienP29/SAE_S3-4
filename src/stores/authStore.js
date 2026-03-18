@@ -35,9 +35,12 @@ export const useAuthStore = defineStore('auth', () => {
     })
 
 
-    function login(userData) {
+    const storedToken = localStorage.getItem('token')
+    const token = ref(storedToken || null)
+
+    function login(userData, jwtToken) {
         const newUser = {
-            id: userData.id,
+            id: userData._id || userData.id,
             email: userData.email,
             name: userData.name,
             role: userData.role,
@@ -49,6 +52,11 @@ export const useAuthStore = defineStore('auth', () => {
         
         user.value = newUser
         localStorage.setItem('user', JSON.stringify(newUser))
+
+        if (jwtToken) {
+            token.value = jwtToken
+            localStorage.setItem('token', jwtToken)
+        }
     }
 
     function updateUser(updatedData) {
@@ -60,7 +68,9 @@ export const useAuthStore = defineStore('auth', () => {
 
     function logout() {
         user.value = null
+        token.value = null
         localStorage.removeItem('user')
+        localStorage.removeItem('token')
     }
 
     function setLanguage(lang) {
@@ -108,6 +118,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     return {
         user,
+        token,
         isAuthenticated,
         userRole,
         currentLanguage,

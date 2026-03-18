@@ -1,9 +1,13 @@
-import {ref, reactive} from 'vue'
+import {ref, reactive, onMounted, computed} from 'vue'
 import {usePrestataireStore} from '@/stores/prestataire.js'
 import {categoryOptions} from '@/datasource/data.mjs'
 
 export function useAdminPrestataireService() {
     const prestataireStore = usePrestataireStore()
+
+    onMounted(() => {
+        prestataireStore.fetchPrestataires()
+    })
 
     const dialogVisible = ref(false)
     const deleteDialogVisible = ref(false)
@@ -91,8 +95,8 @@ export function useAdminPrestataireService() {
     }
 
     return {
-        prestataires: prestataireStore.prestataires,
-        loading: prestataireStore.loading,
+        prestataires: computed(() => prestataireStore.prestataires),
+        loading: computed(() => prestataireStore.loading),
         dialogVisible,
         deleteDialogVisible,
         isEditMode,

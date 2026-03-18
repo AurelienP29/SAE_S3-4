@@ -32,7 +32,7 @@
         :loading="loading"
     >
       <Column field="name" :header="lang('prestataire.colName')" sortable/>
-      <Column field="email" header="Email" sortable/>
+      <Column field="email" :header="lang('admin.accountManager.colEmail')" sortable/>
       <Column field="phone" :header="lang('prestataire.phone')"/>
       <Column field="category" :header="lang('prestataire.colCategory')">
         <template #body="slotProps">
@@ -68,21 +68,6 @@
         :style="{ width: '700px' }"
         :closable="false"
     >
-      <!-- 
-        <div class="field">
-          <div class="field col-12 md:col-6">
-            <label for="name">{{ lang('prestataire.colName') }}</label>
-            <InputText id="name" v-model="form.name" :class="{ 'p-invalid': errors.name }"/>
-            <small v-if="errors.name" style="color: red;">{{ errors.name }}</small>
-          </div>
-
-          <div class="field col-12 md:col-6">
-            <label for="email">Email</label>
-            <InputText id="email" v-model="form.email" :class="{ 'p-invalid': errors.email }"/>
-            <small v-if="errors.email" style="color: red;">{{ errors.email }}</small>
-          </div>
-        </div>
-      !-->
       <div class="p-fluid formgrid grid">
         <div class="field col-12 md:col-6">
           <label for="name">{{ lang('prestataire.colName') }}</label>
@@ -91,7 +76,7 @@
         </div>
 
         <div class="field col-12 md:col-6">
-          <label for="email">Email</label>
+          <label for="email">{{ lang('admin.accountManager.colEmail') }}</label>
           <InputText id="email" v-model="form.email" :class="{ 'p-invalid': errors.email }"/>
           <small v-if="errors.email" style="color: red;">{{ errors.email }}</small>
         </div>
@@ -109,7 +94,7 @@
               :options="translatedCategoryOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Sélectionner"
+              :placeholder="lang('admin.accountManager.rolePlaceholder')"
           />
         </div>
 
@@ -159,7 +144,7 @@
 import {DataTable, Column, Toolbar, Button, Dialog, InputText, Dropdown} from 'primevue'
 import Editor from 'primevue/editor'
 
-import {useAdminPrestataireService} from '/src/services/adminPrestataireService.js'
+import {useAdminPrestataireService} from '@/services/adminPrestataireService.js'
 import PrestataireWaitlistManager from "@/components/adminComponents/PrestataireWaitlistManager.vue";
 import { useAuthStore } from '@/stores/authStore.js';
 import { translations } from '@/datasource/lang.js';

@@ -1,14 +1,16 @@
 import {mapStands} from '@/datasource/mapStands.js';
 
 const USE_API = false;
-const API_URL = 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 let localStands = [...mapStands];
 
 export default {
     async getAllStands() {
         if (USE_API) {
-            const response = await fetch(`${API_URL}/stands`);
+            const response = await fetch(`${API_URL}/api/stands`, {
+                credentials: 'include'
+            });
             return await response.json();
         } else {
             return new Promise((resolve) => {

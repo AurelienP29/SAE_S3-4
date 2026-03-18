@@ -55,4 +55,15 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-module.exports = { authenticateToken };
+// Middleware pour vérifier si l'utilisateur est admin
+const isAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({
+      error: 'Accès refusé',
+      message: 'Vous devez être administrateur pour effectuer cette action'
+    });
+  }
+  next();
+};
+
+module.exports = { authenticateToken, isAdmin };

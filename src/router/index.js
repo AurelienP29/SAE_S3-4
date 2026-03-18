@@ -32,6 +32,7 @@ const routes = [
     {path: '/account', name: 'Account', component: AccountView},
     {path: '/contact-us', name: 'Contact', component: ContactUs},
     {path: '/admin/prestataires', name: 'OrganisateurEvents', component: AdminView},
+    {path: '/admin/activities', name: 'OrganisateurCreateEvent', component: () => import('@/views/AdminActivitiesView.vue')},
     {path: '/admin/map', name: 'OrganisateurMap', component: AdminMapView},
     {path: '/cart', name: 'Cart', component: CartView},
     {path: '/checkout', name: 'Checkout', component: () => import('@/views/Billeterie/CheckOutView.vue')},

@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:all": "./dev.sh",
     "build": "vite build",
     "preview": "vite preview",
     "start": "node index.js"
@@ -19,6 +20,7 @@
     "@vue-email/render": "^0.0.9",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.13.6",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "email-js": "^2.0.3",
     "emailjs": "^4.0.3",

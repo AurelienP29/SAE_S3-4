@@ -1,21 +1,20 @@
-import { ref, reactive, onMounted } from 'vue'
-import { prestataires, prestations } from '@/datasource/data.mjs' // Géré partiellement en mock pour presta/prestation
+import { ref, reactive, onMounted, computed } from 'vue'
+import { useUserStore } from '@/stores/userStore.js'
+import { prestataires, prestations } from '@/datasource/data.mjs'
 
 export function useAdminAccountService() {
-    const accounts = ref([])
-    const loading = ref(false)
+    const userStore = useUserStore()
     const dialogVisible = ref(false)
     const deleteDialogVisible = ref(false)
     const isEditMode = ref(false)
     const selectedAccount = ref(null)
-
-    const API_URL = 'http://localhost:3000/users'
 
     const form = reactive({
         id: null,
         name: '',
         email: '',
         role: '',
+        roles: [],
         phone: '',
         description: ''
     })
@@ -33,25 +32,8 @@ export function useAdminAccountService() {
         { label: 'Organisateur', value: 'organisateur' }
     ]
 
-    async function fetchAccounts() {
-        loading.value = true
-        try {
-            const response = await fetch(API_URL)
-            if (response.ok) {
-                const data = await response.json()
-                accounts.value = data.users.map(u => ({ ...u, id: u._id }))
-            } else {
-                console.error('Erreur de récupération des utilisateurs')
-            }
-        } catch (error) {
-            console.error('Erreur réseau:', error)
-        } finally {
-            loading.value = false
-        }
-    }
-
     onMounted(() => {
-        fetchAccounts()
+        userStore.fetchUsers()
     })
 
     function openEditDialog(account) {
@@ -59,7 +41,8 @@ export function useAdminAccountService() {
             isEditMode.value = true
             selectedAccount.value = account
             Object.assign(form, account)
-            form.id = account._id || account.id // Gérer _id
+            form.id = account.id || account._id
+            form.roles = account.roles || [account.role]
         } else {
             isEditMode.value = false
             selectedAccount.value = null
@@ -78,6 +61,7 @@ export function useAdminAccountService() {
         form.name = ''
         form.email = ''
         form.role = ''
+        form.roles = []
         form.phone = ''
         form.description = ''
         errors.name = ''
@@ -106,36 +90,22 @@ export function useAdminAccountService() {
     async function saveAccount() {
         if (!validate()) return
 
-        loading.value = true
         try {
-            const url = isEditMode.value ? `${API_URL}/${form.id}` : API_URL
-            const method = isEditMode.value ? 'PUT' : 'POST'
-
             const payload = { ...form }
             if (!isEditMode.value && !payload.password) {
-                payload.password = 'password123' // Mot de passe par défaut pour création admin
+                payload.password = 'password123'
+                payload.roles = [payload.role]
             }
 
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            })
-
-            if (response.ok) {
-                await fetchAccounts() // Rafraîchir la liste
-                closeDialog()
+            if (isEditMode.value) {
+                await userStore.updateUser(payload)
             } else {
-                const data = await response.json()
-                errors.global = data.error || 'Erreur lors de la sauvegarde'
+                await userStore.addUser(payload)
             }
+            closeDialog()
         } catch (error) {
-            console.error('Erreur réseau:', error)
-            errors.global = 'Erreur réseau lors de la sauvegarde.'
-        } finally {
-            loading.value = false
+            console.error('Erreur sauvegarde utilisateur:', error)
+            errors.global = 'Erreur lors de la sauvegarde.'
         }
     }
 
@@ -147,47 +117,18 @@ export function useAdminAccountService() {
     async function deleteAccount() {
         if (!selectedAccount.value || selectedAccount.value.role === 'admin') return
 
-        const userEmail = selectedAccount.value.email
-        const userRole = selectedAccount.value.role
-        const userId = selectedAccount.value._id || selectedAccount.value.id
-
-        loading.value = true
         try {
-            const response = await fetch(`${API_URL}/${userId}`, {
-                method: 'DELETE'
-            })
-
-            if (response.ok) {
-                // Suppr locaux liés (pour ne pas casser le reste qui est mocké)
-                if (userRole === 'prestataire') {
-                    const prestaIndex = prestataires.findIndex(p => p.email === userEmail)
-                    if (prestaIndex !== -1) {
-                        const prestataireId = prestataires[prestaIndex].id
-                        prestataires.splice(prestaIndex, 1)
-                        for (let i = prestations.length - 1; i >= 0; i--) {
-                            if (prestations[i].prestataireId === prestataireId) {
-                                prestations.splice(i, 1)
-                            }
-                        }
-                    }
-                }
-
-                await fetchAccounts()
-                deleteDialogVisible.value = false
-                selectedAccount.value = null
-            } else {
-                console.error("Erreur de suppression")
-            }
+            await userStore.deleteUser(selectedAccount.value.id || selectedAccount.value._id)
+            deleteDialogVisible.value = false
+            selectedAccount.value = null
         } catch (error) {
-            console.error('Erreur réseau suppression:', error)
-        } finally {
-            loading.value = false
+            console.error('Erreur suppression utilisateur:', error)
         }
     }
 
     return {
-        accounts,
-        loading,
+        accounts: computed(() => userStore.users),
+        loading: computed(() => userStore.loading),
         dialogVisible,
         deleteDialogVisible,
         isEditMode,

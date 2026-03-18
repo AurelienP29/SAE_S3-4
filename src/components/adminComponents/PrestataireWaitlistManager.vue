@@ -9,7 +9,7 @@
       <template #empty> {{ lang('admin.waitlist.empty') }} </template>
 
       <Column field="name" :header="lang('prestataire.colName')" sortable></Column>
-      <Column field="email" header="Email" sortable></Column>
+      <Column field="email" :header="lang('admin.accountManager.colEmail')" sortable></Column>
       <Column field="category" :header="lang('prestataire.colCategory')" sortable>
         <template #body="slotProps">
           {{ lang('category.' + slotProps.data.category) }}

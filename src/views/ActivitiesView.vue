@@ -26,15 +26,15 @@
     <h1 class="banner">Programme & Réservations</h1>
 
     <div class="activities-grid">
-      <div v-for="act in authStore.activities" :key="act.id" class="activity-card">
+      <div v-for="act in activityStore.activities" :key="act._id" class="activity-card">
         <h3>{{ act.titre }}</h3>
-        <p class="date">{{ act.date }}</p>
+        <p class="date">{{ new Date(act.date).toLocaleString('fr-FR') }}</p>
         <p>Places disponibles : <strong>{{ act.places }}</strong></p>
 
         <div class="actions">
           <button
               v-if="authStore.user"
-              @click="handleReservation(act.id)"
+              @click="handleReservation(act._id)"
               class="btn-reserve"
           >
             Réserver ma place
@@ -53,11 +53,19 @@
 <script setup>
 import {useAuthStore} from '@/stores/authStore.js'
 import {useCartStore} from "@/stores/cartStore.js";
-import {ref} from "vue";
+import {useActivityStore} from '@/stores/activityStore.js';
+import {onMounted} from "vue";
+import Button from 'primevue/button';
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
+const activityStore = useActivityStore()
+
 const ticketsTypes = authStore.ticketsTypes;
+
+onMounted(() => {
+  activityStore.fetchActivities();
+});
 
 function handleReservation(id) {
   const success = authStore.reserverActivite(id)

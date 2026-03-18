@@ -1,6 +1,7 @@
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore.js'
+import {ref} from 'vue'
+import {useRouter} from 'vue-router'
+import {useAuthStore} from '@/stores/authStore.js'
+import {users} from '@/datasource/data.mjs'
 
 export function useLoginService() {
     const router = useRouter()
@@ -36,39 +37,31 @@ export function useLoginService() {
         if (!validate()) return
 
         try {
-            const response = await fetch('http://localhost:3000/auth/login', {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+            const response = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email.value,
-                    password: password.value
-                })
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ email: email.value, password: password.value })
             })
 
             const data = await response.json()
 
-            if (response.ok) {
-                // Succès : L'API nous retourne { message, user, token, expiresIn }
-                // On pourrait stocker le token ici, ex: localStorage.setItem('token', data.token)
-                authStore.login(data.user)
-                router.push({ name: 'Home' })
-            } else {
-                if (data.error === 'Identifiants invalides') {
-                    passwordError.value = 'Email ou mot de passe incorrect.'
-                } else {
-                    passwordError.value = data.message || 'Erreur lors de la connexion'
-                }
+            if (!response.ok) {
+                passwordError.value = data.message || 'Email ou mot de passe incorrect.'
+                return
             }
-        } catch (error) {
-            console.error('Erreur serveur:', error)
-            passwordError.value = 'Impossible de contacter le serveur.'
+
+            authStore.login(data.user, data.token)
+            router.push({name: 'Home'})
+        } catch (err) {
+            console.error('Login error:', err)
+            passwordError.value = 'Erreur réseau. Veuillez réessayer.'
         }
     }
 
     function goToCreateAccount() {
-        router.push({ name: 'Register' })
+        router.push({name: 'Register'})
     }
 
     function handleSocialLogin(provider) {
@@ -98,7 +91,7 @@ export function useLoginService() {
                     roles: ['visiteur']
                 };
                 authStore.login(socialUser);
-                router.push({ name: 'Home' });
+                router.push({name: 'Home'});
             });
         }
     }
@@ -129,7 +122,7 @@ export function useLoginService() {
             };
 
             authStore.login(user);
-            router.push({ name: 'Home' });
+            router.push({name: 'Home'});
         } catch (e) {
             console.error("Erreur lors du décodage du token Google", e);
         }

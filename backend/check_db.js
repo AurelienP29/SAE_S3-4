@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
 async function check() {
-  const client = new MongoClient('mongodb://localhost:27017/festival_db');
+  const client = new MongoClient('mongodb://localhost:27017/necronomicon_db');
   await client.connect();
   const db = client.db();
   const user = await db.collection('users').findOne({ email: 'admin@test.com' });

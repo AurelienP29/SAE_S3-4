@@ -94,9 +94,10 @@ const services = computed(() => {
   return prestations.filter(p => p.prestataireId === prestataire.value.id);
 });
 
-onMounted(() => {
+onMounted(async () => {
   const id = route.params.id;
-  prestataire.value = prestataireStore.getPrestataireById(id);
+  loading.value = true;
+  prestataire.value = await prestataireStore.fetchPrestataireById(id);
   loading.value = false;
 });
 </script>

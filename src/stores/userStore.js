@@ -1,54 +1,54 @@
-import {ref} from 'vue'
-import {defineStore} from 'pinia'
-import {prestations as initialPrestations} from '@/datasource/data.mjs'
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
 
-export const usePrestationStore = defineStore('prestation', () => {
-    const prestations = ref([])
+export const useUserStore = defineStore('user', () => {
+    const users = ref([])
     const loading = ref(false)
-    const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/prestations`
+    const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/users`
 
-    async function fetchPrestations() {
+    async function fetchUsers() {
         loading.value = true
         try {
-            console.log('Fetching prestations from:', API_URL)
+            console.log('Fetching users from:', API_URL)
             const response = await fetch(API_URL, { credentials: 'include' })
             if (response.ok) {
                 const data = await response.json()
-                console.log('Prestations data received:', data)
-                if (data.prestations) {
-                    prestations.value = data.prestations.map(p => ({ ...p, id: p._id }))
+                console.log('Users data received:', data)
+                if (data.users) {
+                    users.value = data.users.map(u => ({ ...u, id: u._id }))
                 }
             }
         } catch (error) {
-            console.error('Erreur chargement prestations:', error)
+            console.error('Erreur chargement utilisateurs:', error)
         } finally {
             loading.value = false
         }
     }
 
-    async function addPrestation(prestation) {
+    async function addUser(user) {
         loading.value = true
         try {
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify(prestation)
+                body: JSON.stringify(user)
             })
             if (response.ok) {
-                await fetchPrestations()
+                await fetchUsers()
             }
         } catch (error) {
-            console.error('Erreur ajout prestation:', error)
+            console.error('Erreur ajout utilisateur:', error)
         } finally {
             loading.value = false
         }
     }
 
-    async function updatePrestation(updatedPrestation) {
+    async function updateUser(updatedUser) {
         loading.value = true
         try {
-            const { id, ...data } = updatedPrestation
+            const id = updatedUser.id || updatedUser._id
+            const { id: _, _id: __, ...data } = updatedUser
             const response = await fetch(`${API_URL}/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -56,16 +56,16 @@ export const usePrestationStore = defineStore('prestation', () => {
                 body: JSON.stringify(data)
             })
             if (response.ok) {
-                await fetchPrestations()
+                await fetchUsers()
             }
         } catch (error) {
-            console.error('Erreur mise à jour prestation:', error)
+            console.error('Erreur mise à jour utilisateur:', error)
         } finally {
             loading.value = false
         }
     }
 
-    async function deletePrestation(id) {
+    async function deleteUser(id) {
         loading.value = true
         try {
             const response = await fetch(`${API_URL}/${id}`, {
@@ -73,21 +73,21 @@ export const usePrestationStore = defineStore('prestation', () => {
                 credentials: 'include'
             })
             if (response.ok) {
-                await fetchPrestations()
+                await fetchUsers()
             }
         } catch (error) {
-            console.error('Erreur suppression prestation:', error)
+            console.error('Erreur suppression utilisateur:', error)
         } finally {
             loading.value = false
         }
     }
 
     return {
-        prestations,
+        users,
         loading,
-        fetchPrestations,
-        addPrestation,
-        updatePrestation,
-        deletePrestation
+        fetchUsers,
+        addUser,
+        updateUser,
+        deleteUser
     }
 })

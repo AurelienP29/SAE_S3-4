@@ -6,6 +6,9 @@ const passport = require('./config/passport');
 
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
+const activitiesRoutes = require('./routes/activities');
+const prestatairesRoutes = require('./routes/prestataires');
+const prestationsRoutes = require('./routes/prestations');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,6 +44,9 @@ client.connect()
 // Routes
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
+app.use('/activities', activitiesRoutes);
+app.use('/prestataires', prestatairesRoutes);
+app.use('/prestations', prestationsRoutes);
 
 // Route de test
 app.get('/', (req, res) => {

@@ -1,9 +1,16 @@
-import {ref, reactive} from 'vue'
+import {ref, reactive, onMounted, computed} from 'vue'
 import {usePrestationStore} from '@/stores/prestation.js'
-import {categoryOptions, prestataires} from '@/datasource/data.mjs'
+import {usePrestataireStore} from '@/stores/prestataire.js'
+import {categoryOptions} from '@/datasource/data.mjs'
 
 export function useAdminPrestationService() {
     const prestationStore = usePrestationStore()
+    const prestataireStore = usePrestataireStore()
+
+    onMounted(() => {
+        prestationStore.fetchPrestations()
+        prestataireStore.fetchPrestataires()
+    })
 
     const dialogVisible = ref(false)
     const deleteDialogVisible = ref(false)
@@ -63,13 +70,13 @@ export function useAdminPrestationService() {
         return isValid
     }
 
-    function savePrestation() {
+    async function savePrestation() {
         if (!validateForm()) return
 
         if (isEditMode.value) {
-            prestationStore.updatePrestation(form)
+            await prestationStore.updatePrestation(form)
         } else {
-            prestationStore.addPrestation(form)
+            await prestationStore.addPrestation(form)
         }
 
         dialogVisible.value = false
@@ -80,16 +87,16 @@ export function useAdminPrestationService() {
         deleteDialogVisible.value = true
     }
 
-    function deletePrestation() {
+    async function deletePrestation() {
         if (!selectedToDelete.value) return
-        prestationStore.deletePrestation(selectedToDelete.value.id)
+        await prestationStore.deletePrestation(selectedToDelete.value.id)
         deleteDialogVisible.value = false
         selectedToDelete.value = null
     }
 
     return {
-        prestations: prestationStore.prestations,
-        loading: prestationStore.loading,
+        prestations: computed(() => prestationStore.prestations),
+        loading: computed(() => prestationStore.loading),
         dialogVisible,
         deleteDialogVisible,
         isEditMode,
@@ -97,7 +104,7 @@ export function useAdminPrestationService() {
         form,
         errors,
         categoryOptions,
-        prestataires,
+        prestataires: computed(() => prestataireStore.prestataires),
         openCreateDialog,
         openEditDialog,
         closeDialog,

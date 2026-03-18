@@ -1,5 +1,6 @@
 import { MongoClient , ObjectId} from 'mongodb';
 import * as data from './datasource/data.mjs';
+import bcrypt from 'bcryptjs';
 
 const url = 'mongodb://localhost:27017';
 const dbName = 'necronomicon_db';
@@ -51,7 +52,11 @@ async function seedDB() {
         // 4. INSERTION DU RESTE DES DONNÉES
 
         // Users
-        const cleanedUsers = data.users.map(({ id, ...rest }) => rest);
+        const cleanedUsers = await Promise.all(data.users.map(async ({ id, password, ...rest }) => {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            return { ...rest, password: hashedPassword };
+        }));
         await db.collection('users').insertMany(cleanedUsers);
 
         // Activities
