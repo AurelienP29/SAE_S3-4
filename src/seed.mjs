@@ -60,7 +60,10 @@ async function seedDB() {
         await db.collection('users').insertMany(cleanedUsers);
 
         // Activities
-        const cleanedActivities = data.activities.map(({ id, ...rest }) => rest);
+        const cleanedActivities = data.activities.map(({ id, date, ...rest }) => ({
+            ...rest,
+            date: new Date(date)
+        }));
         await db.collection('activities').insertMany(cleanedActivities);
 
         // Waiting List (Gestion du .value si c'est une ref Vue)

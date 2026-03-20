@@ -93,43 +93,43 @@ let activities = [
         id: 1,
         titre: "Grand Tournoi Smash Bros (Team Fox)",
         places: 64,
-        date: "Samedi 14h00"
+        date: "2026-03-21T14:00:00.000Z"
     },
     {
         id: 2,
         titre: "Concours Cosplay - Défilé",
         places: 500,
-        date: "Dimanche 15h00"
+        date: "2026-03-22T15:00:00.000Z"
     },
     {
         id: 3,
         titre: "MasterClass Origami avec Kenji",
         places: 20,
-        date: "Samedi 10h30"
+        date: "2026-03-21T10:30:00.000Z"
     },
     {
         id: 4,
         titre: "Initiation Sabre Laser (Jedi Order)",
         places: 15,
-        date: "Dimanche 11h00"
+        date: "2026-03-22T11:00:00.000Z"
     },
     {
         id: 5,
         titre: "Atelier Peinture Warhammer",
         places: 12,
-        date: "Samedi 16h00"
+        date: "2026-03-21T16:00:00.000Z"
     },
     {
         id: 6,
         titre: "Draft Magic: The Gathering",
         places: 32,
-        date: "Vendredi 20h00"
+        date: "2026-03-20T20:00:00.000Z"
     },
     {
         id: 7,
         titre: "Atelier Doublage Anime",
         places: 10,
-        date: "Dimanche 13h30"
+        date: "2026-03-22T13:30:00.000Z"
     }
 ];
 

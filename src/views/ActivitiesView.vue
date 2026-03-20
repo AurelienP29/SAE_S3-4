@@ -28,7 +28,7 @@
     <div class="activities-grid">
       <div v-for="act in activityStore.activities" :key="act._id" class="activity-card">
         <h3>{{ act.titre }}</h3>
-        <p class="date">{{ new Date(act.date).toLocaleString('fr-FR') }}</p>
+        <p class="date">{{ formatDate(act.date) }}</p>
         <p>Places disponibles : <strong>{{ act.places }}</strong></p>
 
         <div class="actions">
@@ -77,6 +77,12 @@ function handleReservation(id) {
 const handleAddToCart = (ticket) => {
   cartStore.addToCart(ticket, authStore.user?.id)
 }
+
+const formatDate = (date) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? date : d.toLocaleString('fr-FR');
+};
 
 </script>
 

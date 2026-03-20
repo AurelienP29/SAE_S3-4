@@ -20,7 +20,7 @@
         <Column field="titre" header="Titre" sortable></Column>
         <Column field="date" header="Date" sortable>
           <template #body="slotProps">
-            {{ new Date(slotProps.data.date).toLocaleString('fr-FR') }}
+            {{ formatDate(slotProps.data.date) }}
           </template>
         </Column>
         <Column field="places" header="Places" sortable></Column>
@@ -154,10 +154,17 @@ const saveActivity = async () => {
     }
 };
 
+const formatDate = (date) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? date : d.toLocaleString('fr-FR');
+};
+
 const editActivity = (data) => {
     activity.value = { ...data };
     // Convert string date to Date object for DatePicker
-    activity.value.date = new Date(activity.value.date);
+    const d = new Date(activity.value.date);
+    activity.value.date = isNaN(d.getTime()) ? new Date() : d;
     activityDialog.value = true;
 };
 
