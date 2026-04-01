@@ -182,8 +182,19 @@
     }
 
     .navbar-actions {
-        flex-direction: column;
-        gap: 0.5rem;
+        display: none !important;
+    }
+
+    .mobile-actions-container {
+        display: flex;
+    }
+}
+
+@media (min-width: 961px) {
+    /* Hide the mobile only item in the main menu entirely on desktop */
+    .mobile-only-item,
+    .mobile-actions-container {
+        display: none !important;
     }
 }
 

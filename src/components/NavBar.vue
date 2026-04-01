@@ -9,16 +9,85 @@
       </template>
 
       <template #item="{ item, props, hasSubmenu }">
-        <a v-ripple class="flex align-items-center" v-bind="props.action">
-          <span :class="item.icon"/>
-          <span class="ml-2">{{ item.label }}</span>
-          <Badge v-if="item.badge" :value="item.badge" class="ml-2" severity="danger"/>
-          <span v-if="hasSubmenu" class="pi pi-angle-down ml-2"/>
-        </a>
+        <template v-if="item.id === 'mobile-actions'">
+          <div class="mobile-actions-container flex flex-column gap-3 p-3 w-full">
+            <ProviderRequestForm
+                buttonIcon="pi pi-user-plus"
+                :buttonRounded="true"
+                :buttonLabel="lang('nav.provideService')"
+                buttonClass="provider-request-trigger w-full"
+            />
+
+            <!-- Cart -->
+            <router-link to="/cart" class="cart-container-mobile flex align-items-center text-white no-underline p-2">
+              <i class="pi pi-shopping-cart mr-2" style="font-size: 1.2rem;"></i>
+              <span class="font-semibold">{{ lang('cart') || 'Panier' }}</span>
+              <Badge v-if="cartStore.itemsCount > 0" :value="cartStore.itemsCount" class="ml-auto" />
+            </router-link>
+
+            <!-- Language -->
+            <Dropdown v-model="authStore.currentLanguage" :options="languageOptions" optionLabel="label"
+                      optionValue="value" placeholder="Langue" class="language-dropdown w-full">
+              <template #value="props">
+                <div v-if="props.value" class="flex align-items-center">
+                  <i :class="props.value === 'fr' ? 'pi pi-flag' : 'pi pi-flag-fill'" class="mr-2"></i>
+                  <span> {{ props.value.toUpperCase() }}</span>
+                </div>
+              </template>
+              <template #option="props">
+                <div class="flex align-items-center">
+                  <i :class="props.option.icon" class="mr-2"></i>
+                  <span>{{ props.option.label }}</span>
+                </div>
+              </template>
+            </Dropdown>
+
+            <!-- Login / User -->
+            <Button
+                v-if="!authStore.isAuthenticated"
+                icon="pi pi-sign-in"
+                :label="lang('login')"
+                @click="goTo('Login')"
+                severity="primary"
+                class="login-button w-full mt-2"
+                raised
+            />
+            <template v-else>
+              <div class="user-mobile-info flex align-items-center my-2 p-2 border-round" style="background: rgba(255,255,255,0.1);">
+                <Avatar v-if="authStore.user" :image="authStore.user?.picture" :label="!authStore.user?.picture ? authStore.user?.name?.charAt(0).toUpperCase() : null" shape="circle" class="mr-2 border-1 border-purple-500" />
+                <span class="text-white font-bold text-lg">{{ authStore.user?.name }}</span>
+              </div>
+              <Button
+                  :label="lang('Profile & Settings') || 'Profil et Paramètres'"
+                  icon="pi pi-user"
+                  @click="goTo('Account')"
+                  severity="secondary"
+                  class="w-full"
+                  outlined
+              />
+              <Button
+                  :label="lang('logout')"
+                  icon="pi pi-sign-out"
+                  @click="handleLogout"
+                  severity="danger"
+                  class="w-full mt-2"
+                  outlined
+              />
+            </template>
+          </div>
+        </template>
+        <template v-else>
+          <a v-ripple class="flex align-items-center" v-bind="props.action">
+            <span :class="item.icon"/>
+            <span class="ml-2">{{ item.label }}</span>
+            <Badge v-if="item.badge" :value="item.badge" class="ml-2" severity="danger"/>
+            <span v-if="hasSubmenu" class="pi pi-angle-down ml-2"/>
+          </a>
+        </template>
       </template>
 
       <template #end>
-        <div class="navbar-actions">
+        <div class="navbar-actions desktop-only">
 
           <ProviderRequestForm
               buttonIcon="pi pi-user-plus"
@@ -107,7 +176,11 @@ const hasRole = (roleTarget) => {
   const userRoles = authStore.user?.roles || []
   const singleRole = authStore.user?.role
 
-  if (singleRole === 'admin' || userRoles.includes('admin')) return true
+  if (singleRole === 'admin' || userRoles.includes('admin')) {
+      if (roleTarget === 'organisateur' || roleTarget === 'admin') {
+          return true
+      }
+  }
 
   return userRoles.includes(roleTarget) || singleRole === roleTarget
 }
@@ -202,6 +275,12 @@ const menuItems = computed(() => {
     })
   }
 
+  if (windowWidth.value <= 960) {
+    items.push({
+      id: 'mobile-actions',
+      class: 'mobile-only-item'
+    });
+  }
 
   return items
 })
@@ -223,18 +302,25 @@ function handleLogout() {
 
 
 const isScrolled = ref(false)
+const windowWidth = ref(window.innerWidth)
 
 function handleScroll() {
   isScrolled.value = window.scrollY > 50
 }
 
+function handleResize() {
+  windowWidth.value = window.innerWidth
+}
+
 onMounted(() => {
   handleScroll()
   window.addEventListener('scroll', handleScroll, {passive: true})
+  window.addEventListener('resize', handleResize, {passive: true})
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 
