@@ -147,7 +147,8 @@
 import {reactive, ref, computed} from 'vue'
 import {useRouter} from 'vue-router'
 import {useAuthStore} from '@/stores/authStore.js'
-import {categoryOptions, serviceOptions, waitingList} from '@/datasource/data.mjs'
+import {categoryOptions, serviceOptions} from '@/datasource/data.mjs'
+import {useWaitingListStore} from '@/stores/waitingListStore.js'
 import {translations as appTranslations} from '@/datasource/lang.js'
 import {Dialog, Button} from 'primevue'
 import emailjs from '@emailjs/browser'
@@ -192,6 +193,7 @@ const props = defineProps({
 });
 
 const authStore = useAuthStore()
+const waitingListStore = useWaitingListStore()
 const router = useRouter()
 const visible = ref(false)
 const successDialogVisible = ref(false)
@@ -362,11 +364,7 @@ async function registerProvider() {
   const shopTypeLabel = formData.shopType ? lang(`category.${formData.shopType}`) : '';
   const servicesLabel = formData.services.map((service) => lang(`service.${service}`)).join(', ');
   const requestDate = new Date().toISOString().slice(0, 10);
-
-  const newWaitlistId = waitingList.value.length > 0
-      ? Math.max(...waitingList.value.map(p => p.id)) + 1
-      : 1;
-
+  
   const templateData = {
     title: t('title_mail'),
     remerciement: t('remerciement'),
@@ -392,8 +390,7 @@ async function registerProvider() {
     msg_type: t('msg_type'),
   };
 
-  waitingList.value.push({
-    id: newWaitlistId,
+  waitingListStore.addRequest({
     name: formData.shopName || formData.providerName,
     email: formData.email,
     phone: formData.phone,

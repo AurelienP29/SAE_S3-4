@@ -9,6 +9,7 @@ const usersRoutes = require('./routes/users');
 const activitiesRoutes = require('./routes/activities');
 const prestatairesRoutes = require('./routes/prestataires');
 const prestationsRoutes = require('./routes/prestations');
+const waitingListRoutes = require('./routes/waitingList');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -47,6 +48,7 @@ app.use('/users', usersRoutes);
 app.use('/activities', activitiesRoutes);
 app.use('/prestataires', prestatairesRoutes);
 app.use('/prestations', prestationsRoutes);
+app.use('/waitingList', waitingListRoutes);
 
 // Route de test
 app.get('/', (req, res) => {

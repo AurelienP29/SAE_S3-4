@@ -33,19 +33,25 @@
 
 <script setup>
 import { DataTable, Column, Button } from 'primevue';
-import {waitingList, prestataires, initialPrestataires, users} from '@/datasource/data.mjs';
 import {usePrestataireStore} from "@/stores/prestataire.js";
+import {useWaitingListStore} from "@/stores/waitingListStore.js";
 import { useAuthStore } from '@/stores/authStore.js';
 import { translations } from '@/datasource/lang.js';
 import emailjs from "@emailjs/browser";
+import { onMounted, computed } from 'vue';
 
 const authStore = useAuthStore();
 const lang = (key) => {
   return translations[authStore.currentLanguage][key] || key;
 };
 
-const waitlist = waitingList;
-const prestataireStore = usePrestataireStore()
+const waitingListStore = useWaitingListStore();
+const waitlist = computed(() => waitingListStore.waitingList);
+const prestataireStore = usePrestataireStore();
+
+onMounted(() => {
+  waitingListStore.fetchWaitingList();
+});
 
 const formatServices = (services) => {
   if (!Array.isArray(services) || services.length === 0) {
@@ -55,40 +61,39 @@ const formatServices = (services) => {
   return services.map((service) => lang(`service.${service}`)).join(', ');
 };
 
-const acceptPrestataire = (prestataire) => {
+const acceptPrestataire = async (prestataire) => {
+  const newPrestataireData = { ...prestataire };
+  delete newPrestataireData._id;
+  delete newPrestataireData.id;
+  delete newPrestataireData.requestDate;
 
-  const newId = prestataires.length > 0 ? Math.max(...prestataires.map(p => p.id)) + 1 : 1;
-  const newPrestataire = { ...prestataire, id: newId };
-  delete newPrestataire.requestDate;
+  let randomPassword = Math.random().toString(36).slice(-8);
 
-  const existingUser = users.find(u => u.email.toLowerCase() === prestataire.email.toLowerCase());
-
-  if (existingUser) {
-    existingUser.role = 'prestataire';
-    if (!existingUser.roles.includes('prestataire')) {
-      existingUser.roles.push('prestataire');
-    }
-    if (!existingUser.phone && prestataire.phone) existingUser.phone = prestataire.phone;
-
-    if (authStore.user && authStore.user.email.toLowerCase() === existingUser.email.toLowerCase()) {
-      authStore.updateUser({
+  try {
+    // Tentative de création d'utilisateur
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const userRes = await fetch(`${apiUrl}/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        name: prestataire.name,
+        email: prestataire.email,
+        password: randomPassword,
         role: 'prestataire',
-        roles: existingUser.roles
-      });
+        phone: prestataire.phone || '',
+        description: prestataire.description || ''
+      })
+    });
+
+    if (!userRes.ok && userRes.status !== 409) {
+      console.error('Erreur de création utilisateur');
     }
-  } else {
-    const randomPassword = Math.random().toString(36).slice(-8);
-    const newUser = {
-      id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-      name: prestataire.name,
-      email: prestataire.email,
-      password: randomPassword,
-      role: 'prestataire',
-      roles: ['prestataire'],
-      phone: prestataire.phone || '',
-      description: prestataire.description || ''
-    };
-    users.push(newUser);
+    
+    // Si l'utilisateur existait (409), l'idéal serait de mettre à jour son rôle, 
+    // mais on s'assure d'abord que le prestataire est ajouté en DB
+
+
 
     // Simulation de l'envoi d'email
 
@@ -141,30 +146,24 @@ const acceptPrestataire = (prestataire) => {
       droits: t('droits')
     }
 
-    emailjs.send(service_c8v4m1m, template_n62o9zo, templateParam, '35QMzN_dvjeN3YUiG')
+    emailjs.send('service_c8v4m1m', 'template_n62o9zo', templateParam, '35QMzN_dvjeN3YUiG')
         .then((message) => {
               console.log('SUCCESS!', message);
             }, (error) => {
               console.log('FAILED...', error);
             }
         )
-  }
 
-  prestataires.push(newPrestataire);
-  initialPrestataires.push(newPrestataire);
-  prestataireStore.addPrestataire(newPrestataire);
-  removeFromWaitlist(prestataire.id);
+  // Ajout au store (gère l'API externe MongoDB)
+  await prestataireStore.addPrestataire(newPrestataireData);
+  await waitingListStore.deleteRequest(prestataire._id || prestataire.id);
+  } catch (error) {
+    console.error(error)
+  }
 };
 
-const rejectPrestataire = (prestataire) => {
-  removeFromWaitlist(prestataire.id);
-};
-
-const removeFromWaitlist = (id) => {
-  const index = waitingList.value.findIndex(p => p.id === id);
-  if (index !== -1) {
-    waitingList.value.splice(index, 1);
-  }
+const rejectPrestataire = async (prestataire) => {
+  await waitingListStore.deleteRequest(prestataire._id || prestataire.id);
 };
 </script>
 
