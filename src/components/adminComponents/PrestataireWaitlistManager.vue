@@ -33,10 +33,11 @@
 
 <script setup>
 import { DataTable, Column, Button } from 'primevue';
-import {waitingList, prestataires, initialPrestataires} from '@/datasource/data.mjs';
+import {waitingList, prestataires, initialPrestataires, users} from '@/datasource/data.mjs';
 import {usePrestataireStore} from "@/stores/prestataire.js";
 import { useAuthStore } from '@/stores/authStore.js';
 import { translations } from '@/datasource/lang.js';
+import emailjs from "@emailjs/browser";
 
 const authStore = useAuthStore();
 const lang = (key) => {
@@ -76,17 +77,77 @@ const acceptPrestataire = (prestataire) => {
       });
     }
   } else {
+    const randomPassword = Math.random().toString(36).slice(-8);
     const newUser = {
       id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
       name: prestataire.name,
       email: prestataire.email,
-      password: 'presta',
+      password: randomPassword,
       role: 'prestataire',
       roles: ['prestataire'],
       phone: prestataire.phone || '',
       description: prestataire.description || ''
     };
     users.push(newUser);
+
+    // Simulation de l'envoi d'email
+
+    const translationMail = {
+      fr: {
+        salutations: "Bonjour ",
+        introMsg : "C'est avec plaisir que je vous informe que votre demande de prestations a été acceptée et validée.",
+        titreRecap : "Récapitulatif de votre prestation :",
+        typeBoutique: "Type de boutique :",
+        coreMsg: "Nous sommes impatients de commencer cette collaboration. La prochaine étape consiste à vous connecter à votre page de profil pour la personnaliser !",
+        bouton: "Voir mon profil",
+        mdp: "Votre mot de passe temporaire est :",
+        identifiant: "Votre identifiant est :",
+        outMsg: "A très vite, l'équipe Necronomi'con",
+        droits: "Tous droits réservés",
+        footerMsg: "Vous recevez cet email car une prestation a été validée avec votre adresse."
+      },
+      en : {
+        salutations: "Hello ",
+        introMsg : "We are happy to inform you that your prestation request has been accepted and validated.",
+        titreRecap : "Your prestation summary :",
+        typeBoutique: "Boutique type :",
+        coreMsg: "We are excited to start this collaboration. The next step is to log in to your profile to customize it!",
+        bouton: "See my profile",
+        mdp: "Your temporary password is :",
+        identifiant: "Your identifier is :",
+        outMsg: "Stay tuned, the Necronomi'con team"
+      }
+    }
+
+    const t = (key) => {
+      return translationMail[authStore.currentLanguage]?.[key] || translationMail.fr[key]
+    }
+
+    const templateParam = {
+      email: prestataire.email,
+      name: prestataire.name,
+      boutiqueType: prestataire.typeBoutique,
+      dates: prestataire.dates,
+      services: prestataire.services.map(service => lang(`service.${service}`)).join(', '),
+      salutations: t('salutations') + prestataire.name,
+      introMsg: t('introMsg'),
+      titreRecap: t('titreRecap'),
+      typeBoutique: t('typeBoutique') + prestataire.typeBoutique,
+      coreMsg: t('coreMsg'),
+      bouton: t('bouton'),
+      mdp: t('mdp') + randomPassword,
+      identifiant: t('identifiant') + prestataire.email,
+      outMsg: t('outMsg'),
+      droits: t('droits')
+    }
+
+    emailjs.send(service_c8v4m1m, template_n62o9zo, templateParam, '35QMzN_dvjeN3YUiG')
+        .then((message) => {
+              console.log('SUCCESS!', message);
+            }, (error) => {
+              console.log('FAILED...', error);
+            }
+        )
   }
 
   prestataires.push(newPrestataire);

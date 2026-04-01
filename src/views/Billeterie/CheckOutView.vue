@@ -189,6 +189,7 @@ import Button from 'primevue/button';
 import emailjs from '@emailjs/browser'
 import {useAuthStore} from "@/stores/authStore.js";
 import router from "@/router/index.js";
+import {Promise} from "mongoose";
 
 const authStore = useAuthStore();
 const cartStore = useCartStore();

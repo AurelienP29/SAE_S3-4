@@ -163,6 +163,9 @@ const translatedCategoryOptions = computed(() => {
   }));
 });
 
+
+
+
 const {
   prestataires,
   loading,
