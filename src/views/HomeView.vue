@@ -143,7 +143,7 @@ const supporters = [
   {link: 'https://www.avantagesjeunes.com/', imgName: 'AvantagesJeunes.jpg'},
   {link: 'https://letrois.info/', imgName: 'letrois-e1562845802515.png'},
   {link: 'http://www.alaconquetedelest.fr/', imgName: 'Conquetedelest.jpg'},
-  {link: 'http://latraxion.com/', imgName: 'Atraxion-e1575534618439.jpg'},
+  {link: 'https://www.latraxion.com/', imgName: 'Atraxion-e1575534618439.jpg'},
   {link: 'http://www.tnt-events.fr/', imgName: 'TNT.jpg'},
   {link: 'https://www.creditmutuel.fr/home/index.html', imgName: 'CreditMutuel.jpg'},
   {link: 'http://www.cfcosplay.com/', imgName: 'cfc-2-e1575534693739.png'},

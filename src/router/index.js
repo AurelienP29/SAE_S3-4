@@ -11,6 +11,7 @@ import AdminMapView from "@/views/AdminMapView.vue";
 import CartView from "@/views/Billeterie/CartView.vue";
 import SuccessView from "@/views/Billeterie/SuccessView.vue";
 import PrestationView from "@/views/PrestationView.vue";
+import AboutView from "@/views/AboutView.vue";
 
 
 // const routes = [
@@ -29,6 +30,7 @@ const routes = [
     {path: '/register', name: 'Register', component: RegisterView},
 
     {path: '/activities', name: 'Activities', component: ActivitiesView},
+    {path: '/about', name: 'About', component: AboutView},
     {path: '/account', name: 'Account', component: AccountView},
     {path: '/contact-us', name: 'Contact', component: ContactUs},
     {path: '/admin/prestataires', name: 'OrganisateurEvents', component: AdminView},
