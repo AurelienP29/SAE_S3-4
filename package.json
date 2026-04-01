@@ -21,6 +21,8 @@
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.13.6",
     "bcryptjs": "^3.0.3",
+    "chart.js": "^4.5.1",
+    "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "email-js": "^2.0.3",
     "emailjs": "^4.0.3",
