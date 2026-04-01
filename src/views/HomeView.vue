@@ -162,9 +162,9 @@ const supporterItems = supporters.map(s => ({...s, src: getImageUrl(s.imgName)})
   --necro-bg: #000000;
   --necro-accent: #a855f7; /* Purple */
   --necro-glow: #22c55e; /* Green */
-  --necro-text: #f1f5f9;
+  --necro-text: #515151;
   --glass-bg: rgba(30, 27, 46, 0.6);
-  --glass-border: rgba(168, 85, 247, 0.2);
+  --glass-border: rgba(218, 218, 218, 0.2);
 }
 
 .necro-layout {
