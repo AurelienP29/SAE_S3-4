@@ -22,6 +22,171 @@
 
     <template v-else>
 
+      <!-- ===== SECTION GESTION ===== -->
+      <section class="stats-section">
+        <h3 class="section-title">
+          <i class="pi pi-cog section-icon"></i>
+          {{ lang('admin.stats.management') }}
+        </h3>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon kpi-icon--orange">
+              <i class="pi pi-id-card"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-value">{{ stats.prestataires?.total ?? '—' }}</span>
+              <span class="kpi-label">{{ lang('admin.stats.total_providers') }}</span>
+            </div>
+          </div>
+
+          <div class="kpi-card kpi-card--alert" v-if="stats.management?.waitingList?.pending > 0">
+            <div class="kpi-icon kpi-icon--yellow">
+              <i class="pi pi-clock"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-value">{{ stats.management?.waitingList?.pending ?? '—' }}</span>
+              <span class="kpi-label">{{ lang('admin.stats.waitlist_pending') }}</span>
+            </div>
+          </div>
+
+          <div class="kpi-card" v-else>
+            <div class="kpi-icon kpi-icon--yellow">
+              <i class="pi pi-clock"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-value">{{ stats.management?.waitingList?.total ?? '—' }}</span>
+              <span class="kpi-label">{{ lang('admin.stats.waitlist_total') }}</span>
+            </div>
+          </div>
+
+          <div class="kpi-card" :class="{ 'kpi-card--alert': stats.management?.messages?.pending > 0 }">
+            <div class="kpi-icon" :class="stats.management?.messages?.pending > 0 ? 'kpi-icon--red' : 'kpi-icon--teal'">
+              <i class="pi pi-envelope"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-value">{{ stats.management?.messages?.pending ?? '—' }}</span>
+              <span class="kpi-label">{{ lang('admin.stats.messages_pending') }}</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon kpi-icon--blue">
+              <i class="pi pi-list"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-value">{{ stats.prestataires?.totalPrestations ?? '—' }}</span>
+              <span class="kpi-label">{{ lang('admin.stats.total_prestations') }}</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon kpi-icon--green">
+              <i class="pi pi-calendar"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-value">{{ stats.prestataires?.totalActivities ?? '—' }}</span>
+              <span class="kpi-label">{{ lang('admin.stats.total_activities') }}</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon kpi-icon--purple">
+              <i class="pi pi-ticket"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-value">{{ stats.prestataires?.totalMaxPlaces ?? '—' }}</span>
+              <span class="kpi-label">{{ lang('admin.stats.total_max_places') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prestataires par statut + taux occupation stands -->
+        <div class="charts-grid-2">
+          <div class="chart-card">
+            <h4 class="chart-title">{{ lang('admin.stats.providers_by_status') }}</h4>
+            <Chart type="doughnut" :data="providersByStatusData" :options="donutOptions" class="chart-medium" />
+          </div>
+
+          <div class="chart-card">
+            <h4 class="chart-title">{{ lang('admin.stats.stand_occupancy') }}</h4>
+            <Chart type="doughnut" :data="standOccupancyData" :options="donutOptions" class="chart-medium" />
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SECTION PRESTATAIRES ===== -->
+      <section class="stats-section">
+        <h3 class="section-title">
+          <i class="pi pi-briefcase section-icon"></i>
+          {{ lang('admin.stats.providers') }}
+        </h3>
+
+        <!-- Répartition par catégorie + disponibilités + prestations catégorie -->
+        <div class="charts-grid-2">
+          <div class="chart-card">
+            <h4 class="chart-title">{{ lang('admin.stats.providers_by_category') }}</h4>
+            <Chart type="doughnut" :data="categoryData" :options="donutOptions" class="chart-medium" />
+          </div>
+
+          <div class="chart-card">
+            <h4 class="chart-title">{{ lang('admin.stats.availability_by_day') }}</h4>
+            <Chart type="bar" :data="availabilityByDayData" :options="barOptions" class="chart-medium" />
+          </div>
+
+          <div class="chart-card">
+            <h4 class="chart-title">{{ lang('admin.stats.prestations_by_category') }}</h4>
+            <Chart type="bar" :data="prestationsByCategoryData" :options="horizontalBarOptions" class="chart-medium" />
+          </div>
+
+          <div class="chart-card">
+            <h4 class="chart-title">{{ lang('admin.stats.activities_per_provider') }}</h4>
+            <DataTable :value="stats.prestataires?.activitiesPerPrestataire" :paginator="true" :rows="5"
+                       responsiveLayout="scroll" class="p-datatable-sm"
+                       sortField="activitiesCount" :sortOrder="-1">
+              <Column field="name" :header="lang('admin.stats.col_provider')" sortable />
+              <Column field="category" :header="lang('prestataire.colCategory')">
+                <template #body="slotProps">
+                  {{ lang('category.' + slotProps.data.category) }}
+                </template>
+              </Column>
+              <Column field="activitiesCount" :header="lang('admin.stats.col_activities_count')" sortable />
+            </DataTable>
+          </div>
+        </div>
+
+        <!-- Visites par prestataire (simulé) -->
+        <div class="chart-card">
+          <div class="chart-title-row">
+            <h4 class="chart-title">{{ lang('admin.stats.page_views') }}</h4>
+            <span class="simulated-badge">
+              <i class="pi pi-info-circle"></i>
+              {{ lang('admin.stats.simulated_badge') }}
+            </span>
+          </div>
+          <DataTable :value="stats.prestataires?.pageViews" :paginator="true" :rows="8"
+                     responsiveLayout="scroll" class="p-datatable-sm"
+                     sortField="views" :sortOrder="-1">
+            <Column field="name" :header="lang('admin.stats.col_provider')" sortable />
+            <Column field="category" :header="lang('prestataire.colCategory')">
+              <template #body="slotProps">
+                {{ lang('category.' + slotProps.data.category) }}
+              </template>
+            </Column>
+            <Column field="views" :header="lang('admin.stats.col_views')" sortable>
+              <template #body="slotProps">
+                <div class="progress-bar-container">
+                  <div class="progress-bar progress-bar--orange"
+                       :style="{ width: Math.min(100, Math.round((slotProps.data.views / maxPageViews) * 100)) + '%' }">
+                  </div>
+                  <span class="progress-label">{{ slotProps.data.views }}</span>
+                </div>
+              </template>
+            </Column>
+          </DataTable>
+        </div>
+      </section>
+
       <!-- ===== SECTION VISITEURS ===== -->
       <section class="stats-section">
         <h3 class="section-title">
@@ -37,7 +202,7 @@
             </div>
             <div class="kpi-body">
               <span class="kpi-value">{{ totalVisitorsAllDays }}</span>
-              <span class="kpi-label">{{ lang('admin.stats.total_visitors') }}</span>
+              <span class="kpi-label">{{ lang('admin.stats.total_visitors') }} <span class="simulated-badge simulated-badge--inline"><i class="pi pi-info-circle"></i> {{ lang('admin.stats.simulated_badge') }}</span></span>
             </div>
           </div>
 
@@ -62,9 +227,15 @@
           </div>
         </div>
 
-        <!-- Visiteurs par jour -->
+        <!-- Visiteurs par jour (simulé) -->
         <div class="chart-card">
-          <h4 class="chart-title">{{ lang('admin.stats.visitors_per_day') }}</h4>
+          <div class="chart-title-row">
+            <h4 class="chart-title">{{ lang('admin.stats.visitors_per_day') }}</h4>
+            <span class="simulated-badge">
+              <i class="pi pi-info-circle"></i>
+              {{ lang('admin.stats.simulated_badge') }}
+            </span>
+          </div>
           <Chart type="bar" :data="visitorsPerDayData" :options="barOptions" class="chart-medium" />
         </div>
 
@@ -90,11 +261,15 @@
         </div>
       </section>
 
-      <!-- ===== SECTION RÉPARTITION ===== -->
+      <!-- ===== SECTION RÉPARTITION (simulée) ===== -->
       <section class="stats-section">
         <h3 class="section-title">
           <i class="pi pi-chart-pie section-icon"></i>
           {{ lang('admin.stats.distribution') }}
+          <span class="simulated-badge simulated-badge--title">
+            <i class="pi pi-info-circle"></i>
+            {{ lang('admin.stats.simulated_badge') }}
+          </span>
         </h3>
 
         <div class="charts-grid-2">
@@ -120,11 +295,15 @@
         </div>
       </section>
 
-      <!-- ===== SECTION SATISFACTION ===== -->
+      <!-- ===== SECTION SATISFACTION (simulée) ===== -->
       <section class="stats-section">
         <h3 class="section-title">
           <i class="pi pi-star section-icon"></i>
           {{ lang('admin.stats.satisfaction') }}
+          <span class="simulated-badge simulated-badge--title">
+            <i class="pi pi-info-circle"></i>
+            {{ lang('admin.stats.simulated_badge') }}
+          </span>
         </h3>
 
         <div class="satisfaction-layout">
@@ -167,114 +346,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <!-- ===== SECTION PRESTATAIRES ===== -->
-      <section class="stats-section">
-        <h3 class="section-title">
-          <i class="pi pi-briefcase section-icon"></i>
-          {{ lang('admin.stats.providers') }}
-        </h3>
-
-        <!-- KPIs Prestataires -->
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-icon kpi-icon--orange">
-              <i class="pi pi-id-card"></i>
-            </div>
-            <div class="kpi-body">
-              <span class="kpi-value">{{ stats.prestataires?.total ?? '—' }}</span>
-              <span class="kpi-label">{{ lang('admin.stats.total_providers') }}</span>
-            </div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-icon kpi-icon--teal">
-              <i class="pi pi-shop"></i>
-            </div>
-            <div class="kpi-body">
-              <span class="kpi-value">{{ stats.prestataires?.exposants ?? '—' }}</span>
-              <span class="kpi-label">{{ lang('admin.stats.total_exhibitors') }}</span>
-            </div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-icon kpi-icon--pink">
-              <i class="pi pi-heart"></i>
-            </div>
-            <div class="kpi-body">
-              <span class="kpi-value">{{ stats.prestataires?.benevoles ?? '—' }}</span>
-              <span class="kpi-label">{{ lang('admin.stats.total_volunteers') }}</span>
-            </div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-icon kpi-icon--blue">
-              <i class="pi pi-list"></i>
-            </div>
-            <div class="kpi-body">
-              <span class="kpi-value">{{ stats.prestataires?.totalPrestations ?? '—' }}</span>
-              <span class="kpi-label">{{ lang('admin.stats.total_prestations') }}</span>
-            </div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-icon kpi-icon--green">
-              <i class="pi pi-calendar"></i>
-            </div>
-            <div class="kpi-body">
-              <span class="kpi-value">{{ stats.prestataires?.totalActivities ?? '—' }}</span>
-              <span class="kpi-label">{{ lang('admin.stats.total_activities') }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Clics/visites par prestataire -->
-        <div class="chart-card">
-          <h4 class="chart-title">{{ lang('admin.stats.page_views') }}</h4>
-          <DataTable :value="stats.prestataires?.pageViews" :paginator="true" :rows="8"
-                     responsiveLayout="scroll" class="p-datatable-sm"
-                     sortField="views" :sortOrder="-1">
-            <Column field="name" :header="lang('admin.stats.col_provider')" sortable />
-            <Column field="category" :header="lang('prestataire.colCategory')">
-              <template #body="slotProps">
-                {{ lang('category.' + slotProps.data.category) }}
-              </template>
-            </Column>
-            <Column field="views" :header="lang('admin.stats.col_views')" sortable>
-              <template #body="slotProps">
-                <div class="progress-bar-container">
-                  <div class="progress-bar progress-bar--orange"
-                       :style="{ width: Math.min(100, Math.round((slotProps.data.views / maxPageViews) * 100)) + '%' }">
-                  </div>
-                  <span class="progress-label">{{ slotProps.data.views }}</span>
-                </div>
-              </template>
-            </Column>
-          </DataTable>
-        </div>
-
-        <!-- Activités par prestataire -->
-        <div class="chart-card">
-          <h4 class="chart-title">{{ lang('admin.stats.activities_per_provider') }}</h4>
-          <DataTable :value="stats.prestataires?.activitiesPerPrestataire" :paginator="true" :rows="8"
-                     responsiveLayout="scroll" class="p-datatable-sm"
-                     sortField="activitiesCount" :sortOrder="-1">
-            <Column field="name" :header="lang('admin.stats.col_provider')" sortable />
-            <Column field="category" :header="lang('prestataire.colCategory')">
-              <template #body="slotProps">
-                {{ lang('category.' + slotProps.data.category) }}
-              </template>
-            </Column>
-            <Column field="activitiesCount" :header="lang('admin.stats.col_activities_count')" sortable />
-          </DataTable>
-        </div>
-
-        <!-- Répartition par catégorie -->
-        <div class="chart-card">
-          <h4 class="chart-title">{{ lang('admin.stats.providers_by_category') }}</h4>
-          <Chart type="doughnut" :data="categoryData" :options="donutOptions" class="chart-medium" />
         </div>
       </section>
 
@@ -427,6 +498,58 @@ const categoryData = computed(() => {
   };
 });
 
+const providersByStatusData = computed(() => {
+  const s = stats.value.prestataires?.byStatus || {};
+  return {
+    labels: [lang('admin.stats.status.accepted'), lang('admin.stats.status.pending'), lang('admin.stats.status.refused')],
+    datasets: [{
+      data: [s.accepted || 0, s.pending || 0, s.refused || 0],
+      backgroundColor: [palette.green, palette.yellow, palette.red],
+      borderWidth: 2,
+    }]
+  };
+});
+
+const standOccupancyData = computed(() => {
+  const occ = stats.value.prestataires?.standOccupancy || {};
+  return {
+    labels: [lang('admin.stats.stand_used'), lang('admin.stats.stand_empty')],
+    datasets: [{
+      data: [occ.withProvider || 0, occ.withoutProvider || 0],
+      backgroundColor: [palette.teal, palette.red],
+      borderWidth: 2,
+    }]
+  };
+});
+
+const availabilityByDayData = computed(() => {
+  const days = stats.value.prestataires?.availabilityByDay || {};
+  const order = ['vendredi', 'samedi', 'dimanche'];
+  const labels = { vendredi: 'Vendredi', samedi: 'Samedi', dimanche: 'Dimanche' };
+  return {
+    labels: order.map(d => labels[d]),
+    datasets: [{
+      label: 'Prestataires',
+      data: order.map(d => days[d] || 0),
+      backgroundColor: [palette.blue, palette.purple, palette.green],
+      borderRadius: 6,
+    }]
+  };
+});
+
+const prestationsByCategoryData = computed(() => {
+  const byCategory = stats.value.prestataires?.prestationsByCategory || {};
+  return {
+    labels: Object.keys(byCategory).map(k => lang(`category.${k}`)),
+    datasets: [{
+      label: 'Prestations',
+      data: Object.values(byCategory),
+      backgroundColor: [palette.purple, palette.green, palette.blue, palette.orange, palette.pink, palette.teal],
+      borderRadius: 4,
+    }]
+  };
+});
+
 // --- Options Chart.js communes ---
 const chartDefaults = {
   plugins: {
@@ -510,6 +633,41 @@ const donutOptions = {
 }
 .section-icon { font-size: 1.1rem; }
 
+/* Simulated badge */
+.simulated-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fb923c;
+  background: rgba(251, 146, 60, 0.12);
+  border: 1px solid rgba(251, 146, 60, 0.3);
+  border-radius: 20px;
+  padding: 0.15rem 0.55rem;
+}
+.simulated-badge--title {
+  font-size: 0.65rem;
+  margin-left: 0.5rem;
+}
+.simulated-badge--inline {
+  font-size: 0.65rem;
+  vertical-align: middle;
+}
+
+.chart-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.chart-title-row .chart-title {
+  margin: 0;
+}
+
 /* KPI cards */
 .kpi-grid {
   display: grid;
@@ -530,6 +688,10 @@ const donutOptions = {
   transform: translateY(-2px);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
 }
+.kpi-card--alert {
+  border-color: rgba(251, 146, 60, 0.4);
+  background: rgba(251, 146, 60, 0.05);
+}
 .kpi-icon {
   width: 48px;
   height: 48px;
@@ -540,12 +702,14 @@ const donutOptions = {
   font-size: 1.3rem;
   flex-shrink: 0;
 }
-.kpi-icon--blue { background: rgba(96, 165, 250, 0.18); color: #60a5fa; }
-.kpi-icon--green { background: rgba(74, 222, 128, 0.18); color: #4ade80; }
+.kpi-icon--blue   { background: rgba(96, 165, 250, 0.18); color: #60a5fa; }
+.kpi-icon--green  { background: rgba(74, 222, 128, 0.18); color: #4ade80; }
 .kpi-icon--purple { background: rgba(168, 85, 247, 0.18); color: #a855f7; }
 .kpi-icon--orange { background: rgba(251, 146, 60, 0.18); color: #fb923c; }
-.kpi-icon--teal { background: rgba(45, 212, 191, 0.18); color: #2dd4bf; }
-.kpi-icon--pink { background: rgba(244, 114, 182, 0.18); color: #f472b6; }
+.kpi-icon--teal   { background: rgba(45, 212, 191, 0.18); color: #2dd4bf; }
+.kpi-icon--pink   { background: rgba(244, 114, 182, 0.18); color: #f472b6; }
+.kpi-icon--yellow { background: rgba(250, 204, 21, 0.18); color: #facc15; }
+.kpi-icon--red    { background: rgba(248, 113, 113, 0.18); color: #f87171; }
 
 .kpi-body {
   display: flex;
@@ -655,7 +819,6 @@ const donutOptions = {
 }
 .score-fill-circle {
   fill: none;
-  stroke: url(#scoreGradient);
   stroke: #a855f7;
   stroke-width: 10;
   stroke-linecap: round;
