@@ -20,7 +20,11 @@
           {{ formatServices(slotProps.data.services) }}
         </template>
       </Column>
-      <Column field="requestDate" :header="lang('admin.waitlist.colDate')" sortable></Column>
+      <Column :header="lang('admin.waitlist.colDate')" sortable>
+        <template #body="slotProps">
+          {{ slotProps.data.requestDate || slotProps.data.request_date || '-' }}
+        </template>
+      </Column>
       <Column :header="lang('admin.action')">
         <template #body="slotProps">
           <Button icon="pi pi-check" severity="success" class="mr-2" style="margin-right: 5px" @click="acceptPrestataire(slotProps.data)" v-tooltip.top="lang('admin.waitlist.accept')" />
@@ -62,10 +66,16 @@ const formatServices = (services) => {
 };
 
 const acceptPrestataire = async (prestataire) => {
-  const newPrestataireData = { ...prestataire };
-  delete newPrestataireData._id;
-  delete newPrestataireData.id;
-  delete newPrestataireData.requestDate;
+  const newPrestataireData = {
+    name: prestataire.name,
+    email: prestataire.email,
+    phone: prestataire.phone || '',
+    category: prestataire.category || 'boutique',
+    description: prestataire.description || '',
+    services: prestataire.services || [],
+    days_available: prestataire.days_available || [],
+    status: 'accepted'
+  };
 
   let randomPassword = Math.random().toString(36).slice(-8);
 
@@ -120,7 +130,9 @@ const acceptPrestataire = async (prestataire) => {
         bouton: "See my profile",
         mdp: "Your temporary password is :",
         identifiant: "Your identifier is :",
-        outMsg: "Stay tuned, the Necronomi'con team"
+        outMsg: "Stay tuned, the Necronomi'con team",
+        droits: "All rights reserved",
+        footerMsg: "You received this email because a prestation has been validated with your address.",
       }
     }
 
@@ -131,13 +143,13 @@ const acceptPrestataire = async (prestataire) => {
     const templateParam = {
       email: prestataire.email,
       name: prestataire.name,
-      boutiqueType: prestataire.typeBoutique,
-      dates: prestataire.dates,
-      services: prestataire.services.map(service => lang(`service.${service}`)).join(', '),
+      boutiqueType: lang(`category.${prestataire.category}`),
+      dates: (prestataire.days_available || []).join(', '),
+      services: (prestataire.services || []).map(service => lang(`service.${service}`)).join(', '),
       salutations: t('salutations') + prestataire.name,
       introMsg: t('introMsg'),
       titreRecap: t('titreRecap'),
-      typeBoutique: t('typeBoutique') + prestataire.typeBoutique,
+      typeBoutique: t('typeBoutique') + lang(`category.${prestataire.category}`),
       coreMsg: t('coreMsg'),
       bouton: t('bouton'),
       mdp: t('mdp') + randomPassword,

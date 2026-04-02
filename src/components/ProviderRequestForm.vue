@@ -20,14 +20,14 @@
 
         <!-- Provider Name -->
         <div class="form-group">
-          <label for="provider-name">{{ t('providerName') }}</label>
+          <label for="provider-name">{{ t('providerName') }} *</label>
           <input type="text" id="provider-name" v-model="formData.providerName" required />
           <span class="error" :class="{ active: errors.providerNameError }">{{ t('providerMessageError') }}</span>
         </div>
 
         <!-- Shop Name -->
         <div class="form-group">
-          <label for="shop-name">{{ t('shopName') }}</label>
+          <label for="shop-name">{{ t('shopName') }} *</label>
           <input type="text" id="shop-name" v-model="formData.shopName" />
           <span class="error" :class="{ active: errors.shopNameError }">{{ t('shopNameError') }}</span>
         </div>
@@ -38,13 +38,13 @@
 
           <div class="input-text-container">
             <div>
-              <label for="phone">{{ t('phone') }}</label>
+              <label for="phone">{{ t('phone') }} *</label>
               <input type="tel" id="phone" v-model="formData.phone" pattern="[0-9]{10}" required />
               <span class="error" :class="{ active: errors.phoneError }">{{ t('phoneError') }}</span>
             </div>
 
             <div>
-              <label for="email">{{ t('email') }}</label>
+              <label for="email">{{ t('email') }} *</label>
               <input type="email" id="email" v-model="formData.email" required />
               <span class="error" :class="{ active: errors.emailError }">{{ t('emailError') }}</span>
             </div>
@@ -58,7 +58,7 @@
 
         <!-- Days of Presence -->
         <div class="form-group">
-          <label>{{ t('daysOfPresence') }}</label>
+          <label>{{ t('daysOfPresence') }} *</label>
 
           <div class="option-line">
             <div class="option-item">
@@ -82,7 +82,7 @@
 
         <!-- Shop Type (Radio) -->
         <div class="form-group">
-          <label>{{ t('typeOfShop') }}</label>
+          <label>{{ t('typeOfShop') }} *</label>
 
           <div class="option-line">
             <div v-for="option in categoryOptions" :key="option.value" class="option-item">
@@ -131,12 +131,10 @@
       <div class="flex flex-column align-items-center gap-3 py-3 text-center">
         <i class="pi pi-check-circle text-6xl text-green-500"></i>
         <p class="text-xl font-medium">{{ lang('provider.request.success.msg') }}</p>
-        <p class="text-gray-400">{{ lang('provider.request.createAccount.prompt') }}</p>
       </div>
       <template #footer>
         <div class="flex justify-content-center gap-2">
-          <Button :label="lang('cancel')" severity="secondary" @click="successDialogVisible = false" />
-          <Button :label="lang('provider.request.createAccount.btn')" @click="goToRegister" />
+          <Button :label="lang('close')" severity="primary" @click="successDialogVisible = false" />
         </div>
       </template>
     </Dialog>
@@ -397,6 +395,7 @@ async function registerProvider() {
     category: formData.shopType,
     description: '',
     services: [...formData.services],
+    days_available: [...formData.daysOfPresence],
     requestDate: requestDate
   });
 
@@ -413,11 +412,6 @@ async function registerProvider() {
   if (!authStore.isAuthenticated) {
     successDialogVisible.value = true;
   }
-}
-
-function goToRegister() {
-  successDialogVisible.value = false;
-  router.push({ name: 'Register' });
 }
 </script>
 

@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
 // POST /waitingList - Ajouter une demande
 router.post('/', async (req, res) => {
     try {
-        const { name, email, phone, category, description, services, requestDate, status } = req.body;
+        const { name, email, phone, category, description, services, days_available, requestDate, status } = req.body;
 
         if (!name || !email) {
             return res.status(400).json({ error: 'Données manquantes', message: 'Le nom et l\'email sont requis' });
@@ -45,6 +45,7 @@ router.post('/', async (req, res) => {
             category: category || 'boutique',
             description: description || '',
             services: services || [],
+            days_available: days_available || [],
             requestDate: requestDate || new Date(),
             status: status || 'pending'
         };
