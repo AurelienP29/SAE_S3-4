@@ -16,7 +16,9 @@ export {
 export const translations = {
     fr: {
         home: 'Accueil',
-        activities: 'Activités & Réservations',
+        events: 'Événements',
+        billeterie: 'Billetterie',
+        activities: 'Programme',
         'organisateur.space': 'Espace Organisateur',
         'organistaeur.manager': 'Manager',
         'organisateur.create': 'Créer un Événement',
@@ -225,7 +227,9 @@ export const translations = {
     },
     en: {
         home: 'Home',
-        activities: 'Activities & Booking',
+        events: 'Events',
+        billeterie: 'Ticketing',
+        activities: 'Schedule',
         'organisateur.space': 'Organizer Space',
         'organistaeur.manager': 'Manager',
         'organisateur.create': 'Create Event',

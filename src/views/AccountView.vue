@@ -332,7 +332,7 @@ const currentItem = computed(() => navItems.value.find(i => i.key === activeSect
 
 const userTickets = computed(() => {
   if (!authStore.user) return [];
-  return cartStore.userConfirmedTickets(authStore.user.email);
+  return authStore.user.tickets || [];
 });
 
 const userReviews = computed(() => {

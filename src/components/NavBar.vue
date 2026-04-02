@@ -216,9 +216,20 @@ const menuItems = computed(() => {
       command: () => goTo('Home')
     },
     {
-      label: lang('activities'),
-      icon: 'pi pi-calendar-times',
-      command: () => goTo('Activities')
+      label: lang('events') || 'Événements',
+      icon: 'pi pi-calendar',
+      items: [
+        {
+          label: lang('activities'),
+          icon: 'pi pi-list',
+          command: () => goTo('Activities')
+        },
+        {
+          label: lang('billeterie') || 'Billetterie',
+          icon: 'pi pi-ticket',
+          command: () => goTo('Billeterie')
+        }
+      ]
     },
     {
       label: lang('contact'),

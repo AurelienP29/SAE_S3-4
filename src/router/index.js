@@ -9,6 +9,7 @@ import ContactUs from "@/views/ContactUs.vue"
 import AdminView from "@/views/AdminView.vue"
 import AdminMapView from "@/views/AdminMapView.vue";
 import CartView from "@/views/Billeterie/CartView.vue";
+import BilleterieView from "@/views/Billeterie/BilleterieView.vue";
 import SuccessView from "@/views/Billeterie/SuccessView.vue";
 import PrestationView from "@/views/PrestationView.vue";
 import AboutView from "@/views/AboutView.vue";
@@ -30,6 +31,7 @@ const routes = [
     {path: '/register', name: 'Register', component: RegisterView},
 
     {path: '/activities', name: 'Activities', component: ActivitiesView},
+    {path: '/billeterie', name: 'Billeterie', component: BilleterieView},
     {path: '/about', name: 'About', component: AboutView},
     {path: '/account', name: 'Account', component: AccountView},
     {path: '/contact-us', name: 'Contact', component: ContactUs},
