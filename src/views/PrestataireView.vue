@@ -325,7 +325,8 @@ import { ref, onMounted, computed, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore.js';
 import { useReviewStore } from '@/stores/reviewStore.js';
-import { prestataires, prestations, categoryOptions } from '@/datasource/data.mjs';
+import { categoryOptions, prestations, prestataires } from '@/datasource/data.mjs';
+import { usePrestataireStore } from '@/stores/prestataire.js';
 import { translations } from '@/datasource/lang.js';
 
 import {
@@ -342,6 +343,7 @@ import InteractiveMap from '@/components/InteractiveMap.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const prestataireStore = usePrestataireStore();
 const reviewStore = useReviewStore();
 const toast = useToast();
 const confirm = useConfirm();
@@ -403,9 +405,17 @@ const prestationDialog = ref(false);
 const editingPrestation = ref(null);
 const prestationForm = reactive({ name: '', Champ1: '', category: '', description: '' });
 
-onMounted(() => {
+onMounted(async () => {
   if (authStore.user) {
-    const found = prestataires.find(p => p.email === authStore.user.email);
+    // Si l'utilisateur n'est pas un prestataire (rôle), on ne cherche pas plus loin
+    if (authStore.user.role !== 'prestataire' && !authStore.user.roles?.includes('prestataire')) {
+      return;
+    }
+
+    // On essaie de récupérer le prestataire depuis le store (qui interroge le backend)
+    await prestataireStore.fetchPrestataires();
+    const found = prestataireStore.prestataires.find(p => p.email === authStore.user.email);
+    
     if (found) {
       prestataire.value = found;
       Object.assign(profileForm, found);
@@ -422,14 +432,17 @@ function loadPrestations() {
   }
 }
 
-function saveProfile() {
+async function saveProfile() {
   if (prestataire.value) {
     profileForm.publicPageImages = publicPageImagesRaw.value.split(',').map(s => s.trim()).filter(s => s !== '');
-    const index = prestataires.findIndex(p => p.id === prestataire.value.id);
-    if (index !== -1) {
-      prestataires[index] = { ...prestataire.value, ...profileForm };
-      prestataire.value = prestataires[index];
+    
+    try {
+      await prestataireStore.updatePrestataire({ ...prestataire.value, ...profileForm });
+      prestataire.value = { ...prestataire.value, ...profileForm };
       toast.add({ severity: 'success', summary: 'Succès', detail: 'Profil mis à jour', life: 3000 });
+    } catch (error) {
+      console.error('Erreur mise à jour profil:', error);
+      toast.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de mettre à jour le profil', life: 3000 });
     }
   }
 }
