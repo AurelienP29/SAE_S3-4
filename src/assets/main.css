@@ -17,6 +17,8 @@
     --necro-green: #22c55e;        /* Secondary Accent (Toxic) */
     --necro-text: #535353;         /* Main Text */
     --necro-text-muted: #94a3b8;   /* Secondary Text */
+    --necro-font-primary: 'Press Start 2P', cursive;
+    --necro-font-secondary: 'Rajdhani', sans-serif;
 
     /* Glassmorphism settings */
     --glass-bg: rgba(30, 27, 46, 0.65);
@@ -44,7 +46,7 @@ body {
     padding: 0;
     background-color: var(--necro-bg);
     color: var(--necro-text);
-    font-family: 'Rajdhani', sans-serif;
+    font-family: var(--necro-font-secondary);
     font-size: 18px; /* Slightly larger for readability */
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
@@ -69,7 +71,7 @@ body {
    4. TYPOGRAPHY
    ========================================= */
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Press Start 2P', cursive;
+    font-family: var(--necro-font-primary);
     line-height: 1.4;
     margin-top: 0;
 }

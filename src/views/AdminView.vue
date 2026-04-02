@@ -89,6 +89,7 @@
               <PrestataireManager     v-else-if="activeSection === 'prestataires'" />
               <AccountManager         v-else-if="activeSection === 'comptes'" />
               <AdminStatsView         v-else-if="activeSection === 'stats'" />
+              <AdminSiteSettingsManager v-else-if="activeSection === 'settings'" />
             </div>
           </Transition>
         </div>
@@ -98,18 +99,21 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 
 import PrestataireManager from "@/components/adminComponents/AdminPrestataireManager.vue";
 import InteractiveMap from "@/components/InteractiveMap.vue";
 import AccountManager from "@/components/adminComponents/AdminAccountManager.vue";
 import AdminPrestationManager from "@/components/adminComponents/AdminPrestationManager.vue";
 import AdminStatsView from "@/components/adminComponents/AdminStatsView.vue";
+import AdminSiteSettingsManager from "@/components/adminComponents/AdminSiteSettingsManager.vue";
 
 import { useAuthStore } from "@/stores/authStore.js";
 import { translations } from "@/datasource/lang.js";
 
 const authStore = useAuthStore();
+const route = useRoute();
 const lang = (key) => translations[authStore.currentLanguage]?.[key] || key;
 
 const sidebarCollapsed = ref(false);
@@ -121,7 +125,18 @@ const navItems = [
   { key: "carte", icon: "pi-map", label: lang("admin.map") },
   { key: "comptes", icon: "pi-users", label: lang("admin.accounts") },
   { key: "stats", icon: "pi-chart-bar", label: lang("admin.stats.tab") },
+  { key: "settings", icon: "pi-cog", label: lang("settings") },
 ];
+
+const updateSectionFromQuery = () => {
+  if (route.query.section && navItems.some(i => i.key === route.query.section)) {
+    activeSection.value = route.query.section;
+  }
+};
+
+onMounted(updateSectionFromQuery);
+
+watch(() => route.query.section, updateSectionFromQuery);
 
 const currentItem = computed(() =>
   navItems.find((i) => i.key === activeSection.value),

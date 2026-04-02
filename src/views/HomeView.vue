@@ -1,15 +1,15 @@
 <template>
   <div class="necro-layout">
 
-    <header class="hero-section" style="background-image: url('/src/assets/images/homeView/conPic2.jpg');">
+    <header class="hero-section" :style="{ backgroundImage: `url(${settingsStore.images?.heroBackground || '/src/assets/images/homeView/conPic2.jpg'})` }">
       <div class="hero-overlay"></div>
 
       <div class="hero-content">
         <div class="banner-wrapper fade-in-down">
-          <img src="/public/images/home-banner.jpg" alt="Necronomi'con Banner" class="floating-banner">
+          <img :src="settingsStore.images?.bannerImage || '/public/images/home-banner.jpg'" alt="Necronomi'con Banner" class="floating-banner">
         </div>
 
-        <h1 class="glitch-title fade-in-up" :data-text="texts.banner">{{ texts.banner }}</h1>
+        <h1 class="glitch-title fade-in-up" :data-text="settingsStore.homeTexts?.banner || texts.banner">{{ settingsStore.homeTexts?.banner || texts.banner }}</h1>
 
         <div class="scroll-indicator">
           <span>﹀</span>
@@ -21,9 +21,9 @@
 
       <section class="grid-row scroll-reveal">
         <div class="text-col">
-          <h2 class="neon-title">{{ texts.intro }}</h2>
+          <h2 class="neon-title">{{ settingsStore.homeTexts?.intro || texts.intro }}</h2>
           <div class="glass-text-box">
-            <p>{{ texts.description }}</p>
+            <p>{{ settingsStore.homeTexts?.description || texts.description }}</p>
           </div>
         </div>
         <div class="visual-col center-content">
@@ -45,8 +45,8 @@
         </div>
 
         <div class="text-col sticky-col" style="max-width: 100%; max-height: 100%;">
-          <h2 class="neon-title">{{ texts.locationTitle }}</h2>
-          <p class="mb-4">{{ texts.mapTitle }}</p>
+          <h2 class="neon-title">{{ settingsStore.homeTexts?.locationTitle || texts.locationTitle }}</h2>
+          <p class="mb-4">{{ settingsStore.homeTexts?.mapTitle || texts.mapTitle }}</p>
           <div class="map-actions">
             <InteractiveMap
                 :current-user="authStore.user"
@@ -78,9 +78,9 @@
           </div>
         </div>
         <div class="text-col">
-          <h2 class="neon-title">{{ texts.originTitle }}</h2>
+          <h2 class="neon-title">{{ settingsStore.homeTexts?.originTitle || texts.originTitle }}</h2>
           <div class="glass-text-box">
-            {{ texts.originDescription }}
+            {{ settingsStore.homeTexts?.originDescription || texts.originDescription }}
           </div>
         </div>
       </section>
@@ -90,7 +90,7 @@
     <div class="section-separator"></div>
 
     <footer class="supporters-section">
-      <h2 class="section-title dark-text">{{ texts.supportersTitle }}</h2>
+      <h2 class="section-title dark-text">{{ settingsStore.homeTexts?.supportersTitle || texts.supportersTitle }}</h2>
       <div class="carousel-wrapper">
         <InfiniteCarousel :items="supporterItems" duration="60s"/>
       </div>
@@ -102,12 +102,14 @@
 <script setup>
 import PrestataireTable from "@/components/PrestataireTable.vue";
 import {useAuthStore} from '@/stores/authStore.js';
+import {useSettingsStore} from '@/stores/settingsStore.js';
 import {mainPageTextPresentation} from '@/datasource/data.mjs';
 import {computed, onMounted} from 'vue';
 import InfiniteCarousel from '@/components/homeComponents/infiniteCarousel.vue';
 import InteractiveMap from "@/components/InteractiveMap.vue";
 
 const authStore = useAuthStore();
+const settingsStore = useSettingsStore();
 
 onMounted(() => {
   const observer = new IntersectionObserver((entries) => {

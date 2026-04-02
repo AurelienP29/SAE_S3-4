@@ -218,6 +218,10 @@ export const translations = {
         'admin.stats.activities_per_provider': 'Activités réalisées par prestataire',
         'admin.stats.col_activities_count': 'Nb activités',
         'admin.stats.providers_by_category': 'Prestataires par catégorie',
+        'admin.settings.title': 'Paramètres du Site',
+        'admin.settings.texts': 'Textes de la page d\'accueil',
+        'admin.settings.appearance': 'Apparence & Polices',
+        'admin.settings.images': 'Images du site',
     },
     en: {
         home: 'Home',
@@ -423,6 +427,10 @@ export const translations = {
         'admin.stats.activities_per_provider': 'Activities per provider',
         'admin.stats.col_activities_count': 'Activity count',
         'admin.stats.providers_by_category': 'Providers by category',
+        'admin.settings.title': 'Site Settings',
+        'admin.settings.texts': 'Home Page Texts',
+        'admin.settings.appearance': 'Appearance & Fonts',
+        'admin.settings.images': 'Site Images',
     }
 }
 

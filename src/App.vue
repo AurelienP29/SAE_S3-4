@@ -9,15 +9,26 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
-import { RouterView } from "vue-router";
+import { onMounted, watch } from "vue";
 import NavBar from "@/components/NavBar.vue";
 import Footer from "@/components/Footer.vue";
 import emailjs from "@emailjs/browser";
+import { useSettingsStore } from "@/stores/settingsStore";
 
-onMounted(() => {});
+const settingsStore = useSettingsStore();
 
-// const props = defineProps([ "" ])
+onMounted(() => {
+  settingsStore.fetchSettings();
+});
+
+watch(() => settingsStore.fonts, (newFonts) => {
+  if (newFonts.primary) {
+    document.documentElement.style.setProperty('--necro-font-primary', newFonts.primary);
+  }
+  if (newFonts.secondary) {
+    document.documentElement.style.setProperty('--necro-font-secondary', newFonts.secondary);
+  }
+}, { deep: true, immediate: true });
 
 emailjs.init({
   publicKey: "wGckwO4lkmqPnxGfJ",

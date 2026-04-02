@@ -241,6 +241,11 @@ const menuItems = computed(() => {
           label: lang('organisateur.create'),
           icon: 'pi pi-plus',
           command: () => goTo('OrganisateurCreateEvent')
+        },
+        {
+          label: lang('admin.settings.title') || 'Paramètres du site',
+          icon: 'pi pi-cog',
+          command: () => router.push({ name: 'OrganisateurEvents', query: { section: 'settings' } })
         }
       ]
     })

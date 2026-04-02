@@ -11,6 +11,7 @@ const prestatairesRoutes = require('./routes/prestataires');
 const prestationsRoutes = require('./routes/prestations');
 const waitingListRoutes = require('./routes/waitingList');
 const statsRoutes = require('./routes/stats');
+const settingsRoutes = require('./routes/settings');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -51,6 +52,7 @@ app.use('/prestataires', prestatairesRoutes);
 app.use('/prestations', prestationsRoutes);
 app.use('/waitingList', waitingListRoutes);
 app.use('/stats', statsRoutes);
+app.use('/settings', settingsRoutes);
 
 // Route de test
 app.get('/', (req, res) => {
