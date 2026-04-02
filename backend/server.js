@@ -23,8 +23,20 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
+const swaggerUi = require('swagger-ui-express');
+const { swaggerSpec } = require('./swagger');
+
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Swagger test route
+app.get('/test-api-docs', (req, res) => res.send('Swagger Test Route OK'));
+
+// Swagger Documentation Route
+const swaggerRouter = express.Router();
+swaggerRouter.use('/', swaggerUi.serve);
+swaggerRouter.get('/', swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerRouter);
 
 // Initialiser Passport (SANS session car on utilise JWT)
 app.use(passport.initialize());

@@ -52,18 +52,40 @@ async function seedDB() {
         // 4. INSERTION DU RESTE DES DONNÉES
 
         // Users
+        const ageOptions = ['< 18 ans', '18-25 ans', '26-35 ans', '36-45 ans', '46-60 ans', '+ 60 ans'];
+        const genderOptions = ['Hommes', 'Femmes', 'Non-binaire'];
+        const familyOptions = ['En famille', 'Seul(e) / Amis'];
+        const regionOptions = ['Belfort (90)', 'Montbéliard (25)', 'Autres Franche-Comté', 'Alsace', 'Reste de la France', 'Suisse / Étranger'];
+
         const cleanedUsers = await Promise.all(data.users.map(async ({ id, password, ...rest }) => {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
-            return { ...rest, password: hashedPassword };
+            return { 
+                ...rest, 
+                password: hashedPassword,
+                ageGroup: ageOptions[Math.floor(Math.random() * ageOptions.length)],
+                gender: genderOptions[Math.floor(Math.random() * genderOptions.length)],
+                family: familyOptions[Math.floor(Math.random() * familyOptions.length)],
+                geographicRegion: regionOptions[Math.floor(Math.random() * regionOptions.length)]
+            };
         }));
-        await db.collection('users').insertMany(cleanedUsers);
+        const usersResult = await db.collection('users').insertMany(cleanedUsers);
+        const userIds = Object.values(usersResult.insertedIds);
 
         // Activities
-        const cleanedActivities = data.activities.map(({ id, date, ...rest }) => ({
-            ...rest,
-            date: new Date(date)
-        }));
+        const cleanedActivities = data.activities.map(({ id, date, ...rest }) => {
+            const max_places = rest.places || rest.max_places || 30;
+            let numRegistrations = Math.floor(max_places * (0.4 + Math.random() * 0.55));
+            if (numRegistrations > userIds.length) numRegistrations = userIds.length;
+            
+            const shuffled = [...userIds].sort(() => 0.5 - Math.random());
+
+            return {
+                ...rest,
+                date: new Date(date),
+                registered_users: shuffled.slice(0, numRegistrations)
+            };
+        });
         await db.collection('activities').insertMany(cleanedActivities);
 
         // Waiting List (Gestion du .value si c'est une ref Vue)

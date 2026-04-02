@@ -12,6 +12,18 @@ const getDb = (req, res, next) => {
 router.use(getDb);
 
 // GET /stats
+/**
+ * @swagger
+ * /stats:
+ *   get:
+ *     summary: Récupérer les statistiques globales de l'événement (dashboard)
+ *     tags: [Stats]
+ *     responses:
+ *       200:
+ *         description: Renvoie les métriques des visiteurs, prestataires et des files d'attentes.
+ *       500:
+ *         description: Erreur interne du serveur
+ */
 router.get('/', async (req, res) => {
     try {
         const db = req.db;
@@ -62,7 +74,7 @@ router.get('/', async (req, res) => {
         // --- Activités ---
         const allActivities = await db.collection('activities').find({}).toArray();
         const totalActivities = allActivities.length;
-        const totalMaxPlaces = allActivities.reduce((sum, a) => sum + (a.max_places || 0), 0);
+        const totalMaxPlaces = allActivities.reduce((sum, a) => sum + (a.max_places || a.places || 0), 0);
 
         // Activités par prestataire via prestation -> provider_id
         const prestationMap = {};
@@ -104,11 +116,41 @@ router.get('/', async (req, res) => {
         const messagesTraites = allMessages.filter(m => m.status === 'traité').length;
 
         // --- Données simulées (non disponibles en DB) ---
-        const simulatedActivityRegistrations = allActivities.map(a => ({
-            title: a.title,
-            registrations: Math.floor((a.max_places || 30) * (0.4 + Math.random() * 0.55)),
-            maxPlaces: a.max_places || 30
+        const realActivityRegistrations = allActivities.map(a => ({
+            title: a.title || a.titre,
+            registrations: a.registered_users ? a.registered_users.length : 0,
+            maxPlaces: a.max_places || a.places || 30
         }));
+
+        // Calculate real demographics
+        const ageCounts = {};
+        const genderCounts = {};
+        const familyCounts = {};
+        const geoCounts = {};
+        
+        for (const u of allUsers) {
+            if (u.ageGroup) ageCounts[u.ageGroup] = (ageCounts[u.ageGroup] || 0) + 1;
+            if (u.gender) genderCounts[u.gender] = (genderCounts[u.gender] || 0) + 1;
+            if (u.family) familyCounts[u.family] = (familyCounts[u.family] || 0) + 1;
+            if (u.geographicRegion) geoCounts[u.geographicRegion] = (geoCounts[u.geographicRegion] || 0) + 1;
+        }
+
+        const formatDistrib = (counts) => {
+            const sum = Object.values(counts).reduce((a, b) => a + b, 0);
+            if (sum === 0) return [];
+            return Object.entries(counts)
+                .sort((a, b) => b[1] - a[1]) // Tri décroissant optionnel
+                .map(([label, count]) => ({
+                    label,
+                    value: Math.round((count / sum) * 100)
+                }));
+        };
+
+        const realAgeDistribution = formatDistrib(ageCounts);
+        const realGenderDistribution = formatDistrib(genderCounts);
+        const realFamilyDistribution = formatDistrib(familyCounts);
+        const realGeoDistribution = formatDistrib(geoCounts);
+        const hasRealDemographics = realAgeDistribution.length > 0;
 
         const simulated = {
             _simulated: true,
@@ -161,12 +203,12 @@ router.get('/', async (req, res) => {
                 uniqueVisiteurs: visiteurs,
                 byRole: usersByRole,
                 totalByDay: simulated.visitorsPerDay,
-                activityRegistrations: simulatedActivityRegistrations,
-                ageDistribution: simulated.ageDistribution,
-                genderDistribution: simulated.genderDistribution,
-                familyDistribution: simulated.familyDistribution,
-                geographicDistribution: simulated.geographicDistribution,
-                _simulatedFields: ['totalByDay', 'activityRegistrations', 'ageDistribution', 'genderDistribution', 'familyDistribution', 'geographicDistribution']
+                activityRegistrations: realActivityRegistrations,
+                ageDistribution: hasRealDemographics ? realAgeDistribution : simulated.ageDistribution,
+                genderDistribution: hasRealDemographics ? realGenderDistribution : simulated.genderDistribution,
+                familyDistribution: hasRealDemographics ? realFamilyDistribution : simulated.familyDistribution,
+                geographicDistribution: hasRealDemographics ? realGeoDistribution : simulated.geographicDistribution,
+                _simulatedFields: hasRealDemographics ? ['totalByDay'] : ['totalByDay', 'ageDistribution', 'genderDistribution', 'familyDistribution', 'geographicDistribution']
             },
             satisfaction: {
                 score: simulated.satisfactionScore,

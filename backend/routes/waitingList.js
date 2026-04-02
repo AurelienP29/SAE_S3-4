@@ -15,6 +15,18 @@ const getDb = (req, res, next) => {
 router.use(getDb);
 
 // GET /waitingList - Liste de toutes les demandes
+/**
+ * @swagger
+ * /waitingList:
+ *   get:
+ *     summary: Récupérer la file d'attente des prestataires
+ *     tags: [WaitingList]
+ *     responses:
+ *       200:
+ *         description: Liste de toutes les demandes d'inscription
+ *       500:
+ *         description: Erreur serveur
+ */
 router.get('/', async (req, res) => {
     try {
         const requests = await req.db.collection('waiting_list_prestataires').find({}).toArray();
@@ -30,6 +42,50 @@ router.get('/', async (req, res) => {
 });
 
 // POST /waitingList - Ajouter une demande
+/**
+ * @swagger
+ * /waitingList:
+ *   post:
+ *     summary: Ajouter un prestataire à la file d'attente
+ *     tags: [WaitingList]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, email]
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               services:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               days_available:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               requestDate:
+ *                 type: string
+ *                 format: date-time
+ *               status:
+ *                 type: string
+ *                 default: pending
+ *     responses:
+ *       201:
+ *         description: Demande créée avec succès
+ *       400:
+ *         description: Données manquantes
+ */
 router.post('/', async (req, res) => {
     try {
         const { name, email, phone, category, description, services, days_available, requestDate, status } = req.body;
@@ -59,6 +115,26 @@ router.post('/', async (req, res) => {
 });
 
 // DELETE /waitingList/:id - Supprimer une demande
+/**
+ * @swagger
+ * /waitingList/{id}:
+ *   delete:
+ *     summary: Supprimer une demande de la file d'attente
+ *     tags: [WaitingList]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Demande supprimée avec succès
+ *       404:
+ *         description: Demande non trouvée
+ */
 router.delete('/:id', async (req, res) => {
     try {
         const result = await req.db.collection('waiting_list_prestataires').deleteOne({ _id: new ObjectId(req.params.id) });

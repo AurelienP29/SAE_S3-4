@@ -16,6 +16,18 @@ const getDb = (req, res, next) => {
 router.use(getDb);
 
 // GET /users - Liste de tous les utilisateurs
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Récupérer la liste des utilisateurs
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Liste de tous les utilisateurs (sans mdp)
+ *       500:
+ *         description: Erreur serveur
+ */
 router.get('/', async (req, res) => {
     try {
         const users = await findAllUsers(req.db);
@@ -33,6 +45,24 @@ router.get('/', async (req, res) => {
 });
 
 // GET /users/:id - Détails d'un utilisateur
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Récupérer les détails d'un utilisateur
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Détails de l'utilisateur
+ *       404:
+ *         description: Utilisateur non trouvé
+ */
 router.get('/:id', async (req, res) => {
     try {
         const user = await findUserById(req.db, req.params.id);
@@ -48,6 +78,40 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /users - Création manuelle d'un utilisateur par l'admin
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Création manuelle d'un utilisateur (Admin)
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, email, password]
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Utilisateur créé
+ *       400:
+ *         description: Données manquantes
+ *       409:
+ *         description: Email déjà utilisé
+ */
 router.post('/', async (req, res) => {
     try {
         const { email, password, name, role, phone, description } = req.body;
@@ -79,15 +143,60 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /users/:id - Mise à jour d'un utilisateur
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     summary: Mettre à jour le profil d'un utilisateur
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               ageGroup:
+ *                 type: string
+ *               gender:
+ *                 type: string
+ *               family:
+ *                 type: string
+ *               geographicRegion:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profil utilisateur mis à jour
+ *       409:
+ *         description: Email déjà utilisé par un autre compte
+ */
 router.put('/:id', async (req, res) => {
     try {
-        const { email, name, role, phone, description } = req.body;
+        const { email, name, role, phone, description, ageGroup, gender, family, geographicRegion } = req.body;
         const updateData = {};
         if (email !== undefined) updateData.email = email.toLowerCase();
         if (name !== undefined) updateData.name = name;
         if (role !== undefined) updateData.role = role;
         if (phone !== undefined) updateData.phone = phone;
         if (description !== undefined) updateData.description = description;
+        if (ageGroup !== undefined) updateData.ageGroup = ageGroup;
+        if (gender !== undefined) updateData.gender = gender;
+        if (family !== undefined) updateData.family = family;
+        if (geographicRegion !== undefined) updateData.geographicRegion = geographicRegion;
 
         // Si on change l'email, on vérifie qu'il n'est pas pris par QUEUELQU'UN D'AUTRE
         if (updateData.email) {
@@ -114,6 +223,24 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /users/:id - Suppression d'un utilisateur
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Supprimer un utilisateur
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Utilisateur supprimé avec succès
+ *       404:
+ *         description: Utilisateur non trouvé
+ */
 router.delete('/:id', async (req, res) => {
     try {
         const result = await deleteUserById(req.db, req.params.id);
@@ -128,6 +255,36 @@ router.delete('/:id', async (req, res) => {
 });
 
 // POST /users/:id/reservations - Réserver une activité
+/**
+ * @swagger
+ * /users/{id}/reservations:
+ *   post:
+ *     summary: Réserver une activité
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               activite:
+ *                 type: object
+ *                 description: L'objet activité entier de la réservation
+ *     responses:
+ *       201:
+ *         description: Réservation effectuée
+ *       400:
+ *         description: Plus de places
+ *       409:
+ *         description: Déjà réservée
+ */
 router.post('/:id/reservations', async (req, res) => {
     try {
         const { activite } = req.body;
@@ -181,6 +338,29 @@ router.post('/:id/reservations', async (req, res) => {
 });
 
 // DELETE /users/:id/reservations/:resId - Annuler une réservation
+/**
+ * @swagger
+ * /users/{id}/reservations/{resId}:
+ *   delete:
+ *     summary: Annuler une réservation
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: resId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Réservation annulée
+ *       500:
+ *         description: Erreur serveur
+ */
 router.delete('/:id/reservations/:resId', async (req, res) => {
     try {
         const user = await findUserById(req.db, req.params.id);
@@ -207,6 +387,33 @@ router.delete('/:id/reservations/:resId', async (req, res) => {
 });
 
 // POST /users/:id/tickets - Ajouter des billets
+/**
+ * @swagger
+ * /users/{id}/tickets:
+ *   post:
+ *     summary: Ajouter des billets à l'utilisateur
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               tickets:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *     responses:
+ *       201:
+ *         description: Billets ajoutés
+ */
 router.post('/:id/tickets', async (req, res) => {
     try {
         const { tickets } = req.body;

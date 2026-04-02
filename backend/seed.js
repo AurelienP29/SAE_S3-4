@@ -181,12 +181,23 @@ async function seed() {
             else if (t.includes('magic')) pid = prestationMap['magic'];
             else if (t.includes('cosplay')) pid = prestationMap['cosplay'];
 
-            await Activity.create({
+            const newActivity = new Activity({
                 prestation_id: pid,
                 title: a.titre,
                 max_places: a.places,
-                start_time: parseDate(a.date)
+                start_time: parseDate(a.date),
+                registered_users: []
             });
+            
+            // Random registrations up to ~85% of max places, limited by number of users
+            const possibleUsers = Object.values(userMap);
+            let numRegistrations = Math.floor((a.places || 30) * (0.4 + Math.random() * 0.55));
+            if (numRegistrations > possibleUsers.length) numRegistrations = possibleUsers.length;
+            
+            const shuffled = [...possibleUsers].sort(() => 0.5 - Math.random());
+            newActivity.registered_users = shuffled.slice(0, numRegistrations);
+            
+            await newActivity.save();
         }
 
         for (const m of rawMessages) {

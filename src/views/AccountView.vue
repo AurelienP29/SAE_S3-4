@@ -113,6 +113,22 @@
                       <label for="acc-picture">{{ lang('account.picture') }}</label>
                       <InputText id="acc-picture" v-model="profileForm.picture" placeholder="https://..." class="w-full" />
                     </div>
+                    <div class="form-field">
+                      <label for="acc-age">Tranche d'âge</label>
+                      <Dropdown id="acc-age" v-model="profileForm.ageGroup" :options="ageOptions" placeholder="Sélectionnez..." class="w-full" />
+                    </div>
+                    <div class="form-field">
+                      <label for="acc-gender">Genre</label>
+                      <Dropdown id="acc-gender" v-model="profileForm.gender" :options="genderOptions" placeholder="Sélectionnez..." class="w-full" />
+                    </div>
+                    <div class="form-field">
+                      <label for="acc-family">Situation</label>
+                      <Dropdown id="acc-family" v-model="profileForm.family" :options="familyOptions" placeholder="Sélectionnez..." class="w-full" />
+                    </div>
+                    <div class="form-field">
+                      <label for="acc-region">Région</label>
+                      <Dropdown id="acc-region" v-model="profileForm.geographicRegion" :options="regionOptions" placeholder="Sélectionnez..." class="w-full" />
+                    </div>
                     <div class="form-field form-field--full">
                       <label for="acc-desc">{{ lang('account.description') }}</label>
                       <Textarea id="acc-desc" v-model="profileForm.description" rows="4" class="w-full" />
@@ -302,7 +318,7 @@ import { translations }   from '@/datasource/lang.js';
 
 import {
   InputText, Button, Textarea, Password, Avatar, Toast,
-  DataTable, Column, Rating, ConfirmDialog, Dialog
+  DataTable, Column, Rating, ConfirmDialog, Dialog, Dropdown
 } from 'primevue';
 
 import { useToast }    from 'primevue/usetoast';
@@ -372,25 +388,59 @@ function confirmDeleteReview(id) {
   });
 }
 
-const profileForm = reactive({ name: '', email: '', phone: '', description: '', picture: '' });
+const ageOptions = ['< 18 ans', '18-25 ans', '26-35 ans', '36-45 ans', '46-60 ans', '+ 60 ans'];
+const genderOptions = ['Hommes', 'Femmes', 'Non-binaire'];
+const familyOptions = ['En famille', 'Seul(e) / Amis'];
+const regionOptions = ['Belfort (90)', 'Montbéliard (25)', 'Autres Franche-Comté', 'Alsace', 'Reste de la France', 'Suisse / Étranger'];
+
+const profileForm = reactive({ name: '', email: '', phone: '', description: '', picture: '', ageGroup: null, gender: null, family: null, geographicRegion: null });
 const securityForm = reactive({ currentPassword: '', newPassword: '', confirmPassword: '' });
 
 onMounted(() => {
   if (authStore.user) {
-    profileForm.name        = authStore.user.name        || '';
-    profileForm.email       = authStore.user.email       || '';
-    profileForm.phone       = authStore.user.phone       || '';
-    profileForm.description = authStore.user.description || '';
-    profileForm.picture     = authStore.user.picture     || '';
+    profileForm.name             = authStore.user.name             || '';
+    profileForm.email            = authStore.user.email            || '';
+    profileForm.phone            = authStore.user.phone            || '';
+    profileForm.description      = authStore.user.description      || '';
+    profileForm.picture          = authStore.user.picture          || '';
+    profileForm.ageGroup         = authStore.user.ageGroup         || null;
+    profileForm.gender           = authStore.user.gender           || null;
+    profileForm.family           = authStore.user.family           || null;
+    profileForm.geographicRegion = authStore.user.geographicRegion || null;
   }
 });
 
 function saveProfile() {
   saving.value = true;
-  setTimeout(() => {
-    authStore.updateUser({ name: profileForm.name, phone: profileForm.phone, description: profileForm.description, picture: profileForm.picture });
+  setTimeout(async () => {
+    // Need to also call to PUT /users/:id to save these fields since authStore.updateUser only does local storage unless specifically handled
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+      const response = await fetch(`${API_URL}/users/${authStore.user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: profileForm.name,
+          phone: profileForm.phone,
+          description: profileForm.description,
+          picture: profileForm.picture,
+          ageGroup: profileForm.ageGroup,
+          gender: profileForm.gender,
+          family: profileForm.family,
+          geographicRegion: profileForm.geographicRegion
+        })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        authStore.updateUser(data.user);
+        toast.add({ severity: 'success', summary: 'Succès', detail: 'Profil mis à jour', life: 3000 });
+      } else {
+        toast.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur du serveur', life: 3000 });
+      }
+    } catch (e) {
+      toast.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur de connexion', life: 3000 });
+    }
     saving.value = false;
-    toast.add({ severity: 'success', summary: 'Succès', detail: 'Profil mis à jour', life: 3000 });
   }, 500);
 }
 

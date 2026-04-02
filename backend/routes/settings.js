@@ -16,6 +16,18 @@ const getDb = (req, res, next) => {
 router.use(getDb);
 
 // GET /settings - Récupérer les paramètres du site (public)
+/**
+ * @swagger
+ * /settings:
+ *   get:
+ *     summary: Récupérer les paramètres du site (public)
+ *     tags: [Settings]
+ *     responses:
+ *       200:
+ *         description: Paramètres du site
+ *       500:
+ *         description: Erreur serveur
+ */
 router.get('/', async (req, res) => {
     try {
         const settings = await getSettings(req.db);
@@ -27,6 +39,26 @@ router.get('/', async (req, res) => {
 });
 
 // PUT /settings - Mettre à jour les paramètres du site (admin uniquement)
+/**
+ * @swagger
+ * /settings:
+ *   put:
+ *     summary: Mettre à jour les paramètres du site (Admin)
+ *     tags: [Settings]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Paramètres mis à jour
+ *       500:
+ *         description: Erreur serveur
+ */
 router.put('/', authenticateToken, isAdmin, async (req, res) => {
     try {
         const result = await updateSettings(req.db, req.body);

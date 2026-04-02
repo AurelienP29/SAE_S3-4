@@ -197,8 +197,13 @@ async function handleRegister() {
     if (response.ok) {
       // Inscription réussie, utiliser les données retournées par l'API
       const newUser = data.user
-      // On peut ajouter le mock initial ici si on veut forcer le store, ou juste rediriger
-      router.push({ name: 'Login' })
+      const token = data.token
+      
+      // Connnexion automatique
+      authStore.login(newUser, token)
+      
+      // Redirection vers l'étape optionnelle
+      router.push({ name: 'Onboarding' })
     } else {
       if (data.error === 'Email déjà utilisé') {
         emailError.value = "Cet email est déjà pris."

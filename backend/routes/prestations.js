@@ -15,6 +15,18 @@ const getDb = (req, res, next) => {
 router.use(getDb);
 
 // GET /prestations - Liste de toutes les prestations
+/**
+ * @swagger
+ * /prestations:
+ *   get:
+ *     summary: Récupérer la liste des prestations
+ *     tags: [Prestations]
+ *     responses:
+ *       200:
+ *         description: Liste de toutes les prestations
+ *       500:
+ *         description: Erreur serveur
+ */
 router.get('/', async (req, res) => {
     try {
         const prestations = await findAllPrestations(req.db);
@@ -30,6 +42,24 @@ router.get('/', async (req, res) => {
 });
 
 // GET /prestations/:id - Détails d'une prestation
+/**
+ * @swagger
+ * /prestations/{id}:
+ *   get:
+ *     summary: Récupérer les détails d'une prestation
+ *     tags: [Prestations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Informations sur la prestation
+ *       404:
+ *         description: Prestation non trouvée
+ */
 router.get('/:id', async (req, res) => {
     try {
         const prestation = await findPrestationById(req.db, req.params.id);
@@ -44,6 +74,36 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /prestations - Création d'une prestation
+/**
+ * @swagger
+ * /prestations:
+ *   post:
+ *     summary: Créer une nouvelle prestation
+ *     tags: [Prestations]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, Champ1]
+ *             properties:
+ *               name:
+ *                 type: string
+ *               Champ1:
+ *                 type: string
+ *               prestataireId:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Prestation créée
+ *       400:
+ *         description: Données manquantes
+ */
 router.post('/', async (req, res) => {
     try {
         const { name, Champ1, prestataireId, category, description } = req.body;
@@ -61,6 +121,30 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /prestations/:id - Mise à jour d'une prestation
+/**
+ * @swagger
+ * /prestations/{id}:
+ *   put:
+ *     summary: Mettre à jour une prestation
+ *     tags: [Prestations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Prestation mise à jour
+ *       404:
+ *         description: Prestation non trouvée
+ */
 router.put('/:id', async (req, res) => {
     try {
         const result = await updatePrestationById(req.db, req.params.id, req.body);
@@ -77,6 +161,24 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /prestations/:id - Suppression d'une prestation
+/**
+ * @swagger
+ * /prestations/{id}:
+ *   delete:
+ *     summary: Supprimer une prestation
+ *     tags: [Prestations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Prestation supprimée
+ *       404:
+ *         description: Prestation non trouvée
+ */
 router.delete('/:id', async (req, res) => {
     try {
         const result = await deletePrestationById(req.db, req.params.id);

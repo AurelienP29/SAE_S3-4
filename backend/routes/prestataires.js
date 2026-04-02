@@ -15,6 +15,18 @@ const getDb = (req, res, next) => {
 router.use(getDb);
 
 // GET /prestataires - Liste de tous les prestataires
+/**
+ * @swagger
+ * /prestataires:
+ *   get:
+ *     summary: Récupérer la liste des prestataires
+ *     tags: [Prestataires]
+ *     responses:
+ *       200:
+ *         description: Liste de tous les prestataires enregistrés
+ *       500:
+ *         description: Erreur serveur
+ */
 router.get('/', async (req, res) => {
     try {
         const prestataires = await findAllPrestataires(req.db);
@@ -30,6 +42,24 @@ router.get('/', async (req, res) => {
 });
 
 // GET /prestataires/:id - Détails d'un prestataire
+/**
+ * @swagger
+ * /prestataires/{id}:
+ *   get:
+ *     summary: Récupérer les détails d'un prestataire
+ *     tags: [Prestataires]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Informations du prestataire
+ *       404:
+ *         description: Prestataire non trouvé
+ */
 router.get('/:id', async (req, res) => {
     try {
         const prestataire = await findPrestataireById(req.db, req.params.id);
@@ -44,6 +74,38 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /prestataires - Création d'un prestataire
+/**
+ * @swagger
+ * /prestataires:
+ *   post:
+ *     summary: Créer un nouveau prestataire
+ *     tags: [Prestataires]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, email]
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Prestataire créé avec succès
+ *       400:
+ *         description: Données manquantes
+ */
 router.post('/', async (req, res) => {
     try {
         const { name, email, phone, category, description } = req.body;
@@ -61,6 +123,43 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /prestataires/:id - Mise à jour d'un prestataire
+/**
+ * @swagger
+ * /prestataires/{id}:
+ *   put:
+ *     summary: Mettre à jour un prestataire
+ *     tags: [Prestataires]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Prestataire mis à jour
+ *       404:
+ *         description: Prestataire non trouvé
+ */
 router.put('/:id', async (req, res) => {
     try {
         const result = await updatePrestataireById(req.db, req.params.id, req.body);
@@ -77,6 +176,26 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /prestataires/:id - Suppression d'un prestataire
+/**
+ * @swagger
+ * /prestataires/{id}:
+ *   delete:
+ *     summary: Supprimer un prestataire
+ *     tags: [Prestataires]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Prestataire supprimé avec succès
+ *       404:
+ *         description: Prestataire non trouvé
+ */
 router.delete('/:id', async (req, res) => {
     try {
         const result = await deletePrestataireById(req.db, req.params.id);

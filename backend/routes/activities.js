@@ -5,6 +5,18 @@ const { authenticateToken, isAdmin } = require('../middleware/auth');
 const router = express.Router();
 
 // GET /activities - Liste toutes les activités
+/**
+ * @swagger
+ * /activities:
+ *   get:
+ *     summary: Récupérer la liste des activités
+ *     tags: [Activities]
+ *     responses:
+ *       200:
+ *         description: Liste de toutes les activités
+ *       500:
+ *         description: Erreur serveur
+ */
 router.get('/', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -16,6 +28,24 @@ router.get('/', async (req, res) => {
 });
 
 // GET /activities/:id - Une seule activité
+/**
+ * @swagger
+ * /activities/{id}:
+ *   get:
+ *     summary: Récupérer une activité par son ID
+ *     tags: [Activities]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Détails de l'activité
+ *       404:
+ *         description: Activité non trouvée
+ */
 router.get('/:id', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -28,6 +58,43 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /activities - Ajouter une activité (Admin seulement)
+/**
+ * @swagger
+ * /activities:
+ *   post:
+ *     summary: Créer une nouvelle activité
+ *     tags: [Activities]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [titre, date]
+ *             properties:
+ *               titre:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               places:
+ *                 type: integer
+ *               prix:
+ *                 type: number
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *     responses:
+ *       201:
+ *         description: Activité créée
+ *       400:
+ *         description: Requête invalide
+ *       401:
+ *         description: Non authentifié
+ *       403:
+ *         description: Accès refusé (Admin requis)
+ */
 router.post('/', authenticateToken, isAdmin, async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -54,6 +121,44 @@ router.post('/', authenticateToken, isAdmin, async (req, res) => {
 });
 
 // PUT /activities/:id - Modifier une activité (Admin seulement)
+/**
+ * @swagger
+ * /activities/{id}:
+ *   put:
+ *     summary: Modifier une activité
+ *     tags: [Activities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               titre:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               places:
+ *                 type: integer
+ *               prix:
+ *                 type: number
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *     responses:
+ *       200:
+ *         description: Activité modifiée
+ *       404:
+ *         description: Activité non trouvée
+ */
 router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -81,6 +186,26 @@ router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
 });
 
 // DELETE /activities/:id - Supprimer une activité (Admin seulement)
+/**
+ * @swagger
+ * /activities/{id}:
+ *   delete:
+ *     summary: Supprimer une activité
+ *     tags: [Activities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Activité supprimée
+ *       404:
+ *         description: Activité non trouvée
+ */
 router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
   try {
     const db = req.app.locals.db;

@@ -35,7 +35,8 @@ const ActivitySchema = new Schema({
     prestation_id: { type: Schema.Types.ObjectId, ref: 'Prestation', default: null },
     title: { type: String, required: true },
     max_places: Number,
-    start_time: Date
+    start_time: Date,
+    registered_users: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
 const MessageSchema = new Schema({

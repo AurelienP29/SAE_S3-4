@@ -16,6 +16,37 @@ const generateToken = (userId) => {
 };
 
 // POST /auth/register - Inscription
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Créer un compte utilisateur
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Utilisateur créé avec succès
+ *       400:
+ *         description: Données manquantes ou mot de passe invalide
+ *       409:
+ *         description: Email déjà utilisé
+ */
 router.post('/register', async (req, res) => {
   try {
     const { email, password, name } = req.body;
@@ -76,6 +107,34 @@ router.post('/register', async (req, res) => {
 });
 
 // POST /auth/login - Connexion
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Se connecter à la plateforme
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Connexion réussie, retourne le token JWT et les informations de l'utilisateur
+ *       400:
+ *         description: Email ou mot de passe textuellement manquant
+ *       401:
+ *         description: Identifiants invalides
+ */
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -135,6 +194,22 @@ router.post('/login', async (req, res) => {
 });
 
 // GET /api/auth/profile - Profil utilisateur (protégé)
+/**
+ * @swagger
+ * /auth/profile:
+ *   get:
+ *     summary: Récupérer le profil de l'utilisateur connecté
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Profil utilisateur récupéré avec succès
+ *       401:
+ *         description: Non authentifié ou token invalide
+ *       500:
+ *         description: Erreur serveur
+ */
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
     res.json({
@@ -152,12 +227,32 @@ router.get('/profile', authenticateToken, async (req, res) => {
 // (Route GET /api/auth/users retirée car déplacée vers routes/users.js)
 
 // Route pour initier l'authentification Google
+/**
+ * @swagger
+ * /auth/google:
+ *   get:
+ *     summary: Rediriger vers l'authentification Google
+ *     tags: [Auth]
+ *     responses:
+ *       302:
+ *         description: Redirection vers Google
+ */
 router.get('/google', passport.authenticate('google', {
   scope: ['profile', 'email'],
   session: false
 }));
 
 // Route callback Google
+/**
+ * @swagger
+ * /auth/google/callback:
+ *   get:
+ *     summary: Callback de l'authentification Google
+ *     tags: [Auth]
+ *     responses:
+ *       302:
+ *         description: Redirection vers le frontend avec le token
+ */
 router.get('/google/callback',
   passport.authenticate('google', {
     session: false,
