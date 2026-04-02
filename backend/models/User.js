@@ -60,6 +60,38 @@ async function createUser(db, { email, password, name }) {
   };
 }
 
+// Ajouter une réservation d'activité
+async function addReservation(db, userId, reservation) {
+  // s'assurer que reservation contient un ID unique, sinon en générer un (comme Date.now())
+  const newReservation = {
+    ...reservation,
+    id: reservation.id || Date.now()
+  };
+  return await db.collection('users').findOneAndUpdate(
+    { _id: new ObjectId(userId) },
+    { $push: { reservations: newReservation } },
+    { returnDocument: 'after' }
+  );
+}
+
+// Supprimer une réservation d'activité
+async function removeReservation(db, userId, reservationId) {
+  return await db.collection('users').findOneAndUpdate(
+    { _id: new ObjectId(userId) },
+    { $pull: { reservations: { id: reservationId } } },
+    { returnDocument: 'after' }
+  );
+}
+
+// Ajouter des billets
+async function addTickets(db, userId, tickets) {
+  return await db.collection('users').findOneAndUpdate(
+    { _id: new ObjectId(userId) },
+    { $push: { tickets: { $each: tickets } } },
+    { returnDocument: 'after' }
+  );
+}
+
 // Comparer le mot de passe
 async function comparePassword(plainPassword, hashedPassword) {
   return await bcrypt.compare(plainPassword, hashedPassword);
@@ -106,5 +138,8 @@ module.exports = {
   createUser,
   comparePassword,
   findUserByGoogleId,
-  createUserFromGoogle
+  createUserFromGoogle,
+  addReservation,
+  removeReservation,
+  addTickets
 };

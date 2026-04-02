@@ -1,5 +1,6 @@
 const express = require('express');
-const { findAllUsers, findUserById, updateUserById, deleteUserById, createUser, findUserByEmail } = require('../models/User');
+const { findAllUsers, findUserById, updateUserById, deleteUserById, createUser, findUserByEmail, addReservation, removeReservation, addTickets } = require('../models/User');
+const { ObjectId } = require('mongodb');
 
 const router = express.Router();
 
@@ -122,6 +123,111 @@ router.delete('/:id', async (req, res) => {
         res.json({ message: 'Utilisateur supprimé avec succès' });
     } catch (error) {
         console.error('Erreur suppression utilisateur:', error);
+        res.status(500).json({ error: 'Erreur serveur', message: error.message });
+    }
+});
+
+// POST /users/:id/reservations - Réserver une activité
+router.post('/:id/reservations', async (req, res) => {
+    try {
+        const { activite } = req.body;
+        if (!activite) {
+            return res.status(400).json({ error: 'Activité manquante' });
+        }
+
+        const user = await findUserById(req.db, req.params.id);
+        if (!user) {
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+
+        const actId = activite._id || activite.id;
+        
+        // Anti-doublons
+        if (user.reservations && user.reservations.some(r => (r.activite._id || r.activite.id) === actId)) {
+            return res.status(409).json({ error: 'Vous avez déjà réservé cette activité.' });
+        }
+
+        // Vérification et décrémentation des places si ID valide
+        if (ObjectId.isValid(actId) && actId.length === 24) {
+            const realAct = await req.db.collection('activities').findOne({ _id: new ObjectId(actId) });
+            if (realAct && realAct.places !== undefined) {
+                if (realAct.places <= 0) {
+                    return res.status(400).json({ error: 'Plus de places disponibles pour cette activité.' });
+                }
+                // Retirer 1 place
+                await req.db.collection('activities').updateOne(
+                    { _id: new ObjectId(actId) },
+                    { $inc: { places: -1 } }
+                );
+            }
+        }
+
+        const reservation = {
+            id: Date.now(),
+            activite,
+            dateReservation: new Date().toLocaleDateString()
+        };
+
+        const result = await addReservation(req.db, req.params.id, reservation);
+        const updatedUser = await findUserById(req.db, req.params.id);
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+        return res.status(201).json({ message: 'Réservation ajoutée', user: updatedUser });
+    } catch (error) {
+        console.error('Erreur ajout réservation:', error);
+        res.status(500).json({ error: 'Erreur serveur', message: error.message });
+    }
+});
+
+// DELETE /users/:id/reservations/:resId - Annuler une réservation
+router.delete('/:id/reservations/:resId', async (req, res) => {
+    try {
+        const user = await findUserById(req.db, req.params.id);
+        if (user && user.reservations) {
+            const reservation = user.reservations.find(r => r.id === parseInt(req.params.resId) || r.id === req.params.resId);
+            if (reservation) {
+                const actId = reservation.activite._id || reservation.activite.id;
+                if (ObjectId.isValid(actId) && String(actId).length === 24) {
+                    // Remettre 1 place
+                    await req.db.collection('activities').updateOne(
+                        { _id: new ObjectId(actId) },
+                        { $inc: { places: 1 } }
+                    );
+                }
+            }
+        }
+
+        const result = await removeReservation(req.db, req.params.id, parseInt(req.params.resId));
+        res.json({ message: 'Réservation annulée', result });
+    } catch (error) {
+        console.error('Erreur annulation réservation:', error);
+        res.status(500).json({ error: 'Erreur serveur', message: error.message });
+    }
+});
+
+// POST /users/:id/tickets - Ajouter des billets
+router.post('/:id/tickets', async (req, res) => {
+    try {
+        const { tickets } = req.body;
+        if (!tickets || !Array.isArray(tickets)) {
+            return res.status(400).json({ error: 'Billets manquants ou format invalide' });
+        }
+
+        // Ajouter la date d'achat sur chaque billet s'il n'y en a pas
+        const enrichedTickets = tickets.map(t => ({
+            ...t,
+            purchaseDate: t.purchaseDate || new Date().toLocaleDateString()
+        }));
+
+        const result = await addTickets(req.db, req.params.id, enrichedTickets);
+        const updatedUser = await findUserById(req.db, req.params.id);
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+        return res.status(201).json({ message: 'Billets ajoutés', user: updatedUser });
+    } catch (error) {
+        console.error('Erreur ajout billets:', error);
         res.status(500).json({ error: 'Erreur serveur', message: error.message });
     }
 });

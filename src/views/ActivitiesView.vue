@@ -1,28 +1,5 @@
 <template>
   <div class="activities-page">
-    <h1 class="banner">Tickets d'entrée</h1>
-    <div class="tickets-grid">
-      <div v-for="ticket in ticketsTypes" :key="ticket.id" class="activity-card ticket-card">
-        <h3>{{ ticket.label }}</h3>
-        <p class="description">{{ ticket.description }}</p>
-        <p class="price">Prix : <strong>{{ ticket.price }}</strong></p>
-
-        <div class="actions">
-          <button
-              v-if="authStore.user"
-              @click="handleAddToCart(ticket)"
-              class="btn-reserve"
-          >
-            Ajouter au panier
-          </button>
-
-          <div v-else class="warning">
-            <router-link :to="{name: 'Login'}">Connectez-vous</router-link>
-            pour acheter
-          </div>
-        </div>
-      </div>
-    </div>
     <h1 class="banner">Programme & Réservations</h1>
 
     <div class="activities-grid">
@@ -36,8 +13,10 @@
               v-if="authStore.user"
               @click="handleReservation(act._id)"
               class="btn-reserve"
+              :disabled="isAlreadyReserved(act._id)"
+              :class="{ 'btn-disabled': isAlreadyReserved(act._id) }"
           >
-            Réserver ma place
+            {{ isAlreadyReserved(act._id) ? 'Déjà réservé' : 'Réserver ma place' }}
           </button>
 
           <div v-else class="warning">
@@ -61,7 +40,6 @@ const cartStore = useCartStore()
 const authStore = useAuthStore()
 const activityStore = useActivityStore()
 
-const ticketsTypes = authStore.ticketsTypes;
 
 onMounted(() => {
   activityStore.fetchActivities();
@@ -74,14 +52,15 @@ function handleReservation(id) {
   }
 }
 
-const handleAddToCart = (ticket) => {
-  cartStore.addToCart(ticket, authStore.user?.id)
-}
-
 const formatDate = (date) => {
     if (!date) return '-';
     const d = new Date(date);
     return isNaN(d.getTime()) ? date : d.toLocaleString('fr-FR');
+};
+
+const isAlreadyReserved = (actId) => {
+  if (!authStore.user || !authStore.user.reservations) return false;
+  return authStore.user.reservations.some(r => (r.activite._id || r.activite.id) === actId);
 };
 
 </script>
@@ -161,8 +140,14 @@ const formatDate = (date) => {
   transition: background 0.3s;
 }
 
-.btn-reserve:hover {
+.btn-reserve:hover:not(:disabled) {
   background-color: #bd2cd1;
+}
+
+.btn-disabled {
+  background-color: #888 !important;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .warning {

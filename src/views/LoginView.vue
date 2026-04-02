@@ -3,7 +3,7 @@
     <div class="auth-card">
       <h2 class="text-center mb-4">Connexion</h2>
 
-      <div class="p-fluid">
+      <form class="p-fluid" @submit.prevent="handleLogin">
         <div class="field mb-4">
           <label for="email" class="block mb-2">Email</label>
           <InputText
@@ -32,7 +32,7 @@
           <div v-if="passwordError" style="color: red;">{{ passwordError }}</div>
         </div>
 
-        <Button label=" Se connecter" icon="pi pi-sign-in" @click="handleLogin" />
+        <Button type="submit" label=" Se connecter" icon="pi pi-sign-in" />
 
         <div class="divider">
           <span>{{ lang('login.with.social') }}</span>
@@ -58,7 +58,7 @@
             @click="goToCreateAccount"
           />
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>

@@ -1,12 +1,15 @@
 import {ref, computed} from 'vue'
 import { defineStore } from 'pinia'
 import emailjs from '@emailjs/browser'
+import { useActivityStore } from '@/stores/activityStore.js'
 
 export const useAuthStore = defineStore('auth', () => {
     const storedUser = localStorage.getItem('user')
     const user = ref(storedUser ? JSON.parse(storedUser) : null)
     
+    const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/users`
     const currentLanguage = ref('fr')
+    // Pour l'admin: a aggregateur de toutes les réservations, mais en vrai on va utiliser le profile pour le visiteur
     const reservations = ref([])
 
     // TODO Stockage temporaire des activités, a modifier après
@@ -31,7 +34,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const mesReservations = computed(() => {
         if (!user.value) return []
-        return reservations.value.filter(r => r.userEmail === user.value.email)
+        return user.value.reservations || []
     })
 
 
@@ -47,7 +50,9 @@ export const useAuthStore = defineStore('auth', () => {
             roles: userData.roles || [userData.role],
             phone: userData.phone || '',
             description: userData.description || '',
-            picture: userData.picture || ''
+            picture: userData.picture || '',
+            reservations: userData.reservations || [],
+            tickets: userData.tickets || []
         }
         
         user.value = newUser
@@ -77,41 +82,116 @@ export const useAuthStore = defineStore('auth', () => {
         currentLanguage.value = lang
     }
 
-    function reserverActivite(activiteId) {
+    async function reserverActivite(activiteId) {
         if (!user.value) return false
 
-        const activite = activities.value.find(a => a.id === activiteId)
+        console.log("Tentative de réservation, act:", activiteId)
+        
+        const activityStore = useActivityStore()
+        const activite = activities.value.find(a => a.id === activiteId) || activityStore?.activities?.find(a => a._id === activiteId) || { id: activiteId, titre: 'Activité', date: new Date().toLocaleDateString() }
 
-        if (activite) {
-            reservations.value.push({
-                id: Date.now(),
-                userEmail: user.value.email,
-                activite: activite,
-                dateReservation: new Date().toLocaleDateString()
+        try {
+            const response = await fetch(`${API_URL}/${user.value.id}/reservations`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ activite })
             })
+            if (response.ok) {
+                const data = await response.json()
+                // Update local user
+                updateUser({ reservations: data.user.reservations })
+                
+                // Mettre à jour le compteur en direct
+                if (activityStore.activities) {
+                    const actIdx = activityStore.activities.findIndex(a => a._id === activiteId || a.id === activiteId);
+                    if (actIdx !== -1 && activityStore.activities[actIdx].places > 0) {
+                        activityStore.activities[actIdx].places -= 1;
+                    }
+                }
 
-            alert(`Réservation enregistrée`)
-            const templateParams = {
-                salutation: this.user.name,
-                activite: activite.titre,
-                date: activite.date,
+                alert(`Réservation enregistrée !`)
+                // Optionnel: envoi de l'email
+                const templateParams = {
+                    salutation: user.value.name,
+                    activite: activite.titre || 'Activité',
+                    date: activite.date || new Date().toLocaleDateString(),
+                }
+                emailjs.send('service_2zpxqyi', 'template_ul9qm2l', templateParams)
+                    .catch(err => console.log('Email failed', err));
+                return true
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                alert(`Réservation impossible : ${errorData.error || response.statusText}`);
+                return false;
             }
-            emailjs.send('service_2zpxqyi', 'template_ul9qm2l', templateParams)
-                .then((response) => {
-                    console.log('SUCCESS!', response.status, response.text);
-                }, (err) => {
-                    console.log('FAILED...', err);
-                })
-            return true
+        } catch(e) {
+            console.error(e)
+            alert("Erreur de connexion au serveur !");
         }
         return false
     }
 
-    function annulerReservation(reservationId) {
-        const index = reservations.value.findIndex(r => r.id === reservationId)
-        if (index !== -1) {
-            reservations.value.splice(index, 1)
-            return true
+    async function annulerReservation(reservationId) {
+        if (!user.value) return false
+
+        console.log("Tentative de suppression de réservation:", reservationId)
+        try {
+            const response = await fetch(`${API_URL}/${user.value.id}/reservations/${reservationId}`, {
+                method: 'DELETE'
+            })
+            if (response.ok) {
+                const currentRes = user.value.reservations || []
+                const resToDelete = currentRes.find(r => r.id === reservationId || r.id === parseInt(reservationId));
+
+                updateUser({ reservations: currentRes.filter(r => r.id !== reservationId && r.id !== parseInt(reservationId)) })
+                
+                // Mettre à jour le compteur en direct
+                const activityStore = useActivityStore()
+                if (resToDelete && activityStore.activities) {
+                    const actId = resToDelete.activite._id || resToDelete.activite.id;
+                    const actIdx = activityStore.activities.findIndex(a => a._id === actId || a.id === actId);
+                    if (actIdx !== -1) {
+                        activityStore.activities[actIdx].places += 1;
+                    }
+                }
+
+                alert("Réservation annulée !")
+                return true
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                alert(`Annulation impossible : ${errorData.error || response.statusText}`);
+                return false;
+            }
+        } catch(e) {
+            console.error(e)
+            alert("Erreur de connexion au serveur !");
+        }
+        return false
+    }
+
+    async function acheterBillets(tickets) {
+        if (!user.value) return false
+
+        console.log("Tentative d'achat de billets:", tickets)
+        try {
+            const response = await fetch(`${API_URL}/${user.value.id}/tickets`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tickets })
+            })
+            if (response.ok) {
+                const data = await response.json()
+                updateUser({ tickets: data.user.tickets })
+                console.log("Billets ajoutés avec succès dans le state local", data.user.tickets)
+                return true
+            } else {
+                const errText = await response.text();
+                console.error("API Error when adding tickets:", response.status, errText);
+                alert("Erreur de sauvegarde: le serveur a refusé les billets. " + response.status);
+            }
+        } catch(e) {
+            console.error("Fetch threw an error:", e)
+            alert("Erreur de connexion au serveur !");
         }
         return false
     }
@@ -131,6 +211,7 @@ export const useAuthStore = defineStore('auth', () => {
         logout,
         setLanguage,
         reserverActivite,
-        annulerReservation
+        annulerReservation,
+        acheterBillets
     }
 })

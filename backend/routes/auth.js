@@ -59,7 +59,9 @@ router.post('/register', async (req, res) => {
         email: user.email,
         name: user.name,
         role: user.role,
-        provider: user.provider
+        provider: user.provider,
+        reservations: user.reservations || [],
+        tickets: user.tickets || []
       },
       token,
       expiresIn: process.env.JWT_EXPIRES_IN || '1h'
@@ -116,7 +118,9 @@ router.post('/login', async (req, res) => {
         name: user.name,
         role: user.role,
         provider: user.provider,
-        picture: user.picture
+        picture: user.picture,
+        reservations: user.reservations || [],
+        tickets: user.tickets || []
       },
       token,
       expiresIn: process.env.JWT_EXPIRES_IN || '1h'

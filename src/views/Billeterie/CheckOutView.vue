@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="checkout-page">
     <div class="container">
       <h1 class="text-3xl font-bold mb-5 text-center">Finalisation de votre commande</h1>
@@ -189,7 +189,7 @@ import Button from 'primevue/button';
 import emailjs from '@emailjs/browser'
 import {useAuthStore} from "@/stores/authStore.js";
 import router from "@/router/index.js";
-import {Promise} from "mongoose";
+
 
 const authStore = useAuthStore();
 const cartStore = useCartStore();
@@ -225,8 +225,23 @@ const isFormValid = computed(() => {
 const processPayment = async () => {
   if (isFormValid.value) {
     alert(`Paiement de ${cartStore.totalAmount}€ effectué via ${paymentMethod.value}`);
+    
+    // On clone le panier pour l'utiliser même après l'avoir vidé
+    const itemsToProcess = [...cartStore.items];
+
+    // 1. Send to backend via AuthStore (On enregistre D'ABORD les billets)
+    const successDB = await authStore.acheterBillets(itemsToProcess);
+    
+    if (!successDB) {
+       return; // L'alerte est gérée dans authStore.js
+    }
+
+    // On vide le panier localement
+    cartStore.confirmTickets();
+
+    // 2. Envoi des emails de confirmation sur notre copie
     try{
-      const emailPromises = cartStore.items.map(ticket => {
+      const emailPromises = itemsToProcess.map(ticket => {
         const templateParams = {
           name: ticket.holderName,
           email: ticket.holderEmail,
@@ -246,16 +261,14 @@ const processPayment = async () => {
 
       // On attend que tous les mails soient envoyés
       await Promise.all(emailPromises);
-
       alert(`Paiement réussi ! Un mail a été envoyé à chaque participant.`);
-
-      cartStore.confirmTickets();
-
-      await router.push({name: 'success'});
     } catch (error) {
       console.error("Erreur lors de l'envoi des mails :", error);
-      alert("Le paiement a réussi mais une erreur est survenue lors de l'envoi des confirmations.");
+      alert("Le paiement a réussi mais une erreur est survenue lors de l'envoi des confirmations par e-mail. Vos billets sont tout de même enregistrés dans votre profil.");
     }
+
+    // 3. Redirection
+    await router.push({name: 'success'});
   }
 };
 </script>
