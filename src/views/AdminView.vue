@@ -590,7 +590,7 @@ const currentItem = computed(() =>
 
 :deep(.p-inputtext),
 :deep(.p-textarea) {
-  background: rgba(11, 9, 20, 0.7) !important;
+  background: rgba(253, 253, 253, 0.7) !important;
   border-color: var(--glass-border) !important;
   color: var(--necro-text) !important;
   font-family: "Rajdhani", sans-serif !important;
