@@ -720,7 +720,7 @@ const donutOptions = {
   font-family: 'Rajdhani', sans-serif;
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--necro-text, #e0e0f0);
+  color: var(--necro-text, #484848);
   line-height: 1;
 }
 .kpi-label {
@@ -838,7 +838,7 @@ const donutOptions = {
   font-family: 'Rajdhani', sans-serif;
   font-size: 2rem;
   font-weight: 700;
-  color: var(--necro-text, #e0e0f0);
+  color: var(--necro-text, #3a3a3a);
 }
 .score-max {
   font-size: 0.85rem;
