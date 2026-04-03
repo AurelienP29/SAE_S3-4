@@ -258,10 +258,8 @@ function translateStatus(status) {
 import { prestations } from '@/datasource/data.mjs';
 
 function getPrestationLink(prestataireId) {
-  const found = prestations.find(p => p.prestataireId === prestataireId);
-
-  if (found) {
-    return { name: 'PrestationDetail', params: { id: found.id } };
+  if (prestataireId) {
+    return { name: 'PrestatairePublic', params: { id: prestataireId } };
   }
   return null;
 }

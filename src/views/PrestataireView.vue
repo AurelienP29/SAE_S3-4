@@ -757,7 +757,7 @@ function cancelMyRequest() {
 .status-info { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); }
 .status-info h3 { color: #2563eb; }
 .map-container-wrapper {
-  border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; height: 500px;
+  border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; height: auto;
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
