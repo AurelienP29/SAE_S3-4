@@ -1,43 +1,43 @@
 <template>
-  <div class="admin-activities-view">
+  <div class="admin-shell">
     <Toast />
-    <div class="header-card p-4 mb-4">
-      <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold">Gestion des Évènements</h1>
-        <Button label="Nouvel Évènement" icon="pi pi-plus" severity="success" @click="openNew" />
-      </div>
-    </div>
+    <div class="admin-content">
+      <div class="content-card">
+        <div class="flex justify-between items-center top-row mb-4">
+          <h1>Gestion des Évènements</h1>
+          <Button label="Nouvel Évènement" icon="pi pi-plus" severity="secondary" @click="openNew" />
+        </div>
 
-    <div class="card p-4">
-      <DataTable 
-        :value="activityStore.activities" 
-        :loading="activityStore.loading" 
-        stripedRows 
-        paginator 
-        :rows="10"
-        responsiveLayout="stack"
-      >
-        <Column field="titre" header="Titre" sortable></Column>
-        <Column field="date" header="Date" sortable>
-          <template #body="slotProps">
-            {{ formatDate(slotProps.data.date) }}
-          </template>
-        </Column>
-        <Column field="places" header="Places" sortable></Column>
-        <Column field="prix" header="Prix" sortable>
+        <DataTable 
+          :value="activityStore.activities" 
+          :loading="activityStore.loading" 
+          stripedRows 
+          paginator 
+          :rows="10"
+          responsiveLayout="stack"
+        >
+          <Column field="titre" header="Titre" sortable></Column>
+          <Column field="date" header="Date" sortable>
             <template #body="slotProps">
-                {{ slotProps.data.prix }}€
+              {{ formatDate(slotProps.data.date) }}
             </template>
-        </Column>
-        <Column header="Actions">
-          <template #body="slotProps">
-            <div class="flex gap-2">
-              <Button icon="pi pi-pencil" severity="info" rounded outlined @click="editActivity(slotProps.data)" />
-              <Button icon="pi pi-trash" severity="danger" rounded outlined @click="confirmDelete(slotProps.data)" />
-            </div>
-          </template>
-        </Column>
-      </DataTable>
+          </Column>
+          <Column field="places" header="Places" sortable></Column>
+          <Column field="prix" header="Prix" sortable>
+              <template #body="slotProps">
+                  {{ slotProps.data.prix }}€
+              </template>
+          </Column>
+          <Column header="Actions">
+            <template #body="slotProps">
+              <div class="flex gap-2">
+                <Button icon="pi pi-pencil" text rounded severity="info" @click="editActivity(slotProps.data)" />
+                <Button icon="pi pi-trash" text rounded severity="danger" @click="confirmDelete(slotProps.data)" />
+              </div>
+            </template>
+          </Column>
+        </DataTable>
+      </div>
     </div>
 
     <!-- Dialog Création/Edition -->
@@ -187,33 +187,139 @@ const deleteActivity = async () => {
 </script>
 
 <style scoped>
-.admin-activities-view {
+@import "@/assets/main.css";
+
+/* Shell & Content Base */
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--necro-bg);
+  font-family: "Rajdhani", sans-serif;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.admin-content {
+  width: 100%;
   max-width: 1200px;
-  margin: 2rem auto;
-  padding: 1rem;
 }
 
-.header-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.content-card {
+  background: rgba(237, 233, 229, 0.75);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg, 16px);
+  padding: 2rem;
+  min-height: 60vh;
+  backdrop-filter: blur(6px);
 }
 
-.card {
-  background: var(--surface-card);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+.top-row {
+  margin-bottom: 2rem;
 }
 
-:deep(.p-datatable-header) {
-    background: transparent;
-    border: none;
+/* ============================================================
+   DEEP OVERRIDES
+   ============================================================ */
+:deep(h1) {
+  font-family: "Rajdhani", sans-serif !important;
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  color: var(--necro-text-muted) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 2px solid rgba(168, 85, 247, 0.2);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+}
+
+:deep(.p-datatable-thead > tr > th) {
+  background: rgba(204, 204, 204, 0.3) !important;
+  color: var(--necro-text-muted) !important;
+  font-family: "Rajdhani", sans-serif !important;
+  font-size: 0.82rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-color: var(--glass-border) !important;
+  font-weight: 700 !important;
+}
+
+:deep(.p-datatable-tbody > tr) {
+  background: transparent !important;
+  color: var(--necro-text, #0b0b0b) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  font-family: "Rajdhani", sans-serif !important;
+  font-size: 0.97rem !important;
+  transition: background 0.15s;
+}
+
+:deep(.p-datatable-tbody > tr:nth-child(even)) {
+  background: rgba(255, 255, 255, 0.023) !important;
+}
+
+:deep(.p-datatable-tbody > tr:hover) {
+  background: rgba(168, 85, 247, 0.09) !important;
+}
+
+:deep(.p-paginator) {
+  background: transparent !important;
+  color: var(--necro-text-muted) !important;
+  border: none !important;
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+:deep(.p-paginator .p-paginator-page.p-highlight) {
+  background: var(--necro-purple) !important;
+  color: white !important;
+  border-radius: 6px;
+}
+
+:deep(.p-button) {
+  font-family: "Rajdhani", sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+}
+
+:deep(.p-dialog) {
+  background: rgba(20, 17, 38, 0.98) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-lg, 16px) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+:deep(.p-dialog-header) {
+  background: transparent !important;
+  color: var(--necro-text, #333333) !important;
+  font-family: "Rajdhani", sans-serif !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+}
+
+:deep(.p-dialog-content) {
+  background: transparent !important;
+  color: var(--necro-text, #424242) !important;
 }
 
 :deep(.p-dialog-footer) {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
+  background: transparent !important;
+  border-top: 1px solid var(--glass-border) !important;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+:deep(.p-inputtext),
+:deep(.p-textarea) {
+  background: rgba(253, 253, 253, 0.7) !important;
+  border-color: var(--glass-border) !important;
+  color: var(--necro-text) !important;
+  font-family: "Rajdhani", sans-serif !important;
+}
+
+:deep(.p-inputtext:focus),
+:deep(.p-textarea:focus) {
+  border-color: var(--necro-purple) !important;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.25) !important;
 }
 </style>
