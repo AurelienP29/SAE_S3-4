@@ -110,14 +110,7 @@ export const useAuthStore = defineStore('auth', () => {
                 }
 
                 alert(`Réservation enregistrée !`)
-                // Optionnel: envoi de l'email
-                const templateParams = {
-                    salutation: user.value.name,
-                    activite: activite.titre || 'Activité',
-                    date: activite.date || new Date().toLocaleDateString(),
-                }
-                emailjs.send('service_2zpxqyi', 'template_ul9qm2l', templateParams)
-                    .catch(err => console.log('Email failed', err));
+               
                 return true
             } else {
                 const errorData = await response.json().catch(() => ({}));
