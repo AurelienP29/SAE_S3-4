@@ -47,6 +47,7 @@ async function createUser(db, { email, password, name }) {
     email: email.toLowerCase(),
     password: hashedPassword,
     name,
+    role: 'visiteur',
     provider: 'local',
     createdAt: new Date()
   });
@@ -55,6 +56,7 @@ async function createUser(db, { email, password, name }) {
     _id: result.insertedId,
     email: email.toLowerCase(),
     name,
+    role: 'visiteur',
     provider: 'local',
     createdAt: new Date()
   };
@@ -113,6 +115,7 @@ async function createUserFromGoogle(db, { googleId, email, name, picture }) {
     email: email ? email.toLowerCase() : null,
     name,
     picture,
+    role: 'visiteur',
     provider: 'google',
     createdAt: new Date()
     // Pas de champ password pour les utilisateurs OAuth
@@ -124,6 +127,7 @@ async function createUserFromGoogle(db, { googleId, email, name, picture }) {
     email: email ? email.toLowerCase() : null,
     name,
     picture,
+    role: 'visiteur',
     provider: 'google',
     createdAt: new Date()
   };

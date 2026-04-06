@@ -229,7 +229,7 @@
                 <!-- ===== ACTIVITES ===== -->
                 <div v-else-if="activeSection === 'activites'">
                   <!-- Visiteur -->
-                  <div v-if="authStore.user.role === 'visiteur'">
+                  <div v-if="!authStore.user.role || authStore.user.role === 'visiteur'">
                     <div v-if="authStore.mesReservations.length > 0" class="reservations-list">
                       <div v-for="resa in authStore.mesReservations" :key="resa.id" class="resa-card">
                         <div>
