@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
-
+import GoogleSignInPlugin from 'vue3-google-signin'
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice'
 import DialogService from 'primevue/dialogservice'
@@ -24,6 +24,10 @@ app.use(PrimeVue, {
         },
     },
 });
+
+app.use(GoogleSignInPlugin, {
+    clientId: "54870244538-qhsj5p7mdf81mdsc8rel3pcthpg3knk8.apps.googleusercontent.com",
+})
 
 app.use(router)
 app.use(ToastService);

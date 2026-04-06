@@ -96,36 +96,9 @@ export function useLoginService() {
         }
     }
 
-    function handleGoogleCallback(response) {
-        // à revoir https://developers.google.com/identity/sign-in/web/sign-in?hl=fr
-        // PB fenêtre de connection -> refus
-        /*
-        console.log("Google response:", response);
-        authStore.login({ name: "Google User", role: "visiteur" });
-        */
-        try {
-            const base64Url = response.credential.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-
-            const googleUser = JSON.parse(jsonPayload);
-
-            const user = {
-                id: googleUser.sub,
-                name: googleUser.name,
-                email: googleUser.email,
-                picture: googleUser.picture,
-                role: 'visiteur',
-                roles: ['visiteur']
-            };
-
-            authStore.login(user);
-            router.push({name: 'Home'});
-        } catch (e) {
-            console.error("Erreur lors du décodage du token Google", e);
-        }
+    function handleGoogleLogin() {
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+        window.location.href = `${API_URL}/auth/google`
     }
 
     return {
@@ -136,6 +109,6 @@ export function useLoginService() {
         handleLogin,
         goToCreateAccount,
         handleSocialLogin,
-        handleGoogleCallback
+        handleGoogleLogin
     }
 }

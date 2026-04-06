@@ -39,9 +39,12 @@
         </div>
 
         <div class="social-login-grid">
-          <!-- <button @click="handleGoogleLogin">Google</button> !-->
-
-          <div id="google-login-btn" class="social-btn google-btn-container"></div>
+          <Button 
+            label=" Se connecter avec Google" 
+            icon="pi pi-google" 
+            class="p-button-outlined w-full mb-3"
+            @click="handleGoogleLogin"
+          />
           
           <div class="social-icons-row mt-3">
             <Button icon="pi pi-github" severity="secondary" rounded outlined @click="handleSocialLogin('GitHub')" />
@@ -85,26 +88,11 @@ const {
   handleLogin,
   goToCreateAccount,
   handleSocialLogin,
-  handleGoogleCallback
+  handleGoogleLogin
 } = useLoginService()
 
 onMounted(() => {
-  if (window.google) {
-    window.google.accounts.id.initialize({
-      client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // À remplacer par un vrai ID
-      callback: handleGoogleCallback,
-      auto_select: false,
-      cancel_on_tap_outside: true
-    });
-    
-    window.google.accounts.id.renderButton(
-      document.getElementById("google-login-btn"),
-      { theme: "outline", size: "large", width: "100%", text: "signin_with", shape: "rectangular" }
-    );
-    
-    // Optionnel
-    // window.google.accounts.id.prompt();
-  }
+  // Le code Google GIS n'est plus nécessaire car on utilise la redirection backend
 })
 </script>
 

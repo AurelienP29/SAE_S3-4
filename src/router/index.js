@@ -28,6 +28,7 @@ const routes = [
     {path: '/prestatairedashboard', name: 'PrestataireView', component: PrestataireView},
     {path: '/prestataire/:id', name: 'PrestatairePublic', component: () => import('@/views/PrestatairePublicView.vue')},
     {path: '/login', name: 'Login', component: LoginView},
+    {path: '/auth/callback', name: 'AuthCallback', component: () => import('@/views/AuthCallbackView.vue')},
     {path: '/register', name: 'Register', component: RegisterView},
     {path: '/onboarding', name: 'Onboarding', component: () => import('@/views/OnboardingView.vue')},
 

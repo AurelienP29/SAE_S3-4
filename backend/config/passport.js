@@ -1,5 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
 const {
   findUserByGoogleId, createUserFromGoogle,
 } = require('../models/User');
@@ -23,9 +24,9 @@ passport.use(new GoogleStrategy({
     if (!user) {
       user = await createUserFromGoogle(db, {
         googleId: profile.id,
-        email: profile.emails[0].value,
+        email: profile.emails && profile.emails[0] ? profile.emails[0].value : null,
         name: profile.displayName,
-        picture: profile.photos[0].value
+        picture: profile.photos && profile.photos[0] ? profile.photos[0].value : null,
       });
     }
 
